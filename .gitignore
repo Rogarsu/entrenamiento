@@ -1,0 +1,19 @@
+.DS_Store
+Thumbs.db
+desktop.ini
+# VSCode
+.vscode/
+# Logs
+*.log
+# Env
+.env
+# Python
+__pycache__/
+*.pyc
+# Node
+node_modules/
+# OS files
+ehthumbs.db
+
+# Keep images in repo (do NOT ignore images/)
+# If later you want to exclude large images, add images/ here

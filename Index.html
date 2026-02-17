@@ -1,0 +1,2017 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Completa - Transformación Física 12 Semanas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #1F4E78;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        h2 {
+            color: #4472C4;
+            border-bottom: 3px solid #4472C4;
+            padding-bottom: 10px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        
+        h3 {
+            color: #1F4E78;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .horario-box {
+            background: #f0f7ff;
+            border-left: 5px solid #4472C4;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        
+        .hora {
+            font-weight: bold;
+            color: #1F4E78;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .actividad {
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .comida {
+            background: #fff9e6;
+            border-left: 5px solid #FFB81C;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        
+        .comida-titulo {
+            font-weight: bold;
+            color: #D4AF00;
+            margin-bottom: 5px;
+        }
+        
+        .comida-contenido {
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .macros {
+            background: #e6f3ff;
+            padding: 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-top: 5px;
+            color: #0066cc;
+        }
+        
+        .ejercicio {
+            background: #e6ffe6;
+            border-left: 5px solid #00aa00;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        
+        .ejercicio-numero {
+            font-weight: bold;
+            color: #006600;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        table th {
+            background-color: #4472C4;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .dia-completo {
+            background: #f5f5f5;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            page-break-inside: avoid;
+        }
+        
+        .dia-titulo {
+            background: #1F4E78;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .seccion-dia {
+            margin-bottom: 15px;
+        }
+        
+        .seccion-titulo {
+            background: #4472C4;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .advertencia {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            color: #856404;
+        }
+        
+        .exito {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            color: #155724;
+        }
+        
+        .lista-check {
+            list-style: none;
+        }
+        
+        .lista-check li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .lista-check li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .tiempo {
+            display: inline-block;
+            background: #e3f2fd;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            color: #0066cc;
+            margin-left: 5px;
+        }
+        
+        .titulo-semana {
+            background: linear-gradient(135deg, #1F4E78 0%, #4472C4 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0 20px 0;
+            font-size: 22px;
+        }
+        
+        .columnas-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        @media print {
+            body {
+                background: white;
+            }
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+            .dia-completo {
+                page-break-inside: avoid;
+            }
+        }
+        
+        .nota-importante {
+            background: #ff6b6b;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+        .local-img {
+            max-width: 320px;
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 8px 0 6px 0;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .img-caption {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <h1>🏋️ TRANSFORMACIÓN FÍSICA COMPLETA</h1>
+        <p class="subtitle">Guía Paso a Paso - 12 Semanas | Edad: 31 años | Peso: 65 kg | Altura: 162 cm</p>
+       
+        <!-- SECCIÓN 1: ANTES DE EMPEZAR -->
+        <h2>⚠️ ANTES DE EMPEZAR (MUY IMPORTANTE)</h2>
+        
+        <div class="nota-importante">
+            FECHA DE INICIO: Próximo LUNES
+            <br>Realiza check-up médico esta semana (presión, glucosa, colesterol, TSH)
+        </div>
+        
+        <h3>Checklist Pre-Inicio</h3>
+        <ul class="lista-check">
+            <li>✓ Check-up médico (presión arterial, glucosa, colesterol, TSH)</li>
+            <li>✓ Toma foto FRENTE (pecho desnudo)</li>
+            <li>✓ Toma foto PERFIL (cuerpo completo)</li>
+            <li>✓ Peso corporal (báscula)</li>
+            <li>✓ Mide cintura (punto más ancho del abdomen)</li>
+            <li>✓ Mide pecho (a la altura de pezones)</li>
+            <li>✓ Mide brazos (relajados, punto más ancho)</li>
+            <li>✓ Mide cadera (punto más ancho)</li>
+            <li>✓ Compra suplementos: D3, Magnesio, Omega-3, Multivitamínico</li>
+            <li>✓ Llena Excel de seguimiento con datos iniciales</li>
+            <li>✓ Establece horario fijo de sueño (ej: 22:30-6:30)</li>
+            <li>✓ Limpia cocina de ultraprocesados</li>
+            <li>✓ Compra alimentos: pollo pechuga, huevos, arroz integral, avena, vegetales</li>
+        </ul>
+        
+        <!-- SECCIÓN 2: SUEÑO -->
+        <h2>😴 PROTOCOLO DE SUEÑO (PRIORIDAD #1)</h2>
+        
+        <div class="exito">
+            <strong>Meta:</strong> 7.5 a 8 horas TODOS los días
+            <br><strong>Horario recomendado:</strong> 22:30 pm a 6:30 am (MISMO todos los días, incluso fin de semana)
+        </div>
+        
+        <h3>Reglas No Negociables</h3>
+        <table>
+            <tr>
+                <th>Regla</th>
+                <th>Acción</th>
+            </tr>
+            <tr>
+                <td><strong>Horario Fijo</strong></td>
+                <td>Acuéstate SIEMPRE 22:30, despierta SIEMPRE 6:30 (incluso sábado-domingo)</td>
+            </tr>
+            <tr>
+                <td><strong>Oscuridad Total</strong></td>
+                <td>Persianas cerradas + sin luz de teléfono/reloj. Habitación completamente negra.</td>
+            </tr>
+            <tr>
+                <td><strong>Temperatura</strong></td>
+                <td>Entre 18-20°C (abre ventanas o usa aire acondicionado). Cuerpo duerme mejor en frío.</td>
+            </tr>
+            <tr>
+                <td><strong>Silencio</strong></td>
+                <td>Sin ruidos. Si hay, usa tapones para oídos.</td>
+            </tr>
+            <tr>
+                <td><strong>Última Comida</strong></td>
+                <td>2.5-3 horas ANTES de dormir (ejemplo: si duermes 22:30, última comida 19:30)</td>
+            </tr>
+            <tr>
+                <td><strong>Última Cafeína</strong></td>
+                <td>12:00 pm máximo. Nada de café después de mediodía.</td>
+            </tr>
+            <tr>
+                <td><strong>Último Pantalla</strong></td>
+                <td>22:00 pm (teléfono, TV, computadora). La luz azul inhibe melatonina.</td>
+            </tr>
+            <tr>
+                <td><strong>Cama = Sueño</strong></td>
+                <td>No uses cama para trabajar, comer o ver TV. Solo para dormir.</td>
+            </tr>
+        </table>
+        
+        <h3>Si Duermes Mal (Aplicar esta noche)</h3>
+        <div class="actividad">
+            <strong>Opción 1 - Baño Caliente:</strong>
+            <br>1 hora antes de dormir, baño/ducha caliente 15-20 min. Cuerpo se enfría después, propicio para sueño.
+        </div>
+        
+        <div class="actividad">
+            <strong>Opción 2 - Respiración 4-7-8:</strong>
+            <br>En cama, acostado boca arriba:
+            <br>1. Inhala por nariz 4 segundos
+            <br>2. Retén aire 7 segundos
+            <br>3. Exhala por boca 8 segundos
+            <br>4. Repetir 5 veces
+        </div>
+        
+        <div class="actividad">
+            <strong>Opción 3 - Magnesio Nocturno:</strong>
+            <br>30-60 minutos antes de dormir: 300-400 mg Magnesio Glicinato + vaso de agua
+        </div>
+        
+        <div class="actividad">
+            <strong>Opción 4 - Yoga Suave:</strong>
+            <br>15 minutos antes de dormir: YouTube "Bedtime yoga 15 min"
+        </div>
+        
+        <!-- SECCIÓN 3: SUPLEMENTOS DIARIOS -->
+        <div style="margin-top:12px; margin-bottom:6px;">
+            <img class="local-img" src="images/suplementos_overview.png" alt="Suplementos (coloca el archivo images/suplementos_overview.png)">
+            <div class="img-caption">Sugerido: <code>images/suplementos_overview.png</code></div>
+        </div>
+        <h2>💊 SUPLEMENTOS DIARIOS</h2>
+        
+        <div class="exito">
+            <strong>Compra AHORA:</strong> D3, Magnesio Glicinato, Omega-3, Multivitamínico, Whey Protein, Creatina (todas de marcas reconocidas)
+        </div>
+        
+        <table>
+            <tr>
+                <th>Suplemento</th>
+                <th>Dosis</th>
+                <th>Cuándo</th>
+                <th>Con qué</th>
+            </tr>
+            <tr>
+                <td><strong>Vitamina D3</strong></td>
+                <td>3000-4000 IU</td>
+                <td>Desayuno (7:00 am)</td>
+                <td>Con primer vaso de agua</td>
+            </tr>
+            <tr>
+                <td><strong>Multivitamínico</strong></td>
+                <td>1 tableta</td>
+                <td>Desayuno (7:00 am)</td>
+                <td>Con D3</td>
+            </tr>
+            <tr>
+                <td><strong>Omega-3 (EPA/DHA)</strong></td>
+                <td>1500 mg</td>
+                <td>Con Almuerzo (13:00)</td>
+                <td>Durante la comida</td>
+            </tr>
+            <tr>
+                <td><strong>Creatina Monohidrato</strong></td>
+                <td>5g diarios</td>
+                <td>Con Almuerzo (13:00)</td>
+                <td>Mezclada en agua o zumo</td>
+            </tr>
+            <tr>
+                <td><strong>Magnesio Glicinato</strong></td>
+                <td>300-400 mg</td>
+                <td>1 hora antes de dormir (21:30)</td>
+                <td>Con vaso de agua</td>
+            </tr>
+            <tr>
+                <td><strong>Whey Protein</strong></td>
+                <td>25-30g</td>
+                <td>Post-Entreno (18:00)</td>
+                <td>Mezclado en batidora</td>
+            </tr>
+        </table>
+        
+        <div class="advertencia">
+            <strong>⚠️ Importante:</strong> Bebe EXTRA agua con Creatina (mínimo 2.5 litros diarios en lugar de 2). La creatina requiere más hidratación.
+        </div>
+        
+        <!-- SECCIÓN 4: HIDRATACIÓN DIARIA -->
+        <h2>💧 HIDRATACIÓN - AGUA Y BEBIDAS</h2>
+        
+        <div class="exito">
+            <strong>Meta Mínima:</strong> 2 litros de agua pura al día
+            <br><strong>Si haces cardio:</strong> +500 ml por hora de cardio
+            <br><strong>Distribución ideal:</strong> Beber 500 ml cada 2-3 horas
+        </div>
+        
+        <h3>Horario de Agua Recomendado</h3>
+        <table>
+            <tr>
+                <th>Hora</th>
+                <th>Cantidad</th>
+                <th>Notas</th>
+            </tr>
+            <tr>
+                <td>6:30 - Despertar</td>
+                <td>500 ml</td>
+                <td>Inmediatamente al levantarse (rehidrata)</td>
+            </tr>
+            <tr>
+                <td>9:00 am</td>
+                <td>500 ml</td>
+                <td>Media mañana</td>
+            </tr>
+            <tr>
+                <td>12:00 pm</td>
+                <td>500 ml</td>
+                <td>Antes de almuerzo</td>
+            </tr>
+            <tr>
+                <td>15:00 - Pre-Entreno</td>
+                <td>500 ml</td>
+                <td>Hora y media antes de entrenar</td>
+            </tr>
+            <tr>
+                <td>17:30 - Durante cardio</td>
+                <td>250-500 ml</td>
+                <td>Bebidas pequeños sorbos durante entreno</td>
+            </tr>
+            <tr>
+                <td>19:30 - Post-Entreno</td>
+                <td>500 ml</td>
+                <td>Con electrolitos si sudaste mucho</td>
+            </tr>
+            <tr>
+                <td>21:00 - Noche</td>
+                <td>250 ml</td>
+                <td>Poco, para no despertarte a orinar</td>
+            </tr>
+        </table>
+        
+        <h3>Bebidas Permitidas vs Prohibidas</h3>
+        <table>
+            <tr>
+                <th>✅ PERMITIDAS (Ilimitadas)</th>
+                <th>❌ PROHIBIDAS (Evita siempre)</th>
+            </tr>
+            <tr>
+                <td>Agua pura</td>
+                <td>Refrescos (Coca-Cola, Sprite, Fanta)</td>
+            </tr>
+            <tr>
+                <td>Agua con limón</td>
+                <td>Bebidas energéticas (Red Bull, Monster)</td>
+            </tr>
+            <tr>
+                <td>Té verde (1-2 tazas)</td>
+                <td>Jugo natural (incluso sin azúcar)</td>
+            </tr>
+            <tr>
+                <td>Café negro sin azúcar (antes 12:00 pm)</td>
+                <td>Alcohol (salvo ocasional)</td>
+            </tr>
+            <tr>
+                <td>Agua con jengibre</td>
+                <td>Bebidas "0% azúcar" químicas</td>
+            </tr>
+            <tr>
+                <td>Agua de coco sin azúcar (ocasional)</td>
+                <td>Leche condensada/Leche evaporada</td>
+            </tr>
+        </table>
+        
+        <!-- SECCIÓN 5: PLAN DE COMIDAS -->
+        <h2>🍽️ PLAN DE COMIDAS - CALORÍAS Y MACROS</h2>
+        
+        <div class="exito">
+            <strong>Meta Calórica:</strong> 1900-2050 calorías/día (deficit -250 a -400 cal)
+            <br><strong>Proteína:</strong> 140-150g/día (39%)
+            <br><strong>Carbohidratos:</strong> 180-220g/día (35%)
+            <br><strong>Grasas:</strong> 50-65g/día (25%)
+        </div>
+        
+        <h3>EJEMPLO DÍA TIPO (1950 calorías)</h3>
+        
+        <div class="dia-completo">
+            <div class="dia-titulo">📅 DÍA COMPLETO - EJEMPLO ESTÁNDAR</div>
+            
+            <div class="comida">
+                <div class="comida-titulo">07:00 - DESAYUNO (380 cal)</div>
+                <div class="comida-contenido">
+                    • 3 huevos enteros (cocinados como prefieras: revueltos, fritos, cocidos)
+                    <br>• 1 tostada de pan integral
+                    <br>• 1 tomate mediano (fresco o cocinado)
+                    <br>• 1 vaso de agua 250 ml
+                    <br>+ D3 (3000 IU) + Multivitamínico
+                    <div class="macros">Macros: 20g proteína | 35g carbs | 12g grasas</div>
+                </div>
+            </div>
+            
+            <div class="comida">
+                <div class="comida-titulo">10:00 - COLACIÓN 1 (160 cal)</div>
+                <div class="comida-contenido">
+                    • 1 manzana mediana (cruda)
+                    <br>• 15g almendras (puñado pequeño)
+                    <br>• 1 vaso de agua 250 ml
+                    <div class="macros">Macros: 4g proteína | 20g carbs | 5g grasas</div>
+                </div>
+            </div>
+            
+            <div class="comida">
+                <div class="comida-titulo">13:00 - ALMUERZO (550 cal)</div>
+                <div class="comida-contenido">
+                    • 200g pechuga de pollo cocida (a la parrilla, hervida o al horno)
+                    <br>• 150g arroz integral cocinado
+                    <br>• Brócoli grande (al vapor o cocido)
+                    <br>• 1 cucharada (10 ml) aceite de oliva extra virgen
+                    <br>• Sal y pimienta al gusto
+                    <br>+ 1500 mg Omega-3 + 5g Creatina
+                    <div class="macros">Macros: 50g proteína | 50g carbs | 12g grasas</div>
+                </div>
+            </div>
+            
+            <div class="comida">
+                <div class="comida-titulo">16:00 - PRE-ENTRENO (200 cal)</div>
+                <div class="comida-contenido">
+                    • 1 plátano mediano (maduro)
+                    <br>• 15g mantequilla de cacahuete (1 cucharada)
+                    <br>• 1 vaso de agua 500 ml
+                    <div class="macros">Macros: 6g proteína | 25g carbs | 7g grasas</div>
+                </div>
+            </div>
+            
+            <div class="comida">
+                <div class="comida-titulo">18:00 - POST-ENTRENO (280 cal)</div>
+                <div class="comida-contenido">
+                    • Whey Protein 25g (mezclado en batidora)
+                    <br>• 50g avena cocida o cruda (en leche)
+                    <br>• 1 plátano mediano
+                    <br>• 200 ml leche descremada
+                    <br>Preparación: Licúa todo junto, bebe rápido (máximo 30 min post-entreno)
+                    <div class="macros">Macros: 28g proteína | 35g carbs | 5g grasas</div>
+                </div>
+            </div>
+            
+            <div class="comida">
+                <div class="comida-titulo">20:00 - CENA (380 cal)</div>
+                <div class="comida-contenido">
+                    • 180g pechuga de pollo (a la parrilla o al horno)
+                    <br>• Ensalada grande: lechuga, tomate, zanahoria, cebolla
+                    <br>• 1 cucharada (10 ml) aceite de oliva extra virgen
+                    <br>• Sal y limón al gusto
+                    <br>• 1 vaso de agua 250 ml
+                    <div class="macros">Macros: 38g proteína | 15g carbs | 9g grasas</div>
+                </div>
+            </div>
+            
+            <div class="comida">
+                <div class="comida-titulo">21:30 - ANTES DE DORMIR</div>
+                <div class="comida-contenido">
+                    • 300-400 mg Magnesio Glicinato
+                    <br>• 1 vaso de agua 250 ml
+                    <br>• SIN comida (para mejor digestión)
+                    <div class="macros">Solo suplementos</div>
+                </div>
+            </div>
+            
+            <div style="background: #e6f3ff; padding: 15px; border-radius: 4px; margin-top: 15px;">
+                <strong>📊 RESUMEN DÍA:</strong>
+                <br>Total Calorías: 1950 cal
+                <br>Proteína: 146g (30% del total)
+                <br>Carbohidratos: 180g (37% del total)
+                <br>Grasas: 50g (23% del total)
+                <br><strong>✓ EQUILIBRIO PERFECTO PARA RECOMPOSICIÓN</strong>
+            </div>
+        </div>
+        
+        <h3>OPCIONES ALTERNATIVAS POR COMIDA (INTERCAMBIABLES)</h3>
+        
+        <h4>🥚 Desayuno (opciones de 380 cal)</h4>
+        <table>
+            <tr>
+                <th>Opción A</th>
+                <th>Opción B</th>
+                <th>Opción C</th>
+            </tr>
+            <tr>
+                <td>3 huevos + tostada integral + tomate</td>
+                <td>Avena 40g + plátano + leche descremada</td>
+                <td>Yogur griego 200g + granola 30g + fresas</td>
+            </tr>
+        </table>
+        
+        <h4>🍎 Colación Mañana (opciones de 160 cal)</h4>
+        <table>
+            <tr>
+                <th>Opción A</th>
+                <th>Opción B</th>
+                <th>Opción C</th>
+            </tr>
+            <tr>
+                <td>Manzana + almendras 15g</td>
+                <td>Plátano + 10g almendras</td>
+                <td>Naranja grande + 15g nueces</td>
+            </tr>
+        </table>
+        
+        <h4>🍗 Almuerzo (opciones de 550 cal)</h4>
+        <table>
+            <tr>
+                <th>Opción A (Pollo)</th>
+                <th>Opción B (Atún)</th>
+                <th>Opción C (Lentejas)</th>
+            </tr>
+            <tr>
+                <td>200g pechuga + 150g arroz integral + brócoli + 1 cucharada aceite</td>
+                <td>200g atún enlatado + 150g arroz integral + zanahoria + 1 cucharada aceite</td>
+                <td>150g lentejas cocidas + 150g arroz integral + espinaca + 1 cucharada aceite</td>
+            </tr>
+        </table>
+        
+        <h4>🍌 Pre-Entreno (opciones de 200 cal)</h4>
+        <table>
+            <tr>
+                <th>Opción A</th>
+                <th>Opción B</th>
+                <th>Opción C</th>
+            </tr>
+            <tr>
+                <td>Plátano + mantequilla maní 15g</td>
+                <td>Manzana + mantequilla almendra 15g</td>
+                <td>Tostada integral + miel 1 cucharada + pizca sal</td>
+            </tr>
+        </table>
+        
+        <h4>🥤 Post-Entreno (opciones de 280 cal)</h4>
+        <table>
+            <tr>
+                <th>Opción A (Recomendada)</th>
+                <th>Opción B</th>
+            </tr>
+            <tr>
+                <td>Whey 25g + avena 50g + plátano + leche 200ml</td>
+                <td>Atún 150g + arroz blanco 100g cocinado + tomate (preparado inmediatamente post-entreno)</td>
+            </tr>
+        </table>
+        
+        <h4>🥗 Cena (opciones de 380 cal)</h4>
+        <table>
+            <tr>
+                <th>Opción A (Pollo)</th>
+                <th>Opción B (Salmón)</th>
+                <th>Opción C (Pescado blanco)</th>
+            </tr>
+            <tr>
+                <td>180g pechuga pollo + ensalada grande + 1 cucharada aceite oliva</td>
+                <td>150g salmón + ensalada grande + 1 cucharada aceite oliva</td>
+                <td>200g merluza/bacalao + ensalada grande + 1 cucharada aceite oliva</td>
+            </tr>
+        </table>
+        
+        <div class="advertencia">
+            <strong>📌 REGLAS ALIMENTICIAS SIMPLES:</strong>
+            <br>1. Proteína en TODAS las comidas (pollo, huevos, atún, lentejas, yogur)
+            <br>2. Come cada 3-4 horas (energía estable)
+            <br>3. Come lentamente (20 minutos mínimo)
+            <br>4. Nada 2-3 horas antes de dormir
+            <br>5. 1 día libre a la semana (come lo que quieras, viernes o sábado)
+        </div>
+        
+        <h3>❌ ALIMENTOS A ELIMINAR</h3>
+        <div class="columnas-2">
+            <div>
+                <strong style="color: #cc0000;">Eliminar Siempre:</strong>
+                <ul style="list-style: none; padding-left: 0;">
+                    <li>❌ Frituras (papas fritas, pollo frito)</li>
+                    <li>❌ Azúcares refinados (azúcar blanca, caramelos)</li>
+                    <li>❌ Pan blanco (solo integral)</li>
+                    <li>❌ Embutidos (salchichas, mortadela)</li>
+                    <li>❌ Refrescos azucarados</li>
+                    <li>❌ Ultraprocesados (sopas bolsa, fideos instantáneos)</li>
+                </ul>
+            </div>
+            <div>
+                <strong style="color: #ff8800;">Reduce (1-2x/semana):</strong>
+                <ul style="list-style: none; padding-left: 0;">
+                    <li>🟡 Arroz blanco → Integral</li>
+                    <li>🟡 Pasta blanca → Integral</li>
+                    <li>🟡 Quesos grasosos → Queso fresco</li>
+                    <li>🟡 Carnes rojas grasosas → Magra</li>
+                    <li>🟡 Salsas azucaradas (ketchup)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- SECCIÓN 6: PRE-ENTRENO -->
+        <h2>⏰ PROTOCOLO PRE-ENTRENO (ANTES DE ENTRENAR)</h2>
+        
+        <div class="exito">
+            <strong>Timing Total:</strong> Comienza 60 minutos antes de entrenar
+            <br><strong>Hora Recomendada Entrenamiento:</strong> 16:45 (4:45 pm)
+        </div>
+        
+        <h3>Timeline Paso a Paso</h3>
+        
+        <div class="horario-box">
+            <div class="hora">16:00 (4:00 pm) - COLACIÓN PRE-ENTRENO</div>
+            <div class="actividad">
+                Qué comer: 1 plátano + 15g mantequilla cacahuete
+                <br>Duración: 5-10 minutos
+                <br>Propósito: Energía disponible en 30-45 minutos
+                <br>Dónde: En casa antes de ir al gimnasio
+            </div>
+        </div>
+        
+        <div class="horario-box">
+            <div class="hora">16:10 (4:10 pm) - HIDRATACIÓN</div>
+            <div class="actividad">
+                Qué beber: 500 ml agua pura
+                <br>Duración: 2-3 minutos
+                <br>Propósito: Rehidrata antes de cardio
+            </div>
+        </div>
+        
+        <div class="horario-box">
+            <div class="hora">16:20 (4:20 pm) - SUPLEMENTOS OPCIONALES</div>
+            <div class="actividad">
+                <strong>Opción 1 - Cafeína (SOLO si dormiste bien):</strong>
+                <br>• 1-2 tazas café negro sin azúcar
+                <br>• O 1 taza té verde
+                <br>• Beneficio: +20% fuerza, +15% enfoque
+                <br>• EVITA si dormiste <6 horas
+                <br><br>
+                <strong>Opción 2 - Beta-Alanina (AGREGAR desde SEMANA 5):</strong>
+                <br>• 3g en 250 ml agua
+                <br>• Beneficio: Resistencia muscular aumentada
+                <br>• Efecto secundario: Hormigueo en piel (NORMAL, desaparece en 15 min)
+                <br><br>
+                Duración: 5-10 minutos
+            </div>
+        </div>
+        
+        <div class="horario-box">
+            <div class="hora">16:30 (4:30 pm) - LLEGADA AL GIMNASIO</div>
+            <div class="actividad">
+                Coloca bolsa, toma agua, prepárate mentalmente
+                <br>Duración: 5 minutos
+            </div>
+        </div>
+        
+        <h3>CALENTAMIENTO (15 minutos - NO OMITAS)</h3>
+        
+        <div class="ejercicio">
+            <div class="ejercicio-numero">BLOQUE 1 - Activación Cardio (3 min)</div>
+            • Caminadora: 2 minutos (RPE 3-4/10, muy fácil)
+            <br>• Movilidad de cadera: 1 minuto (círculos en ambas direcciones)
+        </div>
+        
+        <div class="ejercicio">
+            <div class="ejercicio-numero">BLOQUE 2 - Movilidad Dinámica (5 min)</div>
+            1. Gato-vaca: 1 minuto (moviliza columna)
+            <br>2. Cuadrupedia rocking: 1 minuto (cadera + espalda baja)
+            <br>3. Inchworms: 1 minuto (camina manos → plank → vuelve)
+            <br>4. Armadas brazos: 1 minuto (brazos en grandes círculos)
+            <br>5. Leg swings: 1 minuto (balanceos pierna adelante-atrás + lateral)
+        </div>
+        
+        <div class="ejercicio">
+            <div class="ejercicio-numero">BLOQUE 3 - Específico por Día (5 min)</div>
+            Varía según rutina del día (ver rutinas abajo)
+            <br>Ejemplo si entrenas pecho:
+            <br>1. Banda elástica chest fly: 15 reps suave
+            <br>2. Push-ups asistidos (máquina): 10 reps
+            <br>3. Rotación torso banda: 10 reps c/lado
+        </div>
+        
+        <div class="horario-box">
+            <div class="hora">16:45 (4:45 pm) - COMIENZA ENTRENAMIENTO</div>
+            <div class="actividad">
+                <strong>NOTA:</strong> Si llegaste tarde o no pudiste comer pre-entreno:
+                <br>• Aumenta carbohidratos post-entreno 20g extra
+                <br>• No es catastrofe, solo NO óptimo
+            </div>
+        </div>
+        
+        <!-- SECCIÓN 7: POST-ENTRENO -->
+        <h2>🔄 PROTOCOLO POST-ENTRENO (DESPUÉS DE ENTRENAR)</h2>
+        
+        <div class="exito">
+            <strong>Timing Total:</strong> 45-60 minutos después de terminar ejercicio
+        </div>
+        
+        <h3>Timeline Paso a Paso</h3>
+        
+        <div class="horario-box">
+            <div class="hora">18:00 (6:00 pm) - TERMINA ENTRENAMIENTO</div>
+            <div class="actividad">
+                Última repetición completada
+            </div>
+        </div>
+        
+        <div class="horario-box">
+            <div class="hora">18:00-18:05 - ENFRIAMIENTO (5 min)</div>
+            <div class="actividad">
+                1. Caminadora suave: 3-5 minutos (RPE 2-3/10, muy fácil)
+                <br>Propósito: Baja frecuencia cardíaca gradualmente, evita mareos
+                <br><br>
+                2. Respiración profunda: 2 minutos
+                <br>• Inhala nariz 4 seg → Retén 2 seg → Exhala boca 6 seg
+                <br>• Repetir 10 veces
+                <br>• Propósito: Recupera sistema nervioso, baja cortisol
+            </div>
+        </div>
+        
+        <div class="horario-box">
+            <div class="hora">18:05-18:15 - HIDRATACIÓN INMEDIATA (10 min)</div>
+            <div class="actividad">
+                <strong>SI SUDASTE POCO (no mojado):</strong>
+                <br>• 500 ml agua pura
+                <br><br>
+                <strong>SI SUDASTE MODERADO (remera mojada):</strong>
+                <br>• 500 ml agua + pizca sal marina
+                <br><br>
+                <strong>SI SUDASTE MUCHO (empapado, gotea):</strong>
+                <br>• 500-750 ml agua + electrolito comercial
+                <br>• Alternativa: 1 plátano (potasio natural)
+                <br><br>
+                Propósito: Rehidrata rápidamente + repone sodio/potasio
+            </div>
+        </div>
+        
+        <div class="horario-box">
+            <div class="hora">18:15-18:30 - COMIDA POST-ENTRENO (15 min)</div>
+            <div class="actividad">
+                <strong>PREPARACIÓN RÁPIDA:</strong>
+                <br>1. Vaso batidora vacío
+                <br>2. Whey Protein 25-30g (scoop)
+                <br>3. Avena cruda 50g
+                <br>4. Plátano 1 mediano (cortado)
+                <br>5. Leche descremada 200 ml
+                <br>6. Agua 100 ml
+                <br>7. LICÚA 30 segundos hasta suave
+                <br>8. BEBE INMEDIATAMENTE
+                <br><br>
+                <strong>Macros Objetivo:</strong> 28g proteína | 35g carbs | 5g grasas
+                <br><strong>Timing Crítico:</strong> Máximo 30 minutos post-entreno
+                <br><br>
+                <strong>SI NO PUEDES HACER SMOOTHIE:</strong>
+                <br>Alternativa: Come atún 150g + arroz blanco 100g cocido + tomate (preparado en casa)
+            </div>
+        </div>
+        
+        <div class="horario-box">
+            <div class="hora">18:30-18:45 - ESTIRAMIENTOS (15 min)</div>
+            <div class="actividad">
+                Ver sección "ESTIRAMIENTOS Y MOVILIDAD" abajo
+                <br>Mantén cada pose 45-60 segundos
+                <br>Propósito: Reduce DOMS, acelera recuperación
+            </div>
+        </div>
+        
+        <div class="horario-box">
+            <div class="hora">18:45 - SALIDA DEL GIMNASIO</div>
+            <div class="actividad">
+                Ducha en casa (agua tibia, no fría)
+                <br>Come colación ligera si tienes hambre
+            </div>
+        </div>
+        
+        <h3>Resumen Post-Entreno</h3>
+        <div style="background: #d4edda; padding: 15px; border-radius: 4px;">
+            <strong>✅ Hiciste bien si:</strong>
+            <br>✓ Enfriaste 5 minutos
+            <br>✓ Bebiste agua con electrolitos
+            <br>✓ Comiste post-entreno en 30 min
+            <br>✓ Hiciste estiramientos 15 min
+            <br>✓ Saliste del gimnasio a las 18:45
+        </div>
+        
+        <!-- SECCIÓN 8: ESTIRAMIENTOS -->
+        <div style="margin-top:12px; margin-bottom:6px;">
+            <img class="local-img" src="images/estiramientos_gato_vaca.png" alt="Gato-Vaca (coloca el archivo images/estiramientos_gato_vaca.png)">
+            <div class="img-caption">Sugerido: <code>images/estiramientos_gato_vaca.png</code></div>
+        </div>
+        <h2>🧘 ESTIRAMIENTOS Y MOVILIDAD</h2>
+        
+        <h3>DIARIO - Cualquier Hora (5 minutos)</h3>
+        
+        <table>
+            <tr>
+                <th>Ejercicio</th>
+                <th>Duración</th>
+                <th>Cómo Hacerlo</th>
+            </tr>
+            <tr>
+                <td>Gato-Vaca</td>
+                <td>1 min</td>
+                <td>Posición cuadrupedia: arquea (vaca) → redondea (gato), repetir 20 veces</td>
+            </tr>
+            <tr>
+                <td>Hip Opener (Figura 4)</td>
+                <td>45 seg c/lado</td>
+                <td>Acostado, una pierna cruzada sobre la otra, tira hacia pecho</td>
+            </tr>
+            <tr>
+                <td>Quad Stretch de Pie</td>
+                <td>45 seg c/pierna</td>
+                <td>De pie, tira pie hacia glúteo, mantén equilibrio con pared</td>
+            </tr>
+            <tr>
+                <td>Brazos Cruzados al Pecho</td>
+                <td>45 seg c/lado</td>
+                <td>De pie, cruza brazo sobre pecho, tira con otro brazo</td>
+            </tr>
+            <tr>
+                <td>Spinal Twist Acostado</td>
+                <td>45 seg c/lado</td>
+                <td>Acostado, rodillas al pecho, gira hacia un lado</td>
+            </tr>
+        </table>
+        
+        <h3>POST-ENTRENO - Todos los Días (12-15 minutos)</h3>
+        
+        <table>
+            <tr>
+                <th>Ejercicio</th>
+                <th>Duración</th>
+                <th>Músculos Estirables</th>
+            </tr>
+            <tr>
+                <td>Quad Stretch de Pie</td>
+                <td>60 seg c/pierna</td>
+                <td>Cuádriceps</td>
+            </tr>
+            <tr>
+                <td>Hamstring Fold</td>
+                <td>90 seg</td>
+                <td>Isquiotibiales (atrás de muslo)</td>
+            </tr>
+            <tr>
+                <td>Hip Opener Figura 4</td>
+                <td>60 seg c/lado</td>
+                <td>Glúteos, cadera</td>
+            </tr>
+            <tr>
+                <td>Chest Opener</td>
+                <td>60 seg</td>
+                <td>Pecho, hombro anterior</td>
+            </tr>
+            <tr>
+                <td>Shoulder Pass-Through</td>
+                <td>90 seg</td>
+                <td>Hombros, espalda</td>
+            </tr>
+            <tr>
+                <td>Spinal Twist</td>
+                <td>60 seg c/lado</td>
+                <td>Espalda, abdominales oblicuos</td>
+            </tr>
+            <tr>
+                <td>Child's Pose</td>
+                <td>60 seg</td>
+                <td>Espalda baja, hombros</td>
+            </tr>
+        </table>
+        
+        <h3>2x SEMANA - YOGA COMPLETO (20-25 minutos)</h3>
+        
+        <div class="actividad">
+            <strong>Cuándo:</strong> Martes y Sábado (después entrenamiento o cuando no entrenes)
+            <br><strong>Dónde:</strong> YouTube: Busca "Yoga for flexibility 20 min" o "Yoga principiantes"
+            <br><strong>Qué buscar:</strong> Videos etiquetados "All Levels" o "Intermediate"
+            <br><strong>Beneficios:</strong> Flexibilidad máxima, movilidad, respiración, estrés
+        </div>
+        
+        <h3>2x SEMANA - FOAM ROLLER (10 minutos)</h3>
+        
+        <table>
+            <tr>
+                <th>Zona del Cuerpo</th>
+                <th>Duración</th>
+                <th>Técnica</th>
+            </tr>
+            <tr>
+                <td>Espalda Media (Dorsales)</td>
+                <td>2 min</td>
+                <td>Acostado, rodillo atrás, levanta cadera, rueda de arriba a abajo</td>
+            </tr>
+            <tr>
+                <td>Glúteos</td>
+                <td>2 min</td>
+                <td>Sentado, rodillo bajo glúteos, desplaza peso de un lado al otro</td>
+            </tr>
+            <tr>
+                <td>Cuádriceps (Muslo Frente)</td>
+                <td>2 min</td>
+                <td>Posición plank boca abajo, rodillo en muslo, levanta cadera y desliza</td>
+            </tr>
+            <tr>
+                <td>Pantorrillas</td>
+                <td>2 min</td>
+                <td>Acostado piernas elevadas, rodillo bajo pantorrilla, flexiona/extiende</td>
+            </tr>
+        </table>
+        
+        <!-- SECCIÓN 9: RUTINAS SEMANA 1 -->
+        <div class="titulo-semana">SEMANA 1: MÁQUINAS - HIPERTROFIA BASE</div>
+        
+        <h3>DISTRIBUCIÓN SEMANAL</h3>
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Grupo Muscular</th>
+                <th>Duración Total</th>
+                <th>Descanso Post</th>
+            </tr>
+            <tr>
+                <td><strong>Lunes</strong></td>
+                <td>Pecho + Tríceps (Máquinas)</td>
+                <td>60 min (calentamiento + entreno + enfriamiento)</td>
+                <td>48h mínimo</td>
+            </tr>
+            <tr>
+                <td><strong>Martes</strong></td>
+                <td>Espalda + Bíceps (Máquinas)</td>
+                <td>60 min</td>
+                <td>48h mínimo</td>
+            </tr>
+            <tr>
+                <td><strong>Miércoles</strong></td>
+                <td>Piernas (Máquinas)</td>
+                <td>65 min</td>
+                <td>48h mínimo</td>
+            </tr>
+            <tr>
+                <td><strong>Jueves</strong></td>
+                <td>CARDIO + CORE + Hombro Ligero</td>
+                <td>60 min</td>
+                <td>24h (o entrena viernes)</td>
+            </tr>
+            <tr>
+                <td><strong>Viernes</strong></td>
+                <td>Hombro + Brazos + Accesorios (Máquinas)</td>
+                <td>65 min</td>
+                <td>48h mínimo</td>
+            </tr>
+            <tr>
+                <td><strong>Sábado</strong></td>
+                <td>Piernas Ligeras + Cardio + Movilidad</td>
+                <td>60 min</td>
+                <td>24h descanso completo</td>
+            </tr>
+            <tr>
+                <td><strong>Domingo</strong></td>
+                <td><strong>DESCANSO TOTAL</strong></td>
+                <td>—</td>
+                <td>Recuperación</td>
+            </tr>
+        </table>
+        
+        <h3>📅 LUNES - Pecho + Tríceps (Máquinas)</h3>
+        
+        <div class="dia-completo">
+            <div class="dia-titulo">LUNES - PECHO + TRÍCEPS (Máquinas)</div>
+            
+            <div class="seccion-dia">
+                <div class="seccion-titulo">⏰ CALENTAMIENTO (15 minutos)</div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">1. Caminadora: 3 minutos</div>
+                    RPE 3-4/10 (muy fácil, conversación normal)
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">2. Movilidad Dinámica: 5 minutos</div>
+                    • Gato-vaca: 1 min
+                    <br>• Armadas brazos: 1 min
+                    <br>• Leg swings: 1 min
+                    <br>• Cuadrupedia rocking: 1 min
+                    <br>• Inchworms: 1 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">3. Específico Pecho: 5 minutos</div>
+                    • Banda elástica chest fly: 15 reps ligero (activación)
+                    <br>• Push-ups asistidos máquina: 10 reps (sin peso)
+                    <br>• Rotación torso banda elástica: 10 reps c/lado
+                </div>
+            </div>
+            
+            <div class="seccion-dia">
+                <div class="seccion-titulo">💪 ENTRENAMIENTO PRINCIPAL (45 minutos)</div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 1 - Presa Pecho Máquina: 4 series × 8-10 reps</div>
+                    Peso: MODERADO (puedes hacer reps pero últimas 2 son difíciles)
+                    <br>Descanso: 90 segundos entre series
+                    <br>Técnica: Contrae pecho, empuja máquina hacia adelante, lentamente regresa
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 8 reps
+                    <br>&nbsp;&nbsp;Set 2: 8 reps
+                    <br>&nbsp;&nbsp;Set 3: 9 reps
+                    <br>&nbsp;&nbsp;Set 4: 10 reps
+                    <br>Tiempo: 12 min (incluyendo descanso)
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 2 - Fly Máquina: 3 series × 10-12 reps</div>
+                    Peso: LIGERO-MODERADO
+                    <br>Descanso: 75 segundos entre series
+                    <br>Técnica: Cierra brazos juntos delante de pecho, siente contracción, abre lentamente
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 10 reps
+                    <br>&nbsp;&nbsp;Set 2: 11 reps
+                    <br>&nbsp;&nbsp;Set 3: 12 reps
+                    <br>Tiempo: 7 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 3 - Tríceps Máquina Dips: 4 series × 10-12 reps</div>
+                    Peso: MODERADO
+                    <br>Descanso: 90 segundos entre series
+                    <br>Técnica: Empuja máquina hacia abajo, extiende brazos, lentamente vuelve
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 10 reps
+                    <br>&nbsp;&nbsp;Set 2: 10 reps
+                    <br>&nbsp;&nbsp;Set 3: 11 reps
+                    <br>&nbsp;&nbsp;Set 4: 12 reps
+                    <br>Tiempo: 12 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 4 - Tríceps Cuerda Polea: 3 series × 12-15 reps</div>
+                    Peso: LIGERO
+                    <br>Descanso: 60 segundos entre series
+                    <br>Técnica: Agarra cuerda, tira hacia abajo, extiende brazos, siente tríceps contraído
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 12 reps
+                    <br>&nbsp;&nbsp;Set 2: 13 reps
+                    <br>&nbsp;&nbsp;Set 3: 15 reps
+                    <br>Tiempo: 8 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 5 - Fondos Asistidos Máquina: 2 series × 10-12 reps</div>
+                    Peso: LIGERO (máquina asiste tu peso)
+                    <br>Descanso: 75 segundos entre series
+                    <br>Técnica: Baja controladamente, sube con impulso
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 10 reps
+                    <br>&nbsp;&nbsp;Set 2: 12 reps
+                    <br>Tiempo: 6 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 6 - Abdominales Máquina: 2 series × 15 reps</div>
+                    Peso: LIGERO
+                    <br>Descanso: 60 segundos entre series
+                    <br>Técnica: Flexiona abdomen, contrae core, lentamente regresa
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 15 reps
+                    <br>&nbsp;&nbsp;Set 2: 15 reps
+                    <br>Tiempo: 4 min
+                </div>
+            </div>
+            
+            <div class="seccion-dia">
+                <div class="seccion-titulo">🔄 POST-ENTRENO (15 minutos)</div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Enfriamiento: 5 minutos</div>
+                    • Caminadora suave: 3 min (RPE 2-3/10)
+                    <br>• Respiración profunda: 2 min (inhala 4 seg, exhala 6 seg × 10 veces)
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Estiramientos: 10 minutos</div>
+                    • Pecho: 60 seg (brazos atrás cruzados)
+                    <br>• Tríceps: 60 seg c/brazo (brazo atrás, tira codo)
+                    <br>• Hombro anterior: 60 seg (brazos atrás)
+                    <br>• Chest opener: 60 seg
+                    <br>• Spinal twist: 60 seg c/lado
+                </div>
+            </div>
+            
+            <div style="background: #e6f3ff; padding: 15px; border-radius: 4px; margin-top: 15px;">
+                <strong>📊 RESUMEN LUNES:</strong>
+                <br>✓ Total: 60 minutos (15 calentamiento + 45 entreno + 15 post)
+                <br>✓ Músculos: Pecho (Máx), Tríceps (Máx), Core (Ligero)
+                <br>✓ Volumen: 18 series totales
+                <br>✓ Siguente entrenamiento: Martes (24h descanso es OK)
+            </div>
+        </div>
+        
+        <h3>📅 MARTES - Espalda + Bíceps (Máquinas)</h3>
+        
+        <div class="dia-completo">
+            <div class="dia-titulo">MARTES - ESPALDA + BÍCEPS (Máquinas)</div>
+            
+            <div class="seccion-dia">
+                <div class="seccion-titulo">⏰ CALENTAMIENTO (15 minutos)</div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">1. Caminadora: 3 minutos</div>
+                    RPE 3-4/10
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">2. Movilidad Dinámica: 5 minutos</div>
+                    • Gato-vaca: 1 min
+                    <br>• Armadas brazos grandes círculos: 1 min
+                    <br>• Leg swings: 1 min
+                    <br>• Cuadrupedia rocking: 1 min
+                    <br>• Shoulder pass-through: 1 min (manos juntas, brazos circulan arriba)
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">3. Específico Espalda: 5 minutos</div>
+                    • Banda elástica rows: 15 reps (tira hacia pecho)
+                    <br>• Lat pulldown asistido sin peso: 10 reps
+                    <br>• Rotación torso: 10 reps c/lado
+                </div>
+            </div>
+            
+            <div class="seccion-dia">
+                <div class="seccion-titulo">💪 ENTRENAMIENTO PRINCIPAL (45 minutos)</div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 1 - Remo Máquina Horizontal: 4 series × 8-10 reps</div>
+                    <img class="local-img" src="images/ejercicio_remo_maquina.png" alt="Remo Máquina Horizontal (coloca images/ejercicio_remo_maquina.png)">
+                    <div class="img-caption">Sugerido: <code>images/ejercicio_remo_maquina.png</code></div>
+                    Peso: MODERADO
+                    <br>Descanso: 90 segundos
+                    <br>Técnica: Agarra asas, tira hacia pecho, siente espalda contraída, extiende brazos
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 8 reps
+                    <br>&nbsp;&nbsp;Set 2: 8 reps
+                    <br>&nbsp;&nbsp;Set 3: 9 reps
+                    <br>&nbsp;&nbsp;Set 4: 10 reps
+                    <br>Tiempo: 12 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 2 - Lat Pulldown Máquina: 3 series × 10-12 reps</div>
+                    <img class="local-img" src="images/ejercicio_lat_pulldown.png" alt="Lat Pulldown Máquina (coloca images/ejercicio_lat_pulldown.png)">
+                    <div class="img-caption">Sugerido: <code>images/ejercicio_lat_pulldown.png</code></div>
+                    Peso: LIGERO-MODERADO
+                    <br>Descanso: 75 segundos
+                    <br>Técnica: Barra ancha, tira hacia pecho/cuello, siente lats (espalda lateral) contraída
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 10 reps
+                    <br>&nbsp;&nbsp;Set 2: 11 reps
+                    <br>&nbsp;&nbsp;Set 3: 12 reps
+                    <br>Tiempo: 7 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 3 - Bíceps Máquina Aislada: 4 series × 10-12 reps</div>
+                    <img class="local-img" src="images/ejercicio_biceps_maquina.png" alt="Bíceps Máquina Aislada (coloca images/ejercicio_biceps_maquina.png)">
+                    <div class="img-caption">Sugerido: <code>images/ejercicio_biceps_maquina.png</code></div>
+                    Peso: MODERADO
+                    <br>Descanso: 90 segundos
+                    <br>Técnica: Siéntate, agarra asas, flexiona codos, contrae bíceps, extiende lentamente
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 10 reps
+                    <br>&nbsp;&nbsp;Set 2: 10 reps
+                    <br>&nbsp;&nbsp;Set 3: 11 reps
+                    <br>&nbsp;&nbsp;Set 4: 12 reps
+                    <br>Tiempo: 12 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 4 - Polea Bíceps (Cables): 3 series × 12-15 reps</div>
+                    <img class="local-img" src="images/ejercicio_polea_biceps.png" alt="Polea Bíceps (coloca images/ejercicio_polea_biceps.png)">
+                    <div class="img-caption">Sugerido: <code>images/ejercicio_polea_biceps.png</code></div>
+                    Peso: LIGERO
+                    <br>Descanso: 60 segundos
+                    <br>Técnica: De pie, cuerda en manos, flexiona codos hacia cabeza
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 12 reps
+                    <br>&nbsp;&nbsp;Set 2: 13 reps
+                    <br>&nbsp;&nbsp;Set 3: 15 reps
+                    <br>Tiempo: 8 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 5 - Encorvadas Máquina (Back Extension): 2 series × 12-15 reps</div>
+                    <img class="local-img" src="images/ejercicio_back_extension.png" alt="Encorvadas Máquina / Back Extension (coloca images/ejercicio_back_extension.png)">
+                    <div class="img-caption">Sugerido: <code>images/ejercicio_back_extension.png</code></div>
+                    Peso: LIGERO
+                    <br>Descanso: 75 segundos
+                    <br>Técnica: Espalda baja en máquina, extiende espalda baja hacia atrás
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 12 reps
+                    <br>&nbsp;&nbsp;Set 2: 15 reps
+                    <br>Tiempo: 6 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 6 - Core Rotacional Máquina: 2 series × 15 reps c/lado</div>
+                    <img class="local-img" src="images/ejercicio_core_rotacional.png" alt="Core Rotacional Máquina (coloca images/ejercicio_core_rotacional.png)">
+                    <div class="img-caption">Sugerido: <code>images/ejercicio_core_rotacional.png</code></div>
+                    Peso: LIGERO
+                    <br>Descanso: 60 segundos
+                    <br>Técnica: Siéntate, gira torso lado a lado, siente oblicuos
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 15 reps c/lado (30 total)
+                    <br>&nbsp;&nbsp;Set 2: 15 reps c/lado (30 total)
+                    <br>Tiempo: 4 min
+                </div>
+            </div>
+            
+            <div class="seccion-dia">
+                <div class="seccion-titulo">🔄 POST-ENTRENO (15 minutos)</div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Enfriamiento: 5 minutos</div>
+                    • Caminadora suave: 3 min
+                    <br>• Respiración: 2 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Estiramientos: 10 minutos</div>
+                    • Espalda media: 60 seg
+                    <br>• Bíceps: 60 seg c/brazo
+                    <br>• Hombro: 60 seg
+                    <br>• Lats (espalda lateral): 60 seg c/lado
+                    <br>• Child's pose: 60 seg
+                </div>
+            </div>
+            
+            <div style="background: #e6f3ff; padding: 15px; border-radius: 4px; margin-top: 15px;">
+                <strong>📊 RESUMEN MARTES:</strong>
+                <br>✓ Total: 60 minutos
+                <br>✓ Músculos: Espalda (Máx), Bíceps (Máx), Core (Ligero)
+                <br>✓ Volumen: 18 series
+                <br>✓ Siguente: Miércoles Piernas
+            </div>
+        </div>
+        
+        <h3>📅 MIÉRCOLES - Piernas (Máquinas)</h3>
+        
+        <div class="dia-completo">
+            <div class="dia-titulo">MIÉRCOLES - PIERNAS (Máquinas)</div>
+            
+            <div class="seccion-dia">
+                <div class="seccion-titulo">⏰ CALENTAMIENTO (15 minutos)</div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">1. Caminadora: 3 minutos</div>
+                    RPE 3-4/10
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">2. Movilidad Dinámica: 5 minutos</div>
+                    • Gato-vaca: 1 min
+                    <br>• Hip openers (círculos cadera): 1 min
+                    <br>• Leg swings adelante-atrás: 1 min
+                    <br>• Leg swings lateral: 1 min
+                    <br>• Inchworms: 1 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">3. Específico Piernas: 5 minutos</div>
+                    • Sentadilla máquina sin peso: 15 reps (solo movimiento)
+                    <br>• Sentadilla búlgara asistida: 10 reps c/pierna
+                    <br>• Hip circles: 30 seg
+                </div>
+            </div>
+            
+            <div class="seccion-dia">
+                <div class="seccion-titulo">💪 ENTRENAMIENTO PRINCIPAL (50 minutos)</div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 1 - Prensa de Piernas Máquina: 4 series × 8-10 reps</div>
+                    Peso: PESADO (últimas reps muy difíciles)
+                    <br>Descanso: 120 segundos (piernas reciben mucho volumen)
+                    <br>Técnica: Pies ancho, baja controladamente hasta 90°, sube con fuerza
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 8 reps
+                    <br>&nbsp;&nbsp;Set 2: 8 reps
+                    <br>&nbsp;&nbsp;Set 3: 9 reps
+                    <br>&nbsp;&nbsp;Set 4: 10 reps
+                    <br>Tiempo: 15 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 2 - Hack Squat Máquina: 3 series × 10-12 reps</div>
+                    Peso: MODERADO
+                    <br>Descanso: 90 segundos
+                    <br>Técnica: Similar a sentadilla pero ángulo diferente, baja profundo
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 10 reps
+                    <br>&nbsp;&nbsp;Set 2: 11 reps
+                    <br>&nbsp;&nbsp;Set 3: 12 reps
+                    <br>Tiempo: 8 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 3 - Extensora Cuádriceps Máquina: 3 series × 10-12 reps</div>
+                    Peso: LIGERO-MODERADO
+                    <br>Descanso: 75 segundos
+                    <br>Técnica: Siéntate, extiende piernas, contrae cuádriceps en la parte superior, baja lentamente
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 10 reps
+                    <br>&nbsp;&nbsp;Set 2: 11 reps
+                    <br>&nbsp;&nbsp;Set 3: 12 reps
+                    <br>Tiempo: 7 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 4 - Flexora Isquiotibiales Máquina: 3 series × 10-12 reps</div>
+                    Peso: LIGERO-MODERADO
+                    <br>Descanso: 75 segundos
+                    <br>Técnica: Acostado boca abajo, flexiona piernas hacia glúteos, siente isquiotibiales
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 10 reps
+                    <br>&nbsp;&nbsp;Set 2: 11 reps
+                    <br>&nbsp;&nbsp;Set 3: 12 reps
+                    <br>Tiempo: 7 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 5 - Abductor Máquina: 2 series × 12-15 reps</div>
+                    Peso: LIGERO
+                    <br>Descanso: 60 segundos
+                    <br>Técnica: Siéntate, abre piernas, siente cadera externa/glúteo
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 12 reps
+                    <br>&nbsp;&nbsp;Set 2: 15 reps
+                    <br>Tiempo: 5 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 6 - Aductor Máquina: 2 series × 12-15 reps</div>
+                    Peso: LIGERO
+                    <br>Descanso: 60 segundos
+                    <br>Técnica: Siéntate, cierra piernas, siente cadera interna
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 12 reps
+                    <br>&nbsp;&nbsp;Set 2: 15 reps
+                    <br>Tiempo: 5 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 7 - Pantorrillas Máquina de Pie: 3 series × 15-20 reps</div>
+                    Peso: MODERADO
+                    <br>Descanso: 60 segundos
+                    <br>Técnica: De pie en máquina, sube sobre puntas, baja lentamente
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 15 reps
+                    <br>&nbsp;&nbsp;Set 2: 17 reps
+                    <br>&nbsp;&nbsp;Set 3: 20 reps
+                    <br>Tiempo: 5 min
+                </div>
+            </div>
+            
+            <div class="seccion-dia">
+                <div class="seccion-titulo">🔄 POST-ENTRENO (20 minutos - Más largo por piernas)</div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Enfriamiento: 5 minutos</div>
+                    • Bike suave: 5 min (RPE 2-3/10)
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Estiramientos: 10 minutos</div>
+                    • Quad stretch: 60 seg c/pierna
+                    <br>• Hamstring fold: 90 seg
+                    <br>• Hip opener: 60 seg c/lado
+                    <br>• Pantorrillas: 60 seg
+                    <br>• Child's pose: 60 seg
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Foam Roller: 5 minutos (Recomendado post-piernas)</div>
+                    • Cuádriceps: 2 min
+                    <br>• Pantorrillas: 2 min
+                    <br>• Glúteos: 1 min
+                </div>
+            </div>
+            
+            <div style="background: #e6f3ff; padding: 15px; border-radius: 4px; margin-top: 15px;">
+                <strong>📊 RESUMEN MIÉRCOLES:</strong>
+                <br>✓ Total: 65 minutos
+                <br>✓ Músculos: Piernas (MÁXIMO esfuerzo)
+                <br>✓ Volumen: 20 series
+                <br>✓ Siguiente: Jueves CARDIO (descanso piernas 48h)
+            </div>
+        </div>
+        
+        <h3>📅 JUEVES - CARDIO + CORE + Hombro Ligero</h3>
+        
+        <div class="dia-completo">
+            <div class="dia-titulo">JUEVES - CARDIO + CORE + HOMBRO LIGERO</div>
+            
+            <div class="seccion-dia">
+                <div class="seccion-titulo">🏃 CARDIO (30 minutos)</div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Opción 1 - Cinta Inclinada (RECOMENDADA)</div>
+                    • Duración: 30 minutos
+                    <br>• RPE: 5-6/10 (puedes hablar pero cuesta)
+                    <br>• Inclinación: 5-8%
+                    <br>• Velocidad: 4-5 km/h
+                    <br>• Propósito: Quema grasa sin catabolismo muscular
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Opción 2 - Bike Estacionaria</div>
+                    • Duración: 30 minutos
+                    <br>• RPE: 5-6/10
+                    <br>• Resistencia: Moderada (piernas trabajan pero controlable)
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Opción 3 - Escaladora</div>
+                    • Duración: 20 minutos
+                    <br>• RPE: 6-7/10 (más intenso, menos tiempo)
+                    <br>• + Caminata: 10 min (enfriamiento suave)
+                </div>
+            </div>
+            
+            <div class="seccion-dia">
+                <div class="seccion-titulo">💪 CORE (10 minutos)</div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 1 - Planchas: 3 series × 45 segundos</div>
+                    Posición: Brazos extendidos, cuerpo recto, núcleo contraído
+                    <br>Descanso: 30 seg entre series
+                    <br>Tiempo: 4 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 2 - Dead Bugs: 3 series × 12 reps</div>
+                    Técnica: Acostado, brazos arriba, levanta pierna opuesta-brazo opuesto
+                    <br>Descanso: 30 seg
+                    <br>Tiempo: 3 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 3 - Abdominales Máquina: 2 series × 15 reps</div>
+                    Peso: LIGERO
+                    <br>Descanso: 45 seg
+                    <br>Tiempo: 2 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 4 - Russian Twist (con peso 5 kg): 2 series × 12 reps c/lado</div>
+                    Técnica: Sentado, tira peso lado a lado
+                    <br>Descanso: 45 seg
+                    <br>Tiempo: 2 min
+                </div>
+            </div>
+            
+            <div class="seccion-dia">
+                <div class="seccion-titulo">🔨 HOMBRO LIGERO (10 minutos)</div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 1 - Hombro Máquina Press: 2 series × 12-15 reps</div>
+                    Peso: LIGERO (20% del máximo)
+                    <br>Descanso: 60 seg
+                    <br>Propósito: Mantenimiento, no fatigarse
+                    <br>Tiempo: 5 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 2 - Lateral Raise Máquina: 2 series × 12-15 reps</div>
+                    Peso: LIGERO
+                    <br>Descanso: 60 seg
+                    <br>Tiempo: 5 min
+                </div>
+            </div>
+            
+            <div class="seccion-dia">
+                <div class="seccion-titulo">🧘 MOVILIDAD (20 minutos)</div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Yoga Completo: 20 minutos</div>
+                    YouTube: Busca "Yoga 20 minutos" cualquier nivel
+                    <br>Beneficios: Flexibilidad, movilidad, estrés
+                </div>
+            </div>
+            
+            <div style="background: #e6f3ff; padding: 15px; border-radius: 4px; margin-top: 15px;">
+                <strong>📊 RESUMEN JUEVES:</strong>
+                <br>✓ Total: 60 minutos
+                <br>✓ Enfoque: Recuperación muscular + Cardio
+                <br>✓ Intensidad: BAJA (día de descanso activo)
+                <br>✓ Siguiente: Viernes Hombro/Brazos (48h descanso pecho/tríceps)
+            </div>
+        </div>
+        
+        <h3>📅 VIERNES - Hombro + Brazos + Accesorios (Máquinas)</h3>
+        
+        <div class="dia-completo">
+            <div class="dia-titulo">VIERNES - HOMBRO + BRAZOS + ACCESORIOS (Máquinas)</div>
+            
+            <div class="seccion-dia">
+                <div class="seccion-titulo">⏰ CALENTAMIENTO (15 minutos)</div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">1. Caminadora: 3 minutos</div>
+                    RPE 3-4/10
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">2. Movilidad Dinámica: 5 minutos</div>
+                    • Gato-vaca: 1 min
+                    <br>• Armadas brazos grandes: 1 min
+                    <br>• Cuadrupedia rocking: 1 min
+                    <br>• Shoulder pass-through: 1 min
+                    <br>• Leg swings: 1 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">3. Específico Hombro: 5 minutos</div>
+                    • Lateral raise sin peso: 15 reps
+                    <br>• Rotación externa hombro banda: 12 reps c/lado
+                    <br>• Band pull-aparts: 15 reps
+                </div>
+            </div>
+            
+            <div class="seccion-dia">
+                <div class="seccion-titulo">💪 ENTRENAMIENTO PRINCIPAL (50 minutos)</div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 1 - Hombro Máquina Press: 4 series × 8-10 reps</div>
+                    Peso: MODERADO
+                    <br>Descanso: 90 segundos
+                    <br>Técnica: Empuja hacia adelante/arriba, siente deltoides anterior
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 8 reps
+                    <br>&nbsp;&nbsp;Set 2: 8 reps
+                    <br>&nbsp;&nbsp;Set 3: 9 reps
+                    <br>&nbsp;&nbsp;Set 4: 10 reps
+                    <br>Tiempo: 12 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 2 - Lateral Raise Máquina: 3 series × 10-12 reps</div>
+                    Peso: LIGERO-MODERADO
+                    <br>Descanso: 75 segundos
+                    <br>Técnica: Abre brazos lateralmente, siente deltoides lateral (lado hombro)
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 10 reps
+                    <br>&nbsp;&nbsp;Set 2: 11 reps
+                    <br>&nbsp;&nbsp;Set 3: 12 reps
+                    <br>Tiempo: 7 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 3 - Reverso Pec Deck (Espalda Hombro): 3 series × 10-12 reps</div>
+                    Peso: LIGERO
+                    <br>Descanso: 75 segundos
+                    <br>Técnica: Cierra brazos hacia atrás, siente deltoides posterior
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 10 reps
+                    <br>&nbsp;&nbsp;Set 2: 11 reps
+                    <br>&nbsp;&nbsp;Set 3: 12 reps
+                    <br>Tiempo: 7 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 4 - Bíceps Máquina (tipo silla): 3 series × 10-12 reps</div>
+                    Peso: MODERADO
+                    <br>Descanso: 75 segundos
+                    <br>Técnica: Siéntate, flexiona codos hacia cabeza
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 10 reps
+                    <br>&nbsp;&nbsp;Set 2: 11 reps
+                    <br>&nbsp;&nbsp;Set 3: 12 reps
+                    <br>Tiempo: 7 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 5 - Tríceps Máquina Overhead: 3 series × 10-12 reps</div>
+                    Peso: MODERADO
+                    <br>Descanso: 75 segundos
+                    <br>Técnica: Extensión de brazos hacia arriba, siente tríceps
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 10 reps
+                    <br>&nbsp;&nbsp;Set 2: 11 reps
+                    <br>&nbsp;&nbsp;Set 3: 12 reps
+                    <br>Tiempo: 7 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 6 - Rotación Externa Hombro Máquina: 2 series × 12-15 reps c/lado</div>
+                    Peso: LIGERO
+                    <br>Descanso: 60 segundos
+                    <br>Técnica: Rotación externa controlada hombro
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 12 c/lado
+                    <br>&nbsp;&nbsp;Set 2: 15 c/lado
+                    <br>Tiempo: 5 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 7 - Encorvadas Máquina (Shrugs): 2 series × 12-15 reps</div>
+                    Peso: MODERADO
+                    <br>Descanso: 60 segundos
+                    <br>Técnica: Levanta hombros hacia orejas, baja lentamente
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 12 reps
+                    <br>&nbsp;&nbsp;Set 2: 15 reps
+                    <br>Tiempo: 4 min
+                </div>
+            </div>
+            
+            <div class="seccion-dia">
+                <div class="seccion-titulo">🔄 POST-ENTRENO (15 minutos)</div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Enfriamiento: 5 minutos</div>
+                    • Caminadora suave: 3 min
+                    <br>• Respiración: 2 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Estiramientos: 10 minutos</div>
+                    • Hombro anterior: 60 seg
+                    <br>• Hombro lateral: 60 seg c/lado
+                    <br>• Bíceps: 60 seg c/brazo
+                    <br>• Tríceps: 60 seg c/brazo
+                    <br>• Chest opener: 60 seg
+                </div>
+            </div>
+            
+            <div style="background: #e6f3ff; padding: 15px; border-radius: 4px; margin-top: 15px;">
+                <strong>📊 RESUMEN VIERNES:</strong>
+                <br>✓ Total: 65 minutos
+                <br>✓ Músculos: Hombro (Máx), Brazos (Máx), Accesorios
+                <br>✓ Volumen: 20 series
+                <br>✓ Siguiente: Sábado Piernas Ligeras (48h descanso espalda/bíceps completo, piernas por 3er día)
+            </div>
+        </div>
+        
+        <h3>📅 SÁBADO - Piernas Ligeras + Cardio + Movilidad</h3>
+        
+        <div class="dia-completo">
+            <div class="dia-titulo">SÁBADO - PIERNAS LIGERAS + CARDIO + MOVILIDAD (Recuperación Activa)</div>
+            
+            <div class="seccion-dia">
+                <div class="seccion-titulo">🏋️ PIERNAS LIGERAS (20 minutos)</div>
+                
+                <div class="advertencia">
+                    <strong>⚠️ NOTA:</strong> Jueves (hoy 3er día de piernas en semana). Peso MUY suave. Propósito = mantenimiento + bomba sangre, NO fatiga muscular.
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 1 - Leg Press Suave: 3 series × 12-15 reps</div>
+                    Peso: MUY LIGERO (30-40% del máximo)
+                    <br>Descanso: 60 segundos
+                    <br>Técnica: Movimiento suave, bomba de sangre
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 12 reps
+                    <br>&nbsp;&nbsp;Set 2: 13 reps
+                    <br>&nbsp;&nbsp;Set 3: 15 reps
+                    <br>Tiempo: 5 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 2 - Extensora: 2 series × 15 reps</div>
+                    Peso: LIGERO
+                    <br>Descanso: 60 seg
+                    <br>Series:
+                    <br>&nbsp;&nbsp;Set 1: 15 reps
+                    <br>&nbsp;&nbsp;Set 2: 15 reps
+                    <br>Tiempo: 3 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 3 - Aductor: 2 series × 12 reps</div>
+                    Peso: LIGERO
+                    <br>Descanso: 60 seg
+                    <br>Tiempo: 3 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 4 - Abductor: 2 series × 12 reps</div>
+                    Peso: LIGERO
+                    <br>Descanso: 60 seg
+                    <br>Tiempo: 3 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Ejercicio 5 - Pantorrillas: 2 series × 20 reps</div>
+                    Peso: LIGERO
+                    <br>Descanso: 60 seg
+                    <br>Tiempo: 3 min
+                </div>
+            </div>
+            
+            <div class="seccion-dia">
+                <div class="seccion-titulo">🏃 CARDIO SUAVE (15 minutos)</div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Bike Estacionaria: 15 minutos</div>
+                    RPE: 5/10 (muy suave, puedes hablar sin esfuerzo)
+                    <br>Propósito: Recuperación activa, bomba de sangre para recuperación
+                </div>
+            </div>
+            
+            <div class="seccion-dia">
+                <div class="seccion-titulo">🧘 MOVILIDAD (25 minutos)</div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Foam Roller: 10 minutos</div>
+                    • Espalda: 2 min
+                    <br>• Glúteos: 2 min
+                    <br>• Cuádriceps: 2 min
+                    <br>• Pantorrillas: 2 min
+                    <br>• Banda IT (lateral muslo): 2 min
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Estiramientos: 10 minutos</div>
+                    • Quad: 60 seg c/pierna
+                    <br>• Hamstring: 90 seg
+                    <br>• Hip opener: 60 seg c/lado
+                    <br>• Pantorrillas: 60 seg
+                    <br>• Child's pose: 60 seg
+                </div>
+                
+                <div class="ejercicio">
+                    <div class="ejercicio-numero">Respiración: 5 minutos</div>
+                    Respiración 4-7-8 sentado o acostado
+                </div>
+            </div>
+            
+            <div style="background: #e6f3ff; padding: 15px; border-radius: 4px; margin-top: 15px;">
+                <strong>📊 RESUMEN SÁBADO:</strong>
+                <br>✓ Total: 60 minutos
+                <br>✓ Intensidad: BAJA (recuperación activa)
+                <br>✓ Enfoque: Movilidad + Flujo sanguíneo
+                <br>✓ Siguiente: DOMINGO DESCANSO TOTAL
+            </div>
+        </div>
+        
+        <h3>📅 DOMINGO - DESCANSO TOTAL</h3>
+        
+        <div class="dia-completo">
+            <div class="dia-titulo">DOMINGO - DESCANSO TOTAL 🌴</div>
+            
+            <div style="background: #d4edda; padding: 20px; border-radius: 8px;">
+                <strong style="font-size: 18px;">✅ ACTIVIDADES PERMITIDAS:</strong>
+                <br><br>
+                ✓ Caminata suave al aire libre (30-60 min, sin prisa)
+                <br>✓ Estiramientos suave en casa
+                <br>✓ Yoga suave
+                <br>✓ Lectura/relajación
+                <br>✓ Estar con familia
+                <br>✓ Dormir más de lo normal
+                <br>✓ Come normal (puedes comer lo que quieras con moderación)
+            </div>
+            
+            <div style="background: #fff3cd; padding: 20px; border-radius: 8px; margin-top: 15px;">
+                <strong style="font-size: 18px;">❌ NO HAGAS:</strong>
+                <br><br>
+                ❌ Entrenamientos de fuerza
+                <br>❌ Cardio intenso
+                <br>❌ Entrenamientos nuevos
+                <br>❌ Experimentos en el gimnasio
+                <br>❌ Mucho estrés
+                <br>❌ Trasnoches
+            </div>
+            
+            <div style="background: #e6f3ff; padding: 20px; border-radius: 8px; margin-top: 15px;">
+                <strong style="font-size: 18px;">📌 CHECKLIST DOMINGO:</strong>
+                <br><br>
+                □ Dormir 8-9 horas (recuperación máxima)
+                <br>□ Beber 2-3 litros agua
+                <br>□ Comer proteína cada comida (aunque sea día libre)
+                <br>□ Tomar suplementos (D3, Magnesio, Omega-3)
+                <br>□ Estira 10-15 minutos
+                <br>□ Prepara alimentos para semana siguiente
+                <br>□ Relájate mentalmente
+                <br>□ Lunes prepárate para nueva semana
+            </div>
+        </div>
+
+        <!-- RESUMEN FINAL -->
+        <h2>✅ CHECKLIST SEMANAL SEMANA 1</h2>
+        
+        <table>
+            <tr>
+                <th>Día</th>
+                <th>Entrenamiento</th>
+                <th>¿Completado?</th>
+                <th>Notas</th>
+            </tr>
+            <tr>
+                <td><strong>Lunes</strong></td>
+                <td>Pecho + Tríceps (60 min)</td>
+                <td>☐</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td><strong>Martes</strong></td>
+                <td>Espalda + Bíceps (60 min)</td>
+                <td>☐</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td><strong>Miércoles</strong></td>
+                <td>Piernas (65 min)</td>
+                <td>☐</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td><strong>Jueves</strong></td>
+                <td>CARDIO + CORE (60 min)</td>
+                <td>☐</td>
+                <td>Día ligero</td>
+            </tr>
+            <tr>
+                <td><strong>Viernes</strong></td>
+                <td>Hombro + Brazos (65 min)</td>
+                <td>☐</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td><strong>Sábado</strong></td>
+                <td>Piernas Ligeras + Cardio (60 min)</td>
+                <td>☐</td>
+                <td>Recuperación</td>
+            </tr>
+            <tr>
+                <td><strong>Domingo</strong></td>
+                <td>DESCANSO TOTAL</td>
+                <td>☐</td>
+                <td>Dormir extra</td>
+            </tr>
+        </table>
+        
+        <h2>💡 CONSEJOS FINALES SEMANA 1</h2>
+        
+        <div class="exito">
+            <strong>✅ PRIORIDADES SEMANA 1:</strong>
+            <br><br>
+            1. <strong>Aprende los movimientos</strong> - No importa peso, importa FORMA correcta
+            <br>2. <strong>Duerme 7.5-8h TODOS los días</strong> - Esto es más importante que entrenar perfecto
+            <br>3. <strong>Come proteína en cada comida</strong> - Mínimo 30g por comida
+            <br>4. <strong>Hidrata consistentemente</strong> - 500 ml cada 2-3 horas
+            <br>5. <strong>No te canses</strong> - Si te sientes agotado, reduce peso 20%
+        </div>
+        
+        <div class="advertencia">
+            <strong>⚠️ SI ALGO DUELE:</strong>
+            <br><br>
+            • Dolor muscular (DOMS): Normal, estira post-entreno, sigue entrenando
+            <br>• Dolor articular agudo: PARA, consulta médico antes de continuar
+            <br>• Mareos/Nauseas: Come algo, hidrata, baja intensidad
+            <br>• Fatiga extrema: Posible sobrentrenamiento, duerme más
+        </div>
+
+        <div style="background: #d4edda; padding: 20px; border-radius: 8px; margin-top: 30px; text-align: center;">
+            <h2 style="color: #155724; margin-top: 0;">🎯 METAS REALISTAS 12 SEMANAS</h2>
+            <br>
+            ✓ Pérdida grasa abdominal: 3-5 cm cintura
+            <br>✓ Ganancia muscular: +1-3 kg (peso neto puede bajar -5 a -8 kg grasa)
+            <br>✓ Energía diaria: 7-8/10 (vs actual 4-5/10)
+            <br>✓ Sueño: 7.5-8h consistente
+            <br>✓ Resistencia cardio: Escaladora 30 min sin fatiga extrema
+            <br><br>
+            <strong style="font-size: 18px;">¡ERES CAPAZ! 💪</strong>
+        </div>
+
+    </div>
+</body>
+</html>
