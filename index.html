@@ -328,6 +328,24 @@ textarea.log-input{resize:vertical;min-height:60px}
 </div>
 
 <script>
+// ===== IMAGES =====
+// Mapa de imágenes: key = id del ejercicio o keyword, valor = ruta
+const EX_IMAGES = {
+  'treadmill_walk': 'images/caminata_rapida.webp',
+};
+// Keywords para ejercicios de texto (pre/post) que no tienen id específico
+const EX_IMAGES_KEYWORDS = [
+  { keywords: ['caminata rápida', 'caminata rapida'], img: 'images/caminata_rapida.webp' },
+];
+function getExImage(id, name) {
+  if (EX_IMAGES[id]) return EX_IMAGES[id];
+  const n = (name||'').toLowerCase();
+  for (const entry of EX_IMAGES_KEYWORDS) {
+    if (entry.keywords.some(k => n.includes(k))) return entry.img;
+  }
+  return null;
+}
+
 // ===== DATA =====
 const SESSIONS = [
   {
@@ -12131,20 +12149,28 @@ function saveLog() {
 // ===== EXERCISE MODAL =====
 function openExModal(id, name, muscle, equip) {
   const modal = document.getElementById('exModalContent');
+  const imgSrc = getExImage(id, name);
+  const imgSection = imgSrc
+    ? `<div class="ex-modal-img" style="padding:0;background:var(--bg2)">
+        <img src="${imgSrc}" alt="${name}" style="width:100%;height:220px;object-fit:cover;display:block">
+       </div>`
+    : `<div class="ex-modal-img">
+        <div class="ex-modal-img-placeholder">🏋️</div>
+        <div class="ex-modal-img-text">${name}</div>
+        <div class="ex-modal-img-soon">📸 Imagen del ejercicio — próximamente</div>
+       </div>`;
+  const bodyExtra = imgSrc ? '' : `
+      <div style="font-size:12px;color:var(--text3);margin-top:12px;font-family:var(--font-mono);line-height:1.7">
+        Al hacer clic en el ícono 🖼 de cualquier ejercicio podrás ver aquí la imagen y video demostrativo del movimiento.<br>
+        <span style="color:var(--amber)">Esta función estará disponible en la próxima versión.</span>
+      </div>`;
   modal.innerHTML = `
-    <div class="ex-modal-img">
-      <div class="ex-modal-img-placeholder">🏋️</div>
-      <div class="ex-modal-img-text">${name}</div>
-      <div class="ex-modal-img-soon">📸 Imagen del ejercicio — próximamente</div>
-    </div>
+    ${imgSection}
     <div class="ex-modal-body">
       <div class="ex-modal-name">${name}</div>
       <div class="ex-modal-muscle">💪 ${muscle}</div>
       <div class="ex-modal-equip">🔧 ${equip}</div>
-      <div style="font-size:12px;color:var(--text3);margin-top:12px;font-family:var(--font-mono);line-height:1.7">
-        Al hacer clic en el ícono 🖼 de cualquier ejercicio podrás ver aquí la imagen y video demostrativo del movimiento.<br>
-        <span style="color:var(--amber)">Esta función estará disponible en la próxima versión.</span>
-      </div>
+      ${bodyExtra}
     </div>
   `;
   document.getElementById('exModal').classList.add('open');
