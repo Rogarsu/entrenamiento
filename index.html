@@ -144,6 +144,9 @@ nav{
 .info-item:last-child{border-bottom:none;padding-bottom:0}
 .info-bullet{color:var(--amber);margin-top:1px;flex-shrink:0;font-size:11px}
 .info-text{flex:1}
+.info-clickable{cursor:pointer;transition:background .15s;border-radius:4px;padding-left:4px;padding-right:4px;margin-left:-4px;margin-right:-4px}
+.info-clickable:hover{background:rgba(245,158,11,0.06);color:var(--text)}
+.info-clickable:hover .img-icon{color:var(--amber)}
 
 /* EXERCISE TABLE */
 .ex-table-container{overflow-x:auto;margin-bottom:14px}
@@ -11976,11 +11979,11 @@ function loadSession(id) {
       </div>
       <div class="section-card">
         <div class="sc-label">Calentamiento específico</div>
-        ${s.pre.warmup.map(w => `<div class="info-item"><span class="info-bullet">→</span><span class="info-text">${w}</span></div>`).join('')}
+        ${s.pre.warmup.map(w => `<div class="info-item info-clickable" onclick="openExModal('pre','${escStr(w)}','Calentamiento','Sin equipamiento')"><span class="info-bullet">→</span><span class="info-text">${w}</span><span class="img-icon">🖼</span></div>`).join('')}
       </div>
       <div class="section-card">
         <div class="sc-label">Movilidad articular</div>
-        ${s.pre.mobility.map(m => `<div class="info-item"><span class="info-bullet">○</span><span class="info-text">${m}</span></div>`).join('')}
+        ${s.pre.mobility.map(m => `<div class="info-item info-clickable" onclick="openExModal('pre','${escStr(m)}','Movilidad articular','Sin equipamiento')"><span class="info-bullet">○</span><span class="info-text">${m}</span><span class="img-icon">🖼</span></div>`).join('')}
       </div>
       <div class="section-card" style="border-color:rgba(245,158,11,0.25);background:rgba(245,158,11,0.04)">
         <div class="sc-label" style="color:var(--amber)">Mentalidad</div>
@@ -12029,11 +12032,11 @@ function loadSession(id) {
     <div class="tab-content" id="tab-post">
       <div class="section-card">
         <div class="sc-label">Enfriamiento</div>
-        ${s.post.cooldown.map(c => `<div class="info-item"><span class="info-bullet">↓</span><span class="info-text">${c}</span></div>`).join('')}
+        ${s.post.cooldown.map(c => `<div class="info-item info-clickable" onclick="openExModal('post','${escStr(c)}','Enfriamiento','Sin equipamiento')"><span class="info-bullet">↓</span><span class="info-text">${c}</span><span class="img-icon">🖼</span></div>`).join('')}
       </div>
       <div class="section-card">
         <div class="sc-label">Estiramientos</div>
-        ${s.post.stretches.map(st => `<div class="info-item"><span class="info-bullet">~</span><span class="info-text">${st}</span></div>`).join('')}
+        ${s.post.stretches.map(st => `<div class="info-item info-clickable" onclick="openExModal('post','${escStr(st)}','Estiramiento','Colchoneta / Sin equipamiento')"><span class="info-bullet">~</span><span class="info-text">${st}</span><span class="img-icon">🖼</span></div>`).join('')}
       </div>
       <div class="section-card" style="border-color:rgba(6,182,212,0.25);background:rgba(6,182,212,0.04)">
         <div class="sc-label" style="color:var(--cyan)">Nutrición post-entreno</div>
