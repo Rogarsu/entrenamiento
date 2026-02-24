@@ -292,6 +292,38 @@ textarea.log-input{resize:vertical;min-height:60px}
 }
 .mobile-menu{display:none;background:none;border:1px solid var(--border2);border-radius:6px;padding:6px 10px;color:var(--text);cursor:pointer;font-size:16px}
 @media(max-width:768px){.mobile-menu{display:block}}
+
+/* HISTORY PAGE */
+.hist-page{display:none;position:fixed;inset:0;top:56px;background:var(--bg);z-index:900;overflow-y:auto;padding:24px}
+.hist-page.open{display:block}
+.hist-header{display:flex;align-items:center;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.hist-title{font-family:var(--font-head);font-size:28px;font-weight:800;color:var(--text);letter-spacing:0.04em;text-transform:uppercase}
+.hist-subtitle{font-family:var(--font-mono);font-size:12px;color:var(--text3)}
+.hist-back{background:none;border:1px solid var(--border2);border-radius:8px;color:var(--text2);padding:7px 16px;font-size:13px;cursor:pointer;font-family:var(--font-mono);transition:all .2s;margin-left:auto}
+.hist-back:hover{color:var(--text);border-color:var(--amber)}
+.hist-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.hist-filter-btn{background:var(--bg3);border:1px solid var(--border2);border-radius:6px;color:var(--text2);padding:5px 12px;font-size:12px;cursor:pointer;font-family:var(--font-mono);transition:all .2s}
+.hist-filter-btn.active,.hist-filter-btn:hover{color:var(--amber);border-color:var(--amber);background:rgba(245,158,11,0.07)}
+.hist-empty{text-align:center;padding:80px 20px;font-family:var(--font-mono);color:var(--text3);font-size:13px;line-height:2}
+.hist-table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border2)}
+.hist-table{width:100%;border-collapse:collapse;font-size:13px;min-width:700px}
+.hist-table th{background:var(--bg3);padding:10px 14px;text-align:left;font-family:var(--font-head);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border2);white-space:nowrap;position:sticky;top:0}
+.hist-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle}
+.hist-table tr:last-child td{border-bottom:none}
+.hist-table tr:hover td{background:rgba(255,255,255,0.02)}
+.hist-ex-name{color:var(--text);font-weight:500}
+.hist-muscle{font-size:11px;color:var(--cyan);font-family:var(--font-mono)}
+.hist-set-num{font-family:var(--font-mono);font-size:12px;color:var(--text3);background:var(--bg4);border-radius:4px;padding:2px 8px;display:inline-block}
+.hist-weight{font-family:var(--font-mono);font-weight:600;color:var(--amber);font-size:14px}
+.hist-reps{font-family:var(--font-mono);font-size:13px;color:var(--text)}
+.hist-date{font-family:var(--font-mono);font-size:11px;color:var(--text3);white-space:nowrap}
+.hist-session-badge{font-size:10px;font-family:var(--font-mono);background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:var(--amber);border-radius:4px;padding:2px 7px;white-space:nowrap}
+.nav-mod.hist-btn{color:var(--cyan);border-color:transparent}
+.nav-mod.hist-btn:hover,.nav-mod.hist-btn.active{color:var(--cyan);border-color:var(--cyan);background:rgba(6,182,212,0.08)}
+@media(max-width:768px){
+  .hist-page{padding:16px}
+  .hist-title{font-size:22px}
+}
 </style>
 </head>
 <body>
@@ -306,6 +338,7 @@ textarea.log-input{resize:vertical;min-height:60px}
     <button class="nav-mod locked" title="Próximamente">🧠 Mental</button>
     <button class="nav-mod locked" title="Próximamente">🥗 Nutrición</button>
     <button class="nav-mod locked" title="Próximamente">📈 Progreso</button>
+    <button class="nav-mod hist-btn" onclick="showHistPage()">📋 Historial</button>
   </div>
 </nav>
 
@@ -12244,8 +12277,11 @@ function getLastExLog(exId, currentSessionId) {
 }
 function saveExLog(exId, sessionId, sets, targetReps, muscle) {
   const all = loadExLogs();
+  const now = new Date();
   all[`${exId}_${sessionId}`] = {
-    date: new Date().toLocaleDateString('es-CO'),
+    date: now.toLocaleDateString('es-CO'),
+    time: now.toLocaleTimeString('es-CO', {hour:'2-digit', minute:'2-digit'}),
+    timestamp: now.toISOString(),
     sets,
     targetReps: parseInt(targetReps) || 0,
     muscle: muscle || ''
@@ -12520,6 +12556,91 @@ function closeExModal() {
   document.getElementById('exModal').classList.remove('open');
 }
 
+// ===== HISTORY PAGE =====
+function getExNameFromSessions(exId) {
+  for (const s of SESSIONS) {
+    for (const bl of (s.workout?.blocks || [])) {
+      for (const ex of (bl.exercises || [])) {
+        if (ex.id === exId) return ex.name;
+      }
+    }
+  }
+  return exId;
+}
+
+function getSessionName(sessionId) {
+  const s = SESSIONS.find(x => x.id === sessionId);
+  return s ? s.name : `Sesión ${sessionId}`;
+}
+
+function buildHistoryPage(filterMuscle) {
+  const all = loadExLogs();
+  const keys = Object.keys(all);
+  const tbody = document.getElementById('histTbody');
+  const emptyMsg = document.getElementById('histEmpty');
+
+  // Build rows: one row per set
+  const rows = [];
+  for (const key of keys) {
+    const log = all[key];
+    const parts = key.split('_');
+    const sid = parseInt(parts.pop());
+    const exId = parts.join('_');
+    const exName = getExNameFromSessions(exId);
+    const muscle = log.muscle || '—';
+    if (filterMuscle && filterMuscle !== '__all__' && muscle.toLowerCase().indexOf(filterMuscle.toLowerCase()) === -1) continue;
+    const sessionName = getSessionName(sid);
+    const date = log.date || '—';
+    const time = log.time || '—';
+    (log.sets || []).forEach((set, i) => {
+      rows.push({ muscle, exName, setNum: i + 1, reps: set.reps, weight: set.weight, sessionName, sid, date, time, timestamp: log.timestamp || '' });
+    });
+  }
+
+  // Sort by timestamp desc (most recent first)
+  rows.sort((a, b) => {
+    if (a.timestamp && b.timestamp) return b.timestamp.localeCompare(a.timestamp);
+    return b.sid - a.sid;
+  });
+
+  if (rows.length === 0) {
+    tbody.innerHTML = '';
+    emptyMsg.style.display = 'block';
+    document.querySelector('.hist-table-wrap').style.display = 'none';
+  } else {
+    emptyMsg.style.display = 'none';
+    document.querySelector('.hist-table-wrap').style.display = '';
+    tbody.innerHTML = rows.map(r => `
+      <tr>
+        <td><span class="hist-muscle">${r.muscle}</span></td>
+        <td><span class="hist-ex-name">${r.exName}</span></td>
+        <td><span class="hist-set-num">${r.setNum}</span></td>
+        <td style="font-family:var(--font-mono);color:var(--text2)">${r.reps}</td>
+        <td><span class="hist-weight">${r.weight > 0 ? r.weight + ' kg' : '—'}</span></td>
+        <td><span class="hist-session-badge">${r.sessionName}</span></td>
+        <td><span class="hist-date">${r.date} ${r.time}</span></td>
+      </tr>`).join('');
+  }
+
+  // Build muscle filter buttons
+  const filtersDiv = document.getElementById('histFilters');
+  const muscles = [...new Set(Object.values(all).map(l => l.muscle || '').filter(Boolean))].sort();
+  const active = filterMuscle || '__all__';
+  filtersDiv.innerHTML = [
+    `<button class="hist-filter-btn${active === '__all__' ? ' active' : ''}" onclick="buildHistoryPage('__all__')">Todos</button>`,
+    ...muscles.map(m => `<button class="hist-filter-btn${active === m ? ' active' : ''}" onclick="buildHistoryPage('${m.replace(/'/g,"\\'")}')">${m}</button>`)
+  ].join('');
+}
+
+function showHistPage() {
+  document.getElementById('histPage').classList.add('open');
+  buildHistoryPage();
+}
+
+function hideHistPage() {
+  document.getElementById('histPage').classList.remove('open');
+}
+
 // ===== HELPERS =====
 function escStr(str) {
   return (str||'').replace(/'/g,"\'").replace(/"/g,"&quot;");
@@ -12532,5 +12653,33 @@ function toggleSidebar() {
 buildStats();
 buildSidebar();
 </script>
+
+<!-- HISTORY PAGE -->
+<div id="histPage" class="hist-page">
+  <div class="hist-header">
+    <button class="hist-back" onclick="hideHistPage()">← Volver</button>
+    <div class="hist-title">📋 Historial de Registros</div>
+  </div>
+  <div class="hist-filters" id="histFilters"></div>
+  <div class="hist-table-wrap">
+    <table class="hist-table" id="histTable">
+      <thead>
+        <tr>
+          <th>Músculo</th>
+          <th>Ejercicio</th>
+          <th>Serie</th>
+          <th>Reps</th>
+          <th>Peso (kg)</th>
+          <th>Sesión</th>
+          <th>Fecha &amp; Hora</th>
+        </tr>
+      </thead>
+      <tbody id="histTbody"></tbody>
+    </table>
+  </div>
+  <div id="histEmpty" style="display:none;text-align:center;padding:48px;color:var(--text3);font-family:var(--font-mono);font-size:14px;">
+    Sin registros aún. Guarda el peso y reps de tus ejercicios para verlos aquí.
+  </div>
+</div>
 </body>
 </html>
