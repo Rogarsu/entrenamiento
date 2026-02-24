@@ -331,11 +331,25 @@ textarea.log-input{resize:vertical;min-height:60px}
 // ===== IMAGES =====
 // Mapa de imágenes: key = id del ejercicio o keyword, valor = ruta
 const EX_IMAGES = {
-  'treadmill_walk': 'images/caminata_rapida.webp',
+  'treadmill_walk':    'images/caminata_rapida.webp',
+  'calf_unilateral':   'images/calf_unilateral.webp',
+  'dead_bug':          'images/dead_bug.webp',
+  'glute_bridge':      'images/glute_bridge.webp',
+  'lunge_walk':        'images/lunge_walk.webp',
+  'plank':             'images/plank.webp',
+  'psoas_stretch':     'images/psoas_stretch.webp',
+  'pigeon':            'images/paloma_gluteo.webp',
 };
 // Keywords para ejercicios de texto (pre/post) que no tienen id específico
 const EX_IMAGES_KEYWORDS = [
   { keywords: ['caminata rápida', 'caminata rapida'], img: 'images/caminata_rapida.webp' },
+  { keywords: ['movilidad tobillo', 'movilidad de tobillo', 'círculos de tobillo', 'circulos de tobillo'], img: 'images/movilidad_tobillo.webp' },
+  { keywords: ['pantorrilla contra pared'], img: 'images/pantorrilla_pared.webp' },
+  { keywords: ['apertura de cadera en cuclillas'], img: 'images/deep_squat_hip_opener.webp' },
+  { keywords: ['isquiotibial con banda', 'isquiotibiales con cinta'], img: 'images/isquiotibial_banda.webp' },
+  { keywords: ['rotación espinal', 'rotacion espinal', 'rotaciones de rodilla'], img: 'images/rotacion.webp' },
+  { keywords: ['paloma', 'figura 4', 'piriforme'], img: 'images/paloma_gluteo.webp' },
+  { keywords: ['desbloqueo psoas', 'estiramiento de psoas', 'psoas'], img: 'images/psoas_stretch.webp' },
 ];
 function getExImage(id, name) {
   if (EX_IMAGES[id]) return EX_IMAGES[id];
