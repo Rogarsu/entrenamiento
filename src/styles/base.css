@@ -1,0 +1,46 @@
+/* BASE — reset, variables, tipografía */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #0a0a0f;
+  --bg2: #111118;
+  --bg3: #18181f;
+  --bg4: #202028;
+  --border: #252530;
+  --border2: #2e2e3e;
+  --amber: #f59e0b;
+  --amber2: #fbbf24;
+  --amber-dim: #78530d;
+  --cyan: #06b6d4;
+  --cyan2: #22d3ee;
+  --cyan-dim: #0e4a57;
+  --red: #ef4444;
+  --green: #22c55e;
+  --green-dim: #14532d;
+  --text: #e8e8f0;
+  --text2: #9999b0;
+  --text3: #5a5a6e;
+  --font-head: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }

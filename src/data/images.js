@@ -1,0 +1,59 @@
+// Mapa de imágenes: key = id del ejercicio
+export const EX_IMAGES = {
+  'treadmill_walk':    'images/caminata rápida.gif',
+  'calf_unilateral':   'images/calf_unilateral.webp',
+  'dead_bug':          'images/Dead bug (bicho muerto).gif',
+  'glute_bridge':      'images/Puente de glúteo (unilateral).gif',
+  'lunge_walk':        'images/Estocada caminando.webp',
+  'plank':             'images/Plancha Frontal.gif',
+  'psoas_stretch':     'images/psoas_stretch.webp',
+  'pigeon':            'images/paloma_gluteo.webp',
+  'squat_goblet':      'images/Sentadilla goblet (mancuerna).gif',
+  'rdl':               'images/Peso muerto rumano.gif',
+  'abduction_machine': 'images/Abducción cadera (máquina).gif',
+  'bench_flat':        'images/Press de banca plano (barra).gif',
+  'db_press_incline':  'images/Press inclinado (mancuernas).gif',
+  'db_fly_flat':       'images/Apertura plana (mancuernas).gif',
+  'dips_tricep':       'images/Fondos en banco (tríceps).gif',
+  'tricep_pushdown':   'images/Extensión tríceps (cuerda-cable).gif',
+  'overhead_ext_db':   'images/Extensión overhead (mancuerna).gif',
+};
+
+// Keywords para ejercicios de texto (pre/post) sin id específico
+export const EX_IMAGES_KEYWORDS = [
+  { keywords: ['caminata rápida', 'caminata rapida'], img: 'images/caminata rápida.gif' },
+  { keywords: ['movilidad tobillo', 'movilidad de tobillo', 'círculos de tobillo', 'circulos de tobillo'], img: 'images/movilidad_tobillo.webp' },
+  { keywords: ['pantorrilla contra pared'], img: 'images/Pantorrilla contra pared.avif' },
+  { keywords: ['apertura de cadera en cuclillas'], img: 'images/deep_squat_hip_opener.gif' },
+  { keywords: ['isquiotibial con banda', 'isquiotibiales con cinta'], img: 'images/Isquiotibial con banda o toalla.avif' },
+  { keywords: ['rotación espinal', 'rotacion espinal', 'rotaciones de rodilla'], img: 'images/rotaciones de rodilla.gif' },
+  { keywords: ['paloma', 'figura 4', 'piriforme'], img: 'images/paloma_gluteo.webp' },
+  { keywords: ['desbloqueo psoas', 'estiramiento de psoas', 'psoas'], img: 'images/Desbloqueo psoas rodilla en suelo inclinación adelante.gif' },
+  { keywords: ['círculos de cadera', 'circulos de cadera'], img: 'images/círculos de cadera.gif' },
+  { keywords: ['sentadillas de activación', 'sentadillas de activacion'], img: 'images/sentadillas de activación.webp' },
+  { keywords: ['puentes de glúteo', 'puente de glúteo', 'puentes de gluteo', 'puente de gluteo'], img: 'images/puentes de glúteo lentos.gif' },
+  { keywords: ['caminata suave'], img: 'images/caminata suave.gif' },
+  { keywords: ['cuádriceps de pie', 'cuadriceps de pie'], img: 'images/Cuádriceps de pie.jpg' },
+  { keywords: ['aductor sentado'], img: 'images/Aductor sentado pies juntos.webp' },
+  { keywords: ['torsión espinal', 'torsion espinal'], img: 'images/Torsión espinal tumbado.png' },
+  { keywords: ['bicicleta estática', 'bicicleta estatica', 'bicicleta o elíptica', 'bicicleta o eliptica'], img: 'images/bicicleta estática.gif' },
+  { keywords: ['círculos de hombros', 'circulos de hombros'], img: 'images/círculos de hombros.gif' },
+  { keywords: ['aperturas de pecho con banda'], img: 'images/aperturas de pecho con banda.gif' },
+  { keywords: ['push-ups de rodilla', 'push-up de rodilla'], img: 'images/push-ups de rodilla lentos.gif' },
+  { keywords: ['rotaciones de hombro con banda', 'rotación de hombro con banda'], img: 'images/rotaciones de hombro con banda.avif' },
+  { keywords: ['apertura de pecho en marco de puerta'], img: 'images/Apertura de pecho en marco de puerta.jpg' },
+  { keywords: ['extensión de muñeca y antebrazo', 'extension de muneca y antebrazo'], img: 'images/Extensión de muñeca y antebrazo.jpg' },
+  { keywords: ['rotación interna/externa de hombro', 'rotacion interna/externa de hombro'], img: 'images/Rotación internaexterna de hombro.png' },
+  { keywords: ['tríceps sobre la cabeza', 'triceps sobre la cabeza'], img: 'images/Tríceps sobre la cabeza.jpg' },
+  { keywords: ['cruce de brazo'], img: 'images/Cruce de brazo deltoides anterior.gif' },
+  { keywords: ['extensión de muñeca', 'extension de muneca'], img: 'images/Extensión de muñeca.jpg' },
+];
+
+export function getExImage(id, name) {
+  if (EX_IMAGES[id]) return EX_IMAGES[id];
+  const n = (name || '').toLowerCase();
+  for (const entry of EX_IMAGES_KEYWORDS) {
+    if (entry.keywords.some(k => n.includes(k))) return entry.img;
+  }
+  return null;
+}
