@@ -12266,7 +12266,7 @@ function getRelatedExLogs(targetMuscle, currentSessionId, excludeExId) {
     const parts = key.split('_');
     const sid = parseInt(parts.pop());
     const exId = parts.join('_');
-    if (sid >= currentSessionId) continue;
+    if (sid > currentSessionId) continue; // Incluye sesión actual, excluye futuras
     if (exId === excludeExId) continue;
     if (!log.muscle || !musclesOverlap(targetMuscle, log.muscle)) continue;
     related.push({ exId, sessionId: sid, log });
@@ -12359,18 +12359,46 @@ function saveCurrentExLog() {
   }
   saveExLog(id, state.currentId, sets, targetReps, muscle);
 
-  // Actualizar badge en tabla
+  // Actualizar badge del ejercicio guardado
   const badge = document.getElementById(`rec_badge_${id}`);
   if (badge) {
     const rec = calcNextRecommendation(targetReps, sets);
     const arrow = rec.dir === 'up' ? '↑' : rec.dir === 'down' ? '↓' : '→';
     badge.textContent = `📈 ${rec.nextWeight} kg × ${rec.targetReps} reps ${arrow}`;
+    badge.style.color = '';
     badge.style.display = 'block';
   }
+
+  // Actualizar badges de todos los ejercicios relacionados en la sesión actual
+  const curSession = SESSIONS.find(x => x.id === state.currentId);
+  if (curSession) {
+    curSession.workout.blocks.forEach(bl => {
+      bl.exercises.forEach(ex => {
+        if (ex.id === id) return; // ya actualizado arriba
+        const exBadge = document.getElementById(`rec_badge_${ex.id}`);
+        if (!exBadge) return;
+        const exRec = getExRecommendation(ex.id, state.currentId, ex.reps||'', ex.muscle||'', ex.weight_guide||'');
+        if (!exRec) return;
+        if (exRec.type === 'same') {
+          const r = exRec.rec;
+          const arr = r.dir==='up'?'↑':r.dir==='down'?'↓':'→';
+          exBadge.textContent = `📈 ${r.nextWeight} kg × ${r.targetReps} reps ${arr}`;
+          exBadge.style.color = '';
+          exBadge.style.display = 'block';
+        } else if (exRec.type === 'related' && exRec.crossRec && exRec.crossRec.suggestedWeight) {
+          const icon = exRec.crossRec.level==='high'?'↑':exRec.crossRec.level==='low'?'↓':'→';
+          exBadge.textContent = `📊 ~${exRec.crossRec.suggestedWeight} kg ${icon}`;
+          exBadge.style.color = 'var(--cyan)';
+          exBadge.style.display = 'block';
+        }
+      });
+    });
+  }
+
   // Feedback
   const fb = document.getElementById('exLogSaved');
   if (fb) { fb.style.display = 'block'; setTimeout(() => { fb.style.display = 'none'; }, 2000); }
-  // Refrescar sección de recomendación
+  // Refrescar sección de recomendación en modal
   const recDiv = document.getElementById('exModalRec');
   if (recDiv) recDiv.innerHTML = buildRecSection(id, state.currentId, targetReps, muscle, _exCtx.weightGuide);
 }
