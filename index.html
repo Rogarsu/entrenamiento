@@ -238,6 +238,25 @@ textarea.log-input{resize:vertical;min-height:60px}
 .ex-modal-close{position:absolute;top:12px;right:16px;background:none;border:none;color:var(--text2);font-size:22px;cursor:pointer;line-height:1}
 .ex-modal-close:hover{color:var(--text)}
 .ex-modal-wrapper{position:relative}
+.ex-modal{max-height:90vh;overflow-y:auto}
+/* EXERCISE LOG & RECOMMENDATION */
+.ex-modal-log,.ex-modal-rec{margin:0 0 12px;padding:14px 16px;background:var(--bg4);border-radius:10px;border:1px solid var(--border2)}
+.ex-log-title{font-family:var(--font-mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px;font-weight:600}
+.ex-log-set-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-size:13px;color:var(--text2);flex-wrap:wrap}
+.ex-log-set-label{min-width:56px;font-family:var(--font-mono);font-size:11px;color:var(--text3)}
+.ex-log-input{width:68px;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;color:var(--text);padding:5px 8px;font-size:13px;text-align:center;font-family:var(--font-mono)}
+.ex-log-input:focus{outline:none;border-color:var(--cyan)}
+.ex-log-unit{font-size:11px;color:var(--text3);font-family:var(--font-mono)}
+.ex-log-save{margin-top:12px;background:var(--cyan);color:var(--bg);border:none;border-radius:8px;padding:8px 20px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:0.03em;transition:opacity .2s}
+.ex-log-save:hover{opacity:0.85}
+.ex-log-saved{font-size:11px;color:var(--cyan);font-family:var(--font-mono);margin-top:8px;display:none}
+.ex-rec-box{font-size:20px;font-weight:800;color:var(--amber);margin:4px 0 6px;letter-spacing:0.01em}
+.ex-rec-reason{font-size:11px;color:var(--text3);font-family:var(--font-mono);line-height:1.6}
+.ex-rec-arrow{color:var(--cyan);font-size:14px;margin-right:4px}
+.ex-rec-arrow.down{color:#f87171}
+.ex-rec-first{font-size:12px;color:var(--text3);font-family:var(--font-mono);line-height:1.6}
+/* Badge en tabla */
+.ex-rec-badge{font-size:11px;color:var(--amber);font-family:var(--font-mono);margin-top:4px;letter-spacing:0.02em}
 
 /* STATS PANEL */
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
@@ -12066,10 +12085,13 @@ function loadSession(id) {
               <th>Notas</th>
             </tr></thead>
             <tbody>
-              ${bl.exercises.map(e => `
+              ${bl.exercises.map(e => {
+                const rec = getExRecommendation(e.id, s.id, e.reps||'');
+                const recBadge = rec ? `<div class="ex-rec-badge" id="rec_badge_${e.id}">📈 Rec: ${rec.nextWeight} kg × ${rec.targetReps} reps ${rec.dir==='up'?'↑':rec.dir==='down'?'↓':'→'}</div>` : `<div class="ex-rec-badge" id="rec_badge_${e.id}" style="display:none"></div>`;
+                return `
                 <tr>
                   <td>
-                    <div class="ex-name" onclick="openExModal('${e.id}','${escStr(e.name)}','${escStr(e.muscle)}','${escStr(e.equip)}')">
+                    <div class="ex-name" onclick="openExModal('${e.id}','${escStr(e.name)}','${escStr(e.muscle)}','${escStr(e.equip)}','${e.sets}','${escStr(e.reps)}')">
                       <span class="img-icon">🖼</span> ${e.name}
                     </div>
                     <div class="ex-muscle">${e.muscle}</div>
@@ -12077,10 +12099,10 @@ function loadSession(id) {
                   <td><span class="ex-sets">${e.sets}</span></td>
                   <td><span class="ex-reps">${e.reps}</span></td>
                   <td><span class="ex-rest">${e.rest}</span></td>
-                  <td><span class="ex-weight">${e.weight_guide||'—'}</span></td>
+                  <td><span class="ex-weight">${e.weight_guide||'—'}</span>${recBadge}</td>
                   <td><span class="ex-notes">${e.notes||'—'}</span></td>
-                </tr>
-              `).join('')}
+                </tr>`;
+              }).join('')}
             </tbody>
           </table>
         </div>
@@ -12187,8 +12209,108 @@ function saveLog() {
   loadSession(state.currentId);
 }
 
+// ===== EXERCISE LOGS (peso x serie) =====
+function loadExLogs() {
+  return JSON.parse(localStorage.getItem('sv_ex_logs') || '{}');
+}
+function saveExLogs(data) {
+  localStorage.setItem('sv_ex_logs', JSON.stringify(data));
+}
+function getExLog(exId, sessionId) {
+  return loadExLogs()[`${exId}_${sessionId}`] || null;
+}
+function getLastExLog(exId, currentSessionId) {
+  const all = loadExLogs();
+  const entries = Object.entries(all)
+    .filter(([k]) => k.startsWith(`${exId}_`) && parseInt(k.split('_').pop()) < currentSessionId)
+    .sort((a, b) => parseInt(b[0].split('_').pop()) - parseInt(a[0].split('_').pop()));
+  return entries.length ? entries[0][1] : null;
+}
+function saveExLog(exId, sessionId, sets) {
+  const all = loadExLogs();
+  all[`${exId}_${sessionId}`] = { date: new Date().toLocaleDateString('es-CO'), sets };
+  saveExLogs(all);
+}
+function calcNextRecommendation(targetRepsStr, sets) {
+  const targetReps = parseInt(targetRepsStr) || 10;
+  const increment = 2.5;
+  const avgReps = sets.reduce((s, x) => s + x.reps, 0) / sets.length;
+  const lastWeight = sets[sets.length - 1].weight;
+  let nextWeight, reason, dir;
+  if (avgReps >= targetReps) {
+    nextWeight = lastWeight + increment;
+    reason = `Completaste ${Math.round(avgReps)} reps en promedio. ¡Sube el peso!`;
+    dir = 'up';
+  } else if (avgReps >= targetReps * 0.85) {
+    nextWeight = lastWeight;
+    reason = `Cerca del objetivo (${Math.round(avgReps)} reps prom.). Mantén el peso y completa todas las series.`;
+    dir = 'eq';
+  } else {
+    nextWeight = Math.max(lastWeight - increment, 0);
+    reason = `Fue exigente (${Math.round(avgReps)} reps prom.). Baja un poco el peso y enfócate en la técnica.`;
+    dir = 'down';
+  }
+  return { nextWeight, targetReps, reason, dir };
+}
+function getExRecommendation(exId, sessionId, targetRepsStr) {
+  const last = getLastExLog(exId, sessionId);
+  if (!last || !last.sets || !last.sets.length) return null;
+  return calcNextRecommendation(targetRepsStr, last.sets);
+}
+function saveCurrentExLog(exId, numSets, targetReps) {
+  const n = parseInt(numSets) || 1;
+  const sets = [];
+  for (let i = 0; i < n; i++) {
+    const wEl = document.getElementById(`exw_${i}`);
+    const rEl = document.getElementById(`exr_${i}`);
+    const w = parseFloat(wEl ? wEl.value : 0) || 0;
+    const r = parseInt(rEl ? rEl.value : 0) || 0;
+    sets.push({ weight: w, reps: r });
+  }
+  saveExLog(exId, state.currentId, sets);
+  // Actualizar badge en tabla
+  const badge = document.getElementById(`rec_badge_${exId}`);
+  if (badge) {
+    const rec = calcNextRecommendation(targetReps, sets);
+    const arrow = rec.dir === 'up' ? '↑' : rec.dir === 'down' ? '↓' : '→';
+    badge.textContent = `📈 Rec: ${rec.nextWeight} kg × ${rec.targetReps} reps ${arrow}`;
+    badge.style.display = 'block';
+  }
+  // Mostrar feedback en modal
+  const fb = document.getElementById('exLogSaved');
+  if (fb) { fb.style.display = 'block'; setTimeout(() => { fb.style.display = 'none'; }, 2000); }
+  // Refrescar sección de recomendación en el modal
+  const recDiv = document.getElementById('exModalRec');
+  if (recDiv) recDiv.innerHTML = buildRecSection(exId, state.currentId, targetReps);
+}
+function buildRecSection(exId, sessionId, targetRepsStr) {
+  const last = getLastExLog(exId, sessionId);
+  if (!last || !last.sets || !last.sets.length) {
+    // Revisar si hay log de sesión actual para mostrar proyección
+    const cur = getExLog(exId, sessionId);
+    if (cur && cur.sets && cur.sets.length) {
+      const rec = calcNextRecommendation(targetRepsStr, cur.sets);
+      const arrow = rec.dir === 'up' ? '↑' : rec.dir === 'down' ? '↓' : '→';
+      const cls = rec.dir === 'down' ? 'down' : '';
+      return `<div class="ex-log-title">📈 Proyección siguiente sesión</div>
+        <div class="ex-rec-box"><span class="ex-rec-arrow ${cls}">${arrow}</span>${rec.nextWeight} kg × ${rec.targetReps} reps</div>
+        <div class="ex-rec-reason">${rec.reason}</div>`;
+    }
+    return `<div class="ex-log-title">📈 Recomendación próxima sesión</div>
+      <div class="ex-rec-first">Es la primera vez que registras este ejercicio.<br>Usa la guía de peso como referencia y anota lo que usaste hoy.</div>`;
+  }
+  const rec = calcNextRecommendation(targetRepsStr, last.sets);
+  const arrow = rec.dir === 'up' ? '↑' : rec.dir === 'down' ? '↓' : '→';
+  const cls = rec.dir === 'down' ? 'down' : '';
+  const lastWeightStr = last.sets.map((s,i) => `S${i+1}: ${s.weight}kg×${s.reps}`).join(' · ');
+  return `<div class="ex-log-title">📈 Recomendación próxima sesión</div>
+    <div class="ex-rec-box"><span class="ex-rec-arrow ${cls}">${arrow}</span>${rec.nextWeight} kg × ${rec.targetReps} reps</div>
+    <div class="ex-rec-reason">${rec.reason}</div>
+    <div class="ex-rec-reason" style="margin-top:6px;opacity:0.7">Última sesión (${last.date}): ${lastWeightStr}</div>`;
+}
+
 // ===== EXERCISE MODAL =====
-function openExModal(id, name, muscle, equip) {
+function openExModal(id, name, muscle, equip, targetSets, targetReps) {
   const modal = document.getElementById('exModalContent');
   const imgSrc = getExImage(id, name);
   const imgSection = imgSrc
@@ -12205,6 +12327,37 @@ function openExModal(id, name, muscle, equip) {
         Al hacer clic en el ícono 🖼 de cualquier ejercicio podrás ver aquí la imagen y video demostrativo del movimiento.<br>
         <span style="color:var(--amber)">Esta función estará disponible en la próxima versión.</span>
       </div>`;
+
+  // Sección de registro por serie (solo si es ejercicio de workout con sets definidos)
+  const numSets = parseInt(targetSets) || 0;
+  let logSection = '';
+  if (numSets > 0 && id !== 'pre' && id !== 'post') {
+    const existing = getExLog(id, state.currentId);
+    const rows = Array.from({length: numSets}, (_, i) => {
+      const saved = existing && existing.sets && existing.sets[i];
+      const w = saved ? saved.weight : '';
+      const r = saved ? saved.reps : '';
+      return `<div class="ex-log-set-row">
+        <span class="ex-log-set-label">Serie ${i+1}</span>
+        <input class="ex-log-input" type="number" id="exw_${i}" placeholder="kg" value="${w}" min="0" step="0.5">
+        <span class="ex-log-unit">kg</span>
+        <span class="ex-log-unit" style="margin:0 2px">×</span>
+        <input class="ex-log-input" type="number" id="exr_${i}" placeholder="reps" value="${r}" min="0">
+        <span class="ex-log-unit">reps</span>
+      </div>`;
+    }).join('');
+    logSection = `
+      <div class="ex-modal-log">
+        <div class="ex-log-title">📝 Tu registro — sesión actual</div>
+        ${rows}
+        <button class="ex-log-save" onclick="saveCurrentExLog('${id}','${numSets}','${(targetReps||'').replace(/'/g,'')}')">💾 Guardar registro</button>
+        <div class="ex-log-saved" id="exLogSaved">✓ Guardado</div>
+      </div>
+      <div class="ex-modal-rec" id="exModalRec">
+        ${buildRecSection(id, state.currentId, targetReps||'')}
+      </div>`;
+  }
+
   modal.innerHTML = `
     ${imgSection}
     <div class="ex-modal-body">
@@ -12212,6 +12365,7 @@ function openExModal(id, name, muscle, equip) {
       <div class="ex-modal-muscle">💪 ${muscle}</div>
       <div class="ex-modal-equip">🔧 ${equip}</div>
       ${bodyExtra}
+      ${logSection}
     </div>
   `;
   document.getElementById('exModal').classList.add('open');
