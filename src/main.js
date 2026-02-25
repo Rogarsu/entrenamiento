@@ -14,6 +14,7 @@ import { loadSession, switchTab } from './js/session.js';
 import { openLogForm, closeLogForm, saveLog } from './js/logform.js';
 import { openExModal, closeExModal, saveCurrentExLog } from './js/modal.js';
 import { buildHistoryPage, showHistPage, hideHistPage } from './js/history.js';
+import { toggleNavDropdown, navGoFisico, navGoHistorial } from './js/nav.js';
 
 // ===== EXPONER A WINDOW (para onclick en HTML) =====
 window.toggleSidebar = toggleSidebar;
@@ -29,6 +30,9 @@ window.saveCurrentExLog = saveCurrentExLog;
 window.showHistPage = showHistPage;
 window.hideHistPage = hideHistPage;
 window.buildHistoryPage = buildHistoryPage;
+window.toggleNavDropdown = toggleNavDropdown;
+window.navGoFisico = navGoFisico;
+window.navGoHistorial = navGoHistorial;
 
 // ===== INIT =====
 buildStats();

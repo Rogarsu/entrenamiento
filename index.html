@@ -22,6 +22,22 @@
     <button class="nav-mod locked" title="Próximamente">📈 Progreso</button>
     <button class="nav-mod hist-btn" onclick="showHistPage()">📋 Historial</button>
   </div>
+
+  <!-- DROPDOWN MÓVIL -->
+  <div id="navDropdown">
+    <button class="nav-dropdown-btn" onclick="toggleNavDropdown()">
+      <span id="navCurrentPage">🏋️ Físico</span>
+      <span class="nav-dd-arrow">▼</span>
+    </button>
+    <div id="navDropdownPanel">
+      <button class="nav-dd-item active-fisico" id="navItemFisico" onclick="navGoFisico()">🏋️ Físico</button>
+      <button class="nav-dd-item locked" disabled title="Próximamente">🧠 Mental <span class="nav-dd-tag">pronto</span></button>
+      <button class="nav-dd-item locked" disabled title="Próximamente">🥗 Nutrición <span class="nav-dd-tag">pronto</span></button>
+      <button class="nav-dd-item locked" disabled title="Próximamente">📈 Progreso <span class="nav-dd-tag">pronto</span></button>
+      <div class="nav-dd-divider"></div>
+      <button class="nav-dd-item active-hist" id="navItemHistorial" onclick="navGoHistorial()">📋 Historial</button>
+    </div>
+  </div>
 </nav>
 
 <div class="main">
@@ -63,7 +79,6 @@
 <!-- HISTORY PAGE -->
 <div id="histPage" class="hist-page">
   <div class="hist-header">
-    <button class="hist-back" onclick="hideHistPage()">← Volver</button>
     <div class="hist-title">📋 Historial de Registros</div>
   </div>
   <div class="hist-filters" id="histFilters"></div>

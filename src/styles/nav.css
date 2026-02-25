@@ -28,8 +28,64 @@ nav {
   display: none; background: none; border: 1px solid var(--border2);
   border-radius: 6px; padding: 6px 10px; color: var(--text); cursor: pointer; font-size: 16px;
 }
+
+/* DROPDOWN MÓVIL */
+#navDropdown {
+  display: none;
+  position: relative;
+  margin-left: auto;
+}
+.nav-dropdown-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 12px; border-radius: 6px;
+  font-family: var(--font-head); font-weight: 600; font-size: 13px;
+  letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer;
+  border: 1px solid var(--border2); color: var(--text); background: transparent;
+  transition: all .2s;
+}
+.nav-dropdown-btn:hover { border-color: var(--amber); color: var(--amber); }
+.nav-dropdown-btn .nav-dd-arrow {
+  font-size: 10px; opacity: 0.6; transition: transform .2s;
+}
+#navDropdownPanel.open ~ .nav-dropdown-btn .nav-dd-arrow,
+.nav-dropdown-btn.open .nav-dd-arrow { transform: rotate(180deg); }
+
+#navDropdownPanel {
+  display: none;
+  position: absolute; top: calc(100% + 8px); right: 0;
+  background: rgba(10,10,15,0.98); border: 1px solid var(--border2);
+  border-radius: 10px; padding: 6px; min-width: 200px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+  z-index: 999;
+}
+#navDropdownPanel.open { display: block; }
+
+.nav-dd-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; border-radius: 7px;
+  font-family: var(--font-head); font-weight: 600; font-size: 13px;
+  letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer;
+  border: none; background: transparent; width: 100%; text-align: left;
+  color: var(--text2); transition: all .15s;
+}
+.nav-dd-item:hover:not(.locked) { background: rgba(255,255,255,0.05); color: var(--text); }
+.nav-dd-item.active-fisico { color: var(--amber); }
+.nav-dd-item.active-fisico:hover { background: rgba(245,158,11,0.08); }
+.nav-dd-item.active-hist { color: var(--cyan); }
+.nav-dd-item.active-hist:hover { background: rgba(6,182,212,0.08); }
+.nav-dd-item.locked { opacity: 0.3; cursor: not-allowed; }
+.nav-dd-item .nav-dd-tag {
+  margin-left: auto; font-size: 9px; opacity: 0.5;
+  font-weight: 400; letter-spacing: 0.05em; text-transform: uppercase;
+}
+.nav-dd-divider {
+  height: 1px; background: var(--border2); margin: 4px 6px;
+}
+
 @media (max-width: 768px) {
   .mobile-menu { display: block; }
   .nav-logo span { display: none; }
-  .nav-mod:not(.hist-btn) { display: none; }
+  .nav-modules { display: none; }
+  #navDropdown { display: block; }
 }
