@@ -105,8 +105,10 @@ function _render() {
 
   const optionsHtml = q.options.map(opt => {
     const selected = _ob.answers[q.key] === opt.value ? ' selected' : '';
+    // Use single quotes for string values to avoid breaking the double-quoted onclick attribute
+    const valArg = typeof opt.value === 'string' ? `'${opt.value}'` : opt.value;
     return `
-      <button class="ob-option${selected}" onclick="_obSelect('${q.key}', ${JSON.stringify(opt.value)})">
+      <button class="ob-option${selected}" onclick="_obSelect('${q.key}', ${valArg})">
         <span class="ob-option-icon">${opt.icon}</span>
         <span class="ob-option-label">${opt.label}</span>
         <span class="ob-option-desc">${opt.desc}</span>
@@ -203,9 +205,9 @@ window._obRetry = function() {
 export function showOnboarding() {
   _ob.step = 0;
   _ob.answers = {};
+  document.getElementById('authOverlay').style.display = 'none';
   document.getElementById('appContent').style.display = 'none';
-  const overlay = document.getElementById('onboardingOverlay');
-  overlay.style.display = 'flex';
+  document.getElementById('onboardingOverlay').style.display = 'flex';
   _render();
 }
 

@@ -24,18 +24,25 @@ async function _loadAndRender(user) {
     buildStats();
     buildSidebar();
     if (hasPendingLocalData(sessionLogs, exLogs)) showMigrationBanner();
-  } else if (sessionLogs.length > 0) {
-    // Existing user (has logs but no plan row) → save DEFAULT_SESSIONS as their plan
-    await upsertUserPlan(user.id, DEFAULT_SESSIONS);
-    setPlan(DEFAULT_SESSIONS);
-    buildStats();
-    buildSidebar();
-    if (hasPendingLocalData(sessionLogs, exLogs)) showMigrationBanner();
   } else {
-    // New user with no logs and no plan → show onboarding
-    if (hasPendingLocalData(sessionLogs, exLogs)) showMigrationBanner();
-    showOnboarding();
-    return false; // signal: onboarding is showing, app not shown yet
+    // No plan yet — use account age to distinguish new vs existing users.
+    // New users (registered < 20 min ago) → onboarding.
+    // Existing users (old account, no plan yet) → auto-assign DEFAULT_SESSIONS.
+    const accountAgeMs = Date.now() - new Date(user.created_at).getTime();
+    const isNewUser = accountAgeMs < 20 * 60 * 1000; // less than 20 minutes old
+
+    if (isNewUser) {
+      if (hasPendingLocalData(sessionLogs, exLogs)) showMigrationBanner();
+      showOnboarding();
+      return false; // signal: onboarding is showing, app not shown yet
+    } else {
+      // Existing user without a plan → assign DEFAULT_SESSIONS and save it
+      await upsertUserPlan(user.id, DEFAULT_SESSIONS);
+      setPlan(DEFAULT_SESSIONS);
+      buildStats();
+      buildSidebar();
+      if (hasPendingLocalData(sessionLogs, exLogs)) showMigrationBanner();
+    }
   }
 
   return true;
