@@ -28,4 +28,8 @@ nav {
   display: none; background: none; border: 1px solid var(--border2);
   border-radius: 6px; padding: 6px 10px; color: var(--text); cursor: pointer; font-size: 16px;
 }
-@media (max-width: 768px) { .mobile-menu { display: block; } }
+@media (max-width: 768px) {
+  .mobile-menu { display: block; }
+  .nav-logo span { display: none; }
+  .nav-mod:not(.hist-btn) { display: none; }
+}
