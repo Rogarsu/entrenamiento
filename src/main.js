@@ -18,6 +18,8 @@ import { buildHistoryPage, showHistPage, hideHistPage, histSetEx, histToggleSort
 import { toggleNavDropdown, navGoFisico, navGoHistorial } from './js/nav.js';
 import { openWellnessCheck, closeWellnessModal } from './js/wellness.js';
 import { initAuth, authToggleTab, authSignIn, authSignUp, authSignInGoogle, authSignOut } from './js/auth.js';
+import { dismissMigration, migrateLocalData as _migrate } from './js/migrate.js';
+import { getUserId } from './js/state.js';
 
 // ===== EXPONER A WINDOW (para onclick en HTML) =====
 window.toggleSidebar = toggleSidebar;
@@ -45,6 +47,8 @@ window.authSignIn = authSignIn;
 window.authSignUp = authSignUp;
 window.authSignInGoogle = authSignInGoogle;
 window.authSignOut = authSignOut;
+window.migrateLocalData = () => _migrate(getUserId());
+window.dismissMigration = dismissMigration;
 
 // ===== INIT =====
 // buildStats() and buildSidebar() are called inside initAuth()

@@ -4,6 +4,7 @@ import { initState } from './state.js';
 import { initExLogs } from './storage.js';
 import { buildStats } from './stats.js';
 import { buildSidebar } from './sidebar.js';
+import { hasPendingLocalData, showMigrationBanner } from './migrate.js';
 
 // ── INTERNAL ───────────────────────────────────────────────────────────────────
 
@@ -13,6 +14,8 @@ async function _loadAndRender(user) {
   initExLogs(exLogs);
   buildStats();
   buildSidebar();
+  // Show migration banner if user has local data not yet in Supabase
+  if (hasPendingLocalData(sessionLogs, exLogs)) showMigrationBanner();
 }
 
 function _showApp(user) {

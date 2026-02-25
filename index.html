@@ -104,6 +104,18 @@
   </div>
 </nav>
 
+<!-- MIGRATION BANNER -->
+<div id="migrationBanner" style="display:none">
+  <div class="migration-banner-content">
+    <span class="migration-icon">💾</span>
+    <span class="migration-text">Encontramos datos guardados localmente. ¿Los sincronizamos con tu cuenta en la nube?</span>
+    <div class="migration-actions">
+      <button class="migration-btn-confirm" id="migrateBtnConfirm" onclick="migrateLocalData()">Sí, sincronizar</button>
+      <button class="migration-btn-dismiss" onclick="dismissMigration()">No, descartar</button>
+    </div>
+  </div>
+</div>
+
 <div class="main">
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
