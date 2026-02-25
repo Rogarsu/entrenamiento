@@ -6,6 +6,7 @@ import './styles/session.css';
 import './styles/modal.css';
 import './styles/stats.css';
 import './styles/history.css';
+import './styles/wellness.css';
 
 // ===== MÓDULOS JS =====
 import { buildStats } from './js/stats.js';
@@ -15,6 +16,7 @@ import { openLogForm, closeLogForm, saveLog } from './js/logform.js';
 import { openExModal, closeExModal, saveCurrentExLog } from './js/modal.js';
 import { buildHistoryPage, showHistPage, hideHistPage, histSetEx, histToggleSort } from './js/history.js';
 import { toggleNavDropdown, navGoFisico, navGoHistorial } from './js/nav.js';
+import { openWellnessCheck, closeWellnessModal } from './js/wellness.js';
 
 // ===== EXPONER A WINDOW (para onclick en HTML) =====
 window.toggleSidebar = toggleSidebar;
@@ -35,6 +37,8 @@ window.histToggleSort = histToggleSort;
 window.toggleNavDropdown = toggleNavDropdown;
 window.navGoFisico = navGoFisico;
 window.navGoHistorial = navGoHistorial;
+window.openWellnessCheck = openWellnessCheck;
+window.closeWellnessModal = closeWellnessModal;
 
 // ===== INIT =====
 buildStats();

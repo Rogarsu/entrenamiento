@@ -103,5 +103,19 @@
   </div>
 </div>
 
+<!-- WELLNESS FAB -->
+<button class="wellness-fab" onclick="openWellnessCheck()">
+  <span class="wellness-fab-icon">🩺</span>
+  <span class="wellness-fab-label">¿Cómo me siento?</span>
+</button>
+
+<!-- WELLNESS MODAL -->
+<div class="modal-overlay" id="wellnessModal" onclick="if(event.target===this)closeWellnessModal()">
+  <div class="wellness-modal">
+    <button class="ex-modal-close" onclick="closeWellnessModal()">✕</button>
+    <div id="wellnessContent"></div>
+  </div>
+</div>
+
 </body>
 </html>
