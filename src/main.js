@@ -7,9 +7,9 @@ import './styles/modal.css';
 import './styles/stats.css';
 import './styles/history.css';
 import './styles/wellness.css';
+import './styles/auth.css';
 
 // ===== MÓDULOS JS =====
-import { buildStats } from './js/stats.js';
 import { buildSidebar, togglePhase, toggleSidebar } from './js/sidebar.js';
 import { loadSession, switchTab } from './js/session.js';
 import { openLogForm, closeLogForm, saveLog } from './js/logform.js';
@@ -17,6 +17,7 @@ import { openExModal, closeExModal, saveCurrentExLog } from './js/modal.js';
 import { buildHistoryPage, showHistPage, hideHistPage, histSetEx, histToggleSort } from './js/history.js';
 import { toggleNavDropdown, navGoFisico, navGoHistorial } from './js/nav.js';
 import { openWellnessCheck, closeWellnessModal } from './js/wellness.js';
+import { initAuth, authToggleTab, authSignIn, authSignUp, authSignInGoogle, authSignOut } from './js/auth.js';
 
 // ===== EXPONER A WINDOW (para onclick en HTML) =====
 window.toggleSidebar = toggleSidebar;
@@ -39,7 +40,13 @@ window.navGoFisico = navGoFisico;
 window.navGoHistorial = navGoHistorial;
 window.openWellnessCheck = openWellnessCheck;
 window.closeWellnessModal = closeWellnessModal;
+window.authToggleTab = authToggleTab;
+window.authSignIn = authSignIn;
+window.authSignUp = authSignUp;
+window.authSignInGoogle = authSignInGoogle;
+window.authSignOut = authSignOut;
 
 // ===== INIT =====
-buildStats();
-buildSidebar();
+// buildStats() and buildSidebar() are called inside initAuth()
+// after user data is loaded from Supabase.
+initAuth();

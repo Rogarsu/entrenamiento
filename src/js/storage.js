@@ -1,27 +1,54 @@
+import { upsertExLog } from './db.js';
+import { getUserId } from './state.js';
+
+let _exLogs = {};
+
+// Called on login with rows from Supabase exercise_logs table.
+// If exLogs is null, falls back to localStorage (offline).
+export function initExLogs(exLogs) {
+  if (Array.isArray(exLogs) && getUserId()) {
+    _exLogs = {};
+    for (const row of exLogs) {
+      const key = `${row.exercise_id}_${row.session_id}`;
+      _exLogs[key] = {
+        date: row.logged_date || '',
+        time: row.logged_time || '',
+        timestamp: row.logged_at || '',
+        sets: row.sets || [],
+        targetReps: row.target_reps || 0,
+        muscle: row.muscle || '',
+      };
+    }
+    localStorage.setItem('sv_ex_logs', JSON.stringify(_exLogs));
+  } else {
+    // Offline fallback
+    _exLogs = JSON.parse(localStorage.getItem('sv_ex_logs') || '{}');
+  }
+}
+
 export function loadExLogs() {
-  return JSON.parse(localStorage.getItem('sv_ex_logs') || '{}');
+  return _exLogs;
 }
 
 export function saveExLogs(data) {
+  _exLogs = data;
   localStorage.setItem('sv_ex_logs', JSON.stringify(data));
 }
 
 export function getExLog(exId, sessionId) {
-  return loadExLogs()[`${exId}_${sessionId}`] || null;
+  return _exLogs[`${exId}_${sessionId}`] || null;
 }
 
 export function getLastExLog(exId, currentSessionId) {
-  const all = loadExLogs();
-  const entries = Object.entries(all)
+  const entries = Object.entries(_exLogs)
     .filter(([k]) => k.startsWith(`${exId}_`) && parseInt(k.split('_').pop()) < currentSessionId)
     .sort((a, b) => parseInt(b[0].split('_').pop()) - parseInt(a[0].split('_').pop()));
   return entries.length ? entries[0][1] : null;
 }
 
 export function saveExLog(exId, sessionId, sets, targetReps, muscle) {
-  const all = loadExLogs();
   const now = new Date();
-  all[`${exId}_${sessionId}`] = {
+  const data = {
     date: now.toLocaleDateString('es-CO'),
     time: now.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }),
     timestamp: now.toISOString(),
@@ -29,5 +56,9 @@ export function saveExLog(exId, sessionId, sets, targetReps, muscle) {
     targetReps: parseInt(targetReps) || 0,
     muscle: muscle || '',
   };
-  saveExLogs(all);
+  _exLogs[`${exId}_${sessionId}`] = data;
+  localStorage.setItem('sv_ex_logs', JSON.stringify(_exLogs));
+  // Sync to Supabase in the background
+  const uid = getUserId();
+  if (uid) upsertExLog(uid, exId, sessionId, data).catch(console.error);
 }
