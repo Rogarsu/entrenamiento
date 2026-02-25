@@ -13,7 +13,7 @@ import { buildSidebar, togglePhase, toggleSidebar } from './js/sidebar.js';
 import { loadSession, switchTab } from './js/session.js';
 import { openLogForm, closeLogForm, saveLog } from './js/logform.js';
 import { openExModal, closeExModal, saveCurrentExLog } from './js/modal.js';
-import { buildHistoryPage, showHistPage, hideHistPage } from './js/history.js';
+import { buildHistoryPage, showHistPage, hideHistPage, histSetEx, histToggleSort } from './js/history.js';
 import { toggleNavDropdown, navGoFisico, navGoHistorial } from './js/nav.js';
 
 // ===== EXPONER A WINDOW (para onclick en HTML) =====
@@ -30,6 +30,8 @@ window.saveCurrentExLog = saveCurrentExLog;
 window.showHistPage = showHistPage;
 window.hideHistPage = hideHistPage;
 window.buildHistoryPage = buildHistoryPage;
+window.histSetEx = histSetEx;
+window.histToggleSort = histToggleSort;
 window.toggleNavDropdown = toggleNavDropdown;
 window.navGoFisico = navGoFisico;
 window.navGoHistorial = navGoHistorial;

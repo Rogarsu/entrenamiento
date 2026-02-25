@@ -9,10 +9,18 @@
 .hist-subtitle { font-family: var(--font-mono); font-size: 12px; color: var(--text3); }
 .hist-back { background: none; border: 1px solid var(--border2); border-radius: 8px; color: var(--text2); padding: 7px 16px; font-size: 13px; cursor: pointer; font-family: var(--font-mono); transition: all .2s; margin-left: auto; }
 .hist-back:hover { color: var(--text); border-color: var(--amber); }
-.hist-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.hist-filters { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.hist-filter-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
 .hist-filter-btn { background: var(--bg3); border: 1px solid var(--border2); border-radius: 6px; color: var(--text2); padding: 5px 12px; font-size: 12px; cursor: pointer; font-family: var(--font-mono); transition: all .2s; }
 .hist-filter-btn.active,
 .hist-filter-btn:hover { color: var(--amber); border-color: var(--amber); background: rgba(245,158,11,0.07); }
+.hist-search {
+  background: var(--bg3); border: 1px solid var(--border2); border-radius: 6px;
+  color: var(--text); padding: 5px 12px; font-size: 13px; font-family: var(--font-mono);
+  outline: none; transition: border-color .2s; width: 260px; max-width: 100%;
+}
+.hist-search:focus { border-color: var(--amber); }
+.hist-search::placeholder { color: var(--text3); }
 .hist-empty { text-align: center; padding: 80px 20px; font-family: var(--font-mono); color: var(--text3); font-size: 13px; line-height: 2; }
 .hist-table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid var(--border2); }
 .hist-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 700px; }
@@ -21,6 +29,9 @@
   font-family: var(--font-head); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--text3); border-bottom: 1px solid var(--border2); white-space: nowrap; position: sticky; top: 0;
 }
+#histSortTh { cursor: pointer; user-select: none; }
+#histSortTh:hover { color: var(--amber); }
+.hist-sort-icon { color: var(--amber); margin-left: 4px; }
 .hist-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: middle; }
 .hist-table tr:last-child td { border-bottom: none; }
 .hist-table tr:hover td { background: rgba(255,255,255,0.02); }
