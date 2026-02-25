@@ -21,6 +21,7 @@ export const EX_IMAGES = {
 
 // Keywords para ejercicios de texto (pre/post) sin id específico
 export const EX_IMAGES_KEYWORDS = [
+  { keywords: ['jumping jacks', 'jumping jack'], img: 'images/jumping jacks.gif' },
   { keywords: ['caminata rápida', 'caminata rapida'], img: 'images/caminata rápida.gif' },
   { keywords: ['movilidad tobillo', 'movilidad de tobillo', 'círculos de tobillo', 'circulos de tobillo'], img: 'images/movilidad_tobillo.webp' },
   { keywords: ['pantorrilla contra pared'], img: 'images/Pantorrilla contra pared.avif' },

@@ -308,7 +308,7 @@ export const SESSIONS = [
     "pre": {
       "hydration": "Bebe 400-500 ml de agua 30 min antes. Puedes tomar café negro o té verde 20-30 min antes para aumentar energía y oxidación de grasas.",
       "warmup": [
-        "5 min remo ergómetro suave",
+        "30 jumping jacks",
         "15 retracciones escapulares con banda",
         "Colgarse de barra: 3 × 20 seg",
         "10 superman lentos en el suelo",
@@ -1177,7 +1177,7 @@ export const SESSIONS = [
     "pre": {
       "hydration": "Bebe 400-500 ml de agua 30 min antes. Puedes tomar café negro o té verde 20-30 min antes para aumentar energía y oxidación de grasas.",
       "warmup": [
-        "5 min remo ergómetro suave",
+        "30 jumping jacks",
         "15 retracciones escapulares con banda",
         "Colgarse de barra: 3 × 20 seg",
         "10 superman lentos en el suelo",
@@ -1978,7 +1978,7 @@ export const SESSIONS = [
     "pre": {
       "hydration": "Bebe 400-500 ml de agua 30 min antes. Puedes tomar café negro o té verde 20-30 min antes para aumentar energía y oxidación de grasas.",
       "warmup": [
-        "5 min remo ergómetro suave",
+        "30 jumping jacks",
         "15 retracciones escapulares con banda",
         "Colgarse de barra: 3 × 20 seg",
         "10 superman lentos en el suelo",
@@ -3096,7 +3096,7 @@ export const SESSIONS = [
     "pre": {
       "hydration": "Bebe 400-500 ml de agua 30 min antes. Puedes tomar café negro o té verde 20-30 min antes para aumentar energía y oxidación de grasas.",
       "warmup": [
-        "5 min remo ergómetro suave",
+        "30 jumping jacks",
         "15 retracciones escapulares con banda",
         "Colgarse de barra: 3 × 20 seg",
         "10 superman lentos en el suelo",
@@ -3764,7 +3764,7 @@ export const SESSIONS = [
     "pre": {
       "hydration": "Bebe 400-500 ml de agua 30 min antes. Puedes tomar café negro o té verde 20-30 min antes para aumentar energía y oxidación de grasas.",
       "warmup": [
-        "5 min remo ergómetro suave",
+        "30 jumping jacks",
         "15 retracciones escapulares con banda",
         "Colgarse de barra: 3 × 20 seg",
         "10 superman lentos en el suelo",
@@ -4602,7 +4602,7 @@ export const SESSIONS = [
     "pre": {
       "hydration": "Bebe 400-500 ml de agua 30 min antes. Puedes tomar café negro o té verde 20-30 min antes para aumentar energía y oxidación de grasas.",
       "warmup": [
-        "5 min remo ergómetro suave",
+        "30 jumping jacks",
         "15 retracciones escapulares con banda",
         "Colgarse de barra: 3 × 20 seg",
         "10 superman lentos en el suelo",
@@ -5259,7 +5259,7 @@ export const SESSIONS = [
     "pre": {
       "hydration": "Bebe 400-500 ml de agua 30 min antes. Puedes tomar café negro o té verde 20-30 min antes para aumentar energía y oxidación de grasas.",
       "warmup": [
-        "5 min remo ergómetro suave",
+        "30 jumping jacks",
         "15 retracciones escapulares con banda",
         "Colgarse de barra: 3 × 20 seg",
         "10 superman lentos en el suelo",
@@ -5894,7 +5894,7 @@ export const SESSIONS = [
     "pre": {
       "hydration": "Bebe 400-500 ml de agua 30 min antes. Puedes tomar café negro o té verde 20-30 min antes para aumentar energía y oxidación de grasas.",
       "warmup": [
-        "5 min remo ergómetro suave",
+        "30 jumping jacks",
         "15 retracciones escapulares con banda",
         "Colgarse de barra: 3 × 20 seg",
         "10 superman lentos en el suelo",
@@ -6441,7 +6441,7 @@ export const SESSIONS = [
     "pre": {
       "hydration": "Bebe 400-500 ml de agua 30 min antes. Puedes tomar café negro o té verde 20-30 min antes para aumentar energía y oxidación de grasas.",
       "warmup": [
-        "5 min remo ergómetro suave",
+        "30 jumping jacks",
         "15 retracciones escapulares con banda",
         "Colgarse de barra: 3 × 20 seg",
         "10 superman lentos en el suelo",
@@ -7216,7 +7216,7 @@ export const SESSIONS = [
     "pre": {
       "hydration": "Bebe 400-500 ml de agua 30 min antes. Puedes tomar café negro o té verde 20-30 min antes para aumentar energía y oxidación de grasas.",
       "warmup": [
-        "5 min remo ergómetro suave",
+        "30 jumping jacks",
         "15 retracciones escapulares con banda",
         "Colgarse de barra: 3 × 20 seg",
         "10 superman lentos en el suelo",
@@ -7845,7 +7845,7 @@ export const SESSIONS = [
     "pre": {
       "hydration": "Bebe 400-500 ml de agua 30 min antes. Puedes tomar café negro o té verde 20-30 min antes para aumentar energía y oxidación de grasas.",
       "warmup": [
-        "5 min remo ergómetro suave",
+        "30 jumping jacks",
         "15 retracciones escapulares con banda",
         "Colgarse de barra: 3 × 20 seg",
         "10 superman lentos en el suelo",
@@ -8548,7 +8548,7 @@ export const SESSIONS = [
     "pre": {
       "hydration": "Bebe 400-500 ml de agua 30 min antes. Puedes tomar café negro o té verde 20-30 min antes para aumentar energía y oxidación de grasas.",
       "warmup": [
-        "5 min remo ergómetro suave",
+        "30 jumping jacks",
         "15 retracciones escapulares con banda",
         "Colgarse de barra: 3 × 20 seg",
         "10 superman lentos en el suelo",
@@ -9034,7 +9034,7 @@ export const SESSIONS = [
     "pre": {
       "hydration": "Bebe 400-500 ml de agua 30 min antes. Puedes tomar café negro o té verde 20-30 min antes para aumentar energía y oxidación de grasas.",
       "warmup": [
-        "5 min remo ergómetro suave",
+        "30 jumping jacks",
         "15 retracciones escapulares con banda",
         "Colgarse de barra: 3 × 20 seg",
         "10 superman lentos en el suelo",
@@ -9509,7 +9509,7 @@ export const SESSIONS = [
     "pre": {
       "hydration": "Bebe 400-500 ml de agua 30 min antes. Puedes tomar café negro o té verde 20-30 min antes para aumentar energía y oxidación de grasas.",
       "warmup": [
-        "5 min remo ergómetro suave",
+        "30 jumping jacks",
         "15 retracciones escapulares con banda",
         "Colgarse de barra: 3 × 20 seg",
         "10 superman lentos en el suelo",
@@ -10162,7 +10162,7 @@ export const SESSIONS = [
     "pre": {
       "hydration": "Bebe 400-500 ml de agua 30 min antes. Puedes tomar café negro o té verde 20-30 min antes para aumentar energía y oxidación de grasas.",
       "warmup": [
-        "5 min remo ergómetro suave",
+        "30 jumping jacks",
         "15 retracciones escapulares con banda",
         "Colgarse de barra: 3 × 20 seg",
         "10 superman lentos en el suelo",
@@ -10730,7 +10730,7 @@ export const SESSIONS = [
     "pre": {
       "hydration": "Bebe 400-500 ml de agua 30 min antes. Puedes tomar café negro o té verde 20-30 min antes para aumentar energía y oxidación de grasas.",
       "warmup": [
-        "5 min remo ergómetro suave",
+        "30 jumping jacks",
         "15 retracciones escapulares con banda",
         "Colgarse de barra: 3 × 20 seg",
         "10 superman lentos en el suelo",
