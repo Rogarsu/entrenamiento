@@ -1,5 +1,4 @@
-import { SESSIONS } from '../data/sessions.js';
-import { state, isDone } from './state.js';
+import { state, isDone, getPlan } from './state.js';
 
 export function buildSidebar() {
   const container = document.getElementById('phaseList');
@@ -7,7 +6,7 @@ export function buildSidebar() {
   const phaseColors = { 1: 'ph1', 2: 'ph2', 3: 'ph3', 4: 'ph4' };
 
   container.innerHTML = phases.map(ph => {
-    const pSessions = SESSIONS.filter(s => s.phase === ph);
+    const pSessions = getPlan().filter(s => s.phase === ph);
     const donePh = pSessions.filter(s => isDone(s.id)).length;
     return `
     <div class="phase-section">
@@ -33,8 +32,8 @@ export function buildSidebar() {
 }
 
 export function updateSidebarProgress() {
-  const total = SESSIONS.length;
-  const done = SESSIONS.filter(s => isDone(s.id)).length;
+  const total = getPlan().length;
+  const done = getPlan().filter(s => isDone(s.id)).length;
   document.getElementById('sidebarProgress').textContent = `${done} / ${total} sesiones completadas`;
 }
 

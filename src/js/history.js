@@ -1,10 +1,10 @@
 import { loadExLogs } from './storage.js';
-import { SESSIONS } from '../data/sessions.js';
+import { getPlan } from './state.js';
 
 const _state = { muscle: '__all__', ex: '', sortDir: 'desc' };
 
 export function getExNameFromSessions(exId) {
-  for (const s of SESSIONS) {
+  for (const s of getPlan()) {
     for (const bl of (s.workout?.blocks || [])) {
       for (const ex of (bl.exercises || [])) {
         if (ex.id === exId) return ex.name;
@@ -15,7 +15,7 @@ export function getExNameFromSessions(exId) {
 }
 
 export function getSessionName(sessionId) {
-  const s = SESSIONS.find(x => x.id === sessionId);
+  const s = getPlan().find(x => x.id === sessionId);
   return s ? s.name : `Sesión ${sessionId}`;
 }
 

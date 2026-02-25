@@ -1,6 +1,8 @@
 import { upsertSessionLog } from './db.js';
+import { SESSIONS as DEFAULT_SESSIONS } from '../data/sessions.js';
 
 let _userId = null;
+let _activeSessions = null; // null = fallback to DEFAULT_SESSIONS
 
 export const state = {
   logs: [],
@@ -8,8 +10,18 @@ export const state = {
   expandedPhases: [1, 2, 3, 4],
 };
 
-// Called on login with rows from Supabase session_logs table.
-// If sessionLogs is null, falls back to localStorage (offline).
+// ── Plan (dynamic per user) ────────────────────────────────────────────────────
+
+export function setPlan(sessions) {
+  _activeSessions = sessions;
+}
+
+export function getPlan() {
+  return _activeSessions || DEFAULT_SESSIONS;
+}
+
+// ── Auth init ──────────────────────────────────────────────────────────────────
+
 export function initState(sessionLogs, userId) {
   _userId = userId;
   if (Array.isArray(sessionLogs) && userId) {
@@ -24,7 +36,6 @@ export function initState(sessionLogs, userId) {
     }));
     localStorage.setItem('sv_logs', JSON.stringify(state.logs));
   } else {
-    // Offline fallback — load from localStorage
     state.logs = JSON.parse(localStorage.getItem('sv_logs') || '[]');
   }
 }
@@ -33,7 +44,6 @@ export function getUserId() { return _userId; }
 
 export function saveState() {
   localStorage.setItem('sv_logs', JSON.stringify(state.logs));
-  // Sync latest log to Supabase in the background
   if (_userId) {
     const latest = state.logs[state.logs.length - 1];
     if (latest) upsertSessionLog(_userId, latest).catch(console.error);

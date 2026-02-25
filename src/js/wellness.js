@@ -1,5 +1,4 @@
-import { state } from './state.js';
-import { SESSIONS } from '../data/sessions.js';
+import { state, getPlan } from './state.js';
 
 // ─── Muscle group definitions ─────────────────────────────────────────────────
 const MUSCLE_GROUPS = {
@@ -133,7 +132,7 @@ function _muscleKey(str) {
 
 function _getRecentSessions(n = 3) {
   const sorted = [...state.logs].sort((a, b) => b.sessionId - a.sessionId);
-  return sorted.slice(0, n).map(l => SESSIONS.find(s => s.id === l.sessionId)).filter(Boolean);
+  return sorted.slice(0, n).map(l => getPlan().find(s => s.id === l.sessionId)).filter(Boolean);
 }
 
 function _getMusclesFromSessions(sessions) {

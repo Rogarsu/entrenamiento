@@ -42,3 +42,23 @@ export async function upsertExLog(userId, exId, sessionId, data) {
   }, { onConflict: 'user_id,exercise_id,session_id' });
   if (error) console.error('upsert exercise_log:', error);
 }
+
+// ── TRAINING PLANS ──────────────────────────────────────────────────────────
+
+export async function fetchUserPlan(userId) {
+  const { data, error } = await supabase
+    .from('training_plans')
+    .select('sessions')
+    .eq('user_id', userId)
+    .single();
+  if (error) return null;
+  return data?.sessions || null;
+}
+
+export async function upsertUserPlan(userId, sessions) {
+  const { error } = await supabase.from('training_plans').upsert({
+    user_id: userId,
+    sessions,
+  }, { onConflict: 'user_id' });
+  if (error) console.error('upsert training_plan:', error);
+}

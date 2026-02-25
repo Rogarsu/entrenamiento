@@ -1,12 +1,11 @@
-import { SESSIONS } from '../data/sessions.js';
 import { PHASES } from '../data/phases.js';
-import { state, isDone, getLog } from './state.js';
+import { state, isDone, getLog, getPlan } from './state.js';
 import { getExRecommendation } from './progression.js';
 import { escStr } from './helpers.js';
 
 export function loadSession(id) {
   state.currentId = id;
-  const s = SESSIONS.find(x => x.id === id);
+  const s = getPlan().find(x => x.id === id);
   if (!s) return;
 
   document.querySelectorAll('.session-item').forEach(el => el.classList.remove('active'));
@@ -175,7 +174,7 @@ export function buildPhaseIntro(phase) {
   const p = PHASES[phase];
   const phaseColors = { 1: 'var(--amber)', 2: 'var(--cyan)', 3: 'var(--red)', 4: 'var(--green)' };
   const color = phaseColors[phase];
-  const pSessions = SESSIONS.filter(s => s.phase === phase);
+  const pSessions = getPlan().filter(s => s.phase === phase);
   const done = pSessions.filter(s => isDone(s.id)).length;
 
   document.getElementById('phaseIntroBox').innerHTML = `

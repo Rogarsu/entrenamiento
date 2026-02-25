@@ -8,6 +8,7 @@ import './styles/stats.css';
 import './styles/history.css';
 import './styles/wellness.css';
 import './styles/auth.css';
+import './styles/onboarding.css';
 
 // ===== MÓDULOS JS =====
 import { buildSidebar, togglePhase, toggleSidebar } from './js/sidebar.js';

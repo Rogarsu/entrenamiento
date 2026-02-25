@@ -1,5 +1,4 @@
-import { state } from './state.js';
-import { SESSIONS } from '../data/sessions.js';
+import { state, getPlan } from './state.js';
 import { getExImage } from '../data/images.js';
 import { getExLog, getLastExLog, saveExLog } from './storage.js';
 import { calcNextRecommendation, calcCrossExRecommendation, getRelatedExLogs, getExRecommendation } from './progression.js';
@@ -92,7 +91,7 @@ export function saveCurrentExLog() {
     badge.style.display = 'block';
   }
 
-  const curSession = SESSIONS.find(x => x.id === state.currentId);
+  const curSession = getPlan().find(x => x.id === state.currentId);
   if (curSession) {
     curSession.workout.blocks.forEach(bl => {
       bl.exercises.forEach(ex => {

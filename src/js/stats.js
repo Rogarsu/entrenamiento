@@ -1,9 +1,8 @@
-import { SESSIONS } from '../data/sessions.js';
-import { state, isDone } from './state.js';
+import { state, isDone, getPlan } from './state.js';
 
 export function buildStats() {
-  const total = SESSIONS.length;
-  const done = SESSIONS.filter(s => isDone(s.id)).length;
+  const total = getPlan().length;
+  const done = getPlan().filter(s => isDone(s.id)).length;
   const totalMin = state.logs.reduce((a, b) => a + (b.duration || 0), 0);
   const avgEnergy = state.logs.length
     ? (state.logs.reduce((a, b) => a + (b.energy || 0), 0) / state.logs.length).toFixed(1)

@@ -1,10 +1,12 @@
 import { supabase } from './supabase.js';
-import { fetchUserData } from './db.js';
-import { initState } from './state.js';
+import { fetchUserData, fetchUserPlan, upsertUserPlan } from './db.js';
+import { initState, setPlan } from './state.js';
 import { initExLogs } from './storage.js';
 import { buildStats } from './stats.js';
 import { buildSidebar } from './sidebar.js';
 import { hasPendingLocalData, showMigrationBanner } from './migrate.js';
+import { showOnboarding } from './onboarding.js';
+import { SESSIONS as DEFAULT_SESSIONS } from '../data/sessions.js';
 
 // ── INTERNAL ───────────────────────────────────────────────────────────────────
 
@@ -12,14 +14,36 @@ async function _loadAndRender(user) {
   const { sessionLogs, exLogs } = await fetchUserData(user.id);
   initState(sessionLogs, user.id);
   initExLogs(exLogs);
-  buildStats();
-  buildSidebar();
-  // Show migration banner if user has local data not yet in Supabase
-  if (hasPendingLocalData(sessionLogs, exLogs)) showMigrationBanner();
+
+  // Load user's training plan from Supabase
+  const planSessions = await fetchUserPlan(user.id);
+
+  if (planSessions) {
+    // User has a saved plan
+    setPlan(planSessions);
+    buildStats();
+    buildSidebar();
+    if (hasPendingLocalData(sessionLogs, exLogs)) showMigrationBanner();
+  } else if (sessionLogs.length > 0) {
+    // Existing user (has logs but no plan row) → save DEFAULT_SESSIONS as their plan
+    await upsertUserPlan(user.id, DEFAULT_SESSIONS);
+    setPlan(DEFAULT_SESSIONS);
+    buildStats();
+    buildSidebar();
+    if (hasPendingLocalData(sessionLogs, exLogs)) showMigrationBanner();
+  } else {
+    // New user with no logs and no plan → show onboarding
+    if (hasPendingLocalData(sessionLogs, exLogs)) showMigrationBanner();
+    showOnboarding();
+    return false; // signal: onboarding is showing, app not shown yet
+  }
+
+  return true;
 }
 
 function _showApp(user) {
   document.getElementById('authOverlay').style.display = 'none';
+  document.getElementById('onboardingOverlay').style.display = 'none';
   document.getElementById('appContent').style.display = '';
   const el = document.getElementById('navUserEmail');
   if (el) el.textContent = user.email;
@@ -28,6 +52,7 @@ function _showApp(user) {
 function _showLogin() {
   document.getElementById('authOverlay').style.display = 'flex';
   document.getElementById('appContent').style.display = 'none';
+  document.getElementById('onboardingOverlay').style.display = 'none';
   _renderTab('signin');
 }
 
@@ -57,8 +82,13 @@ export async function initAuth() {
   // Check for existing session (handles OAuth redirect too)
   const { data: { session } } = await supabase.auth.getSession();
   if (session) {
-    await _loadAndRender(session.user);
-    _showApp(session.user);
+    const appReady = await _loadAndRender(session.user);
+    if (appReady) _showApp(session.user);
+    else {
+      // Onboarding is showing — still update nav email
+      const el = document.getElementById('navUserEmail');
+      if (el) el.textContent = session.user.email;
+    }
   } else {
     _showLogin();
   }
@@ -66,8 +96,12 @@ export async function initAuth() {
   // Listen for future auth state changes
   supabase.auth.onAuthStateChange(async (event, session) => {
     if (event === 'SIGNED_IN' && session) {
-      await _loadAndRender(session.user);
-      _showApp(session.user);
+      const appReady = await _loadAndRender(session.user);
+      if (appReady) _showApp(session.user);
+      else {
+        const el = document.getElementById('navUserEmail');
+        if (el) el.textContent = session.user.email;
+      }
     } else if (event === 'SIGNED_OUT') {
       initState([], null);
       initExLogs([]);
