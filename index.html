@@ -84,6 +84,7 @@
     <button class="nav-mod locked" title="Próximamente">🥗 Nutrición</button>
     <button class="nav-mod locked" title="Próximamente">📈 Progreso</button>
     <button class="nav-mod hist-btn" onclick="showHistPage()">📋 Historial</button>
+    <button class="nav-mod" onclick="navGoReportes()">📄 Reportes</button>
   </div>
 
   <!-- DROPDOWN MÓVIL -->
@@ -99,6 +100,7 @@
       <button class="nav-dd-item locked" disabled title="Próximamente">📈 Progreso <span class="nav-dd-tag">pronto</span></button>
       <div class="nav-dd-divider"></div>
       <button class="nav-dd-item active-hist" id="navItemHistorial" onclick="navGoHistorial()">📋 Historial</button>
+      <button class="nav-dd-item" id="navItemReportes" onclick="navGoReportes()">📄 Reportes</button>
       <div class="nav-dd-divider"></div>
       <button class="nav-dd-item" onclick="authSignOut()" style="color:var(--text3)">🚪 Cerrar sesión</button>
     </div>
@@ -197,6 +199,47 @@
   <div class="wellness-modal">
     <button class="ex-modal-close" onclick="closeWellnessModal()">✕</button>
     <div id="wellnessContent"></div>
+  </div>
+</div>
+
+<!-- REPORTS PAGE -->
+<div id="reportsPage" class="reports-page">
+  <div class="reports-header">
+    <div class="reports-title">📄 Reportes</div>
+    <button class="reports-back" onclick="navGoFisico()">← Volver</button>
+  </div>
+  <div class="reports-desc">Genera PDFs para compartir con tu coach o revisar tu progreso.</div>
+  <div class="reports-grid">
+    <div class="report-card">
+      <div class="report-card-icon">📋</div>
+      <div class="report-card-title">Plan de entrenamiento</div>
+      <div class="report-card-desc">Todas tus sesiones con ejercicios, series, repeticiones y guías de peso. Ideal para mostrar a tu coach.</div>
+      <div class="report-card-details">
+        <span>· Organizado por fase y sesión</span>
+        <span>· Tabla de ejercicios por bloque</span>
+        <span>· Guías de peso e intensidad</span>
+      </div>
+      <button class="report-btn" onclick="downloadPlanPDF()">⬇ Descargar PDF</button>
+    </div>
+    <div class="report-card">
+      <div class="report-card-icon">📊</div>
+      <div class="report-card-title">Historial de pesos</div>
+      <div class="report-card-desc">Todos tus registros con series, repeticiones y pesos usados. Muestra tu progresión real.</div>
+      <div class="report-card-details">
+        <span>· Agrupado por músculo y ejercicio</span>
+        <span>· Progresión de peso en el tiempo</span>
+        <span>· Volumen total por sesión</span>
+      </div>
+      <button class="report-btn" onclick="downloadHistorialPDF()">⬇ Descargar PDF</button>
+    </div>
+  </div>
+  <div class="reports-soon-section">
+    <div class="reports-soon-title">Próximamente</div>
+    <div class="reports-soon-grid">
+      <div class="report-soon-card"><span class="report-soon-icon">📈</span><div class="report-soon-info"><div class="report-soon-name">Reporte de progreso</div><div class="report-soon-tag">Próximamente</div></div></div>
+      <div class="report-soon-card"><span class="report-soon-icon">🗓</span><div class="report-soon-info"><div class="report-soon-name">Resumen mensual</div><div class="report-soon-tag">Próximamente</div></div></div>
+      <div class="report-soon-card"><span class="report-soon-icon">💪</span><div class="report-soon-info"><div class="report-soon-name">Máximos personales</div><div class="report-soon-tag">Próximamente</div></div></div>
+    </div>
   </div>
 </div>
 

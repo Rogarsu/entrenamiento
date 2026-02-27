@@ -13,28 +13,38 @@ export function setNavPage(page) {
   const label = document.getElementById('navCurrentPage');
   const itemFisico = document.getElementById('navItemFisico');
   const itemHistorial = document.getElementById('navItemHistorial');
+  const itemReportes = document.getElementById('navItemReportes');
 
-  if (page === 'fisico') {
-    if (label) label.textContent = '🏋️ Físico';
-    itemFisico?.classList.add('active');
-    itemHistorial?.classList.remove('active');
-  } else if (page === 'historial') {
-    if (label) label.textContent = '📋 Historial';
-    itemFisico?.classList.remove('active');
-    itemHistorial?.classList.add('active');
-  }
+  const labels = {
+    fisico: '🏋️ Físico',
+    historial: '📋 Historial',
+    reportes: '📄 Reportes',
+  };
+  if (label) label.textContent = labels[page] || labels.fisico;
+
+  itemFisico?.classList.toggle('active', page === 'fisico');
+  itemHistorial?.classList.toggle('active', page === 'historial');
+  itemReportes?.classList.toggle('active', page === 'reportes');
 
   closeNavDropdown();
 }
 
 export function navGoFisico() {
   window.hideHistPage?.();
+  window.hideReportsPage?.();
   setNavPage('fisico');
 }
 
 export function navGoHistorial() {
+  window.hideReportsPage?.();
   window.showHistPage?.();
   setNavPage('historial');
+}
+
+export function navGoReportes() {
+  window.hideHistPage?.();
+  window.showReportsPage?.();
+  setNavPage('reportes');
 }
 
 document.addEventListener('click', (e) => {
