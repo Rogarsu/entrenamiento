@@ -78,6 +78,10 @@
 .ex-sets, .ex-reps, .ex-rest { font-family: var(--font-mono); color: var(--text2); font-size: 12px; white-space: nowrap; }
 .ex-notes { color: var(--cyan2); font-size: 12px; font-style: italic; }
 .ex-weight { color: var(--amber); font-size: 12px; font-family: var(--font-mono); }
+.ex-log-row { font-size: 11px; color: var(--green); margin-top: 4px; font-family: var(--font-mono); line-height: 1.4; }
+.ex-edit-hint { color: var(--text3); font-size: 10px; }
+.ex-name.ex-logged { color: var(--green); }
+.ex-name.ex-logged:hover { color: var(--amber); }
 
 /* MARK DONE */
 .mark-section { border-top: 1px solid var(--border2); padding-top: 16px; margin-top: 4px; }

@@ -120,6 +120,16 @@ export function saveCurrentExLog() {
   if (fb) { fb.style.display = 'block'; setTimeout(() => { fb.style.display = 'none'; }, 2000); }
   const recDiv = document.getElementById('exModalRec');
   if (recDiv) recDiv.innerHTML = buildRecSection(id, state.currentId, targetReps, muscle, _exCtx.weightGuide);
+
+  // Update the logged-values summary row in the exercise table (live, no full re-render)
+  const sumEl = document.getElementById(`ex_log_sum_${id}`);
+  if (sumEl) {
+    const summary = sets.map(st => `${st.weight > 0 ? st.weight + 'kg' : '—'}×${st.reps}`).join(' · ');
+    sumEl.innerHTML = `✓ ${summary}<span class="ex-edit-hint"> — toca para editar</span>`;
+    sumEl.style.display = 'block';
+  }
+  const iconEl = document.getElementById(`ex_icon_${id}`);
+  if (iconEl) iconEl.textContent = '✏️';
 }
 
 export function buildRecSection(exId, sessionId, targetRepsStr, muscle, weightGuide) {

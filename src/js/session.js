@@ -1,5 +1,6 @@
 import { PHASES } from '../data/phases.js';
 import { state, isDone, getLog, getPlan } from './state.js';
+import { getExLog } from './storage.js';
 import { getExRecommendation } from './progression.js';
 import { escStr } from './helpers.js';
 
@@ -89,6 +90,11 @@ export function loadSession(id) {
             <tbody>
               ${bl.exercises.map(e => {
                 const exRec = getExRecommendation(e.id, s.id, e.reps || '', e.muscle || '', e.weight_guide || '');
+                const exLog = getExLog(e.id, s.id);
+                const hasLog = !!(exLog && exLog.sets && exLog.sets.length);
+                const logSummary = hasLog
+                  ? exLog.sets.map(st => `${st.weight > 0 ? st.weight + 'kg' : '—'}×${st.reps}`).join(' · ')
+                  : '';
                 let badgeHtml = '';
                 if (exRec) {
                   if (exRec.type === 'same') {
@@ -107,10 +113,11 @@ export function loadSession(id) {
                 return `
                 <tr>
                   <td>
-                    <div class="ex-name" onclick="openExModal('${e.id}','${escStr(e.name)}','${escStr(e.muscle)}','${escStr(e.equip)}','${e.sets}','${escStr(e.reps)}','${escStr(e.weight_guide || '')}')">
-                      <span class="img-icon">🖼</span> ${e.name}
+                    <div class="ex-name${hasLog ? ' ex-logged' : ''}" onclick="openExModal('${e.id}','${escStr(e.name)}','${escStr(e.muscle)}','${escStr(e.equip)}','${e.sets}','${escStr(e.reps)}','${escStr(e.weight_guide || '')}')">
+                      <span class="img-icon" id="ex_icon_${e.id}">${hasLog ? '✏️' : '🖼'}</span> ${e.name}
                     </div>
                     <div class="ex-muscle">${e.muscle}</div>
+                    <div class="ex-log-row" id="ex_log_sum_${e.id}"${hasLog ? '' : ' style="display:none"'}>✓ ${logSummary}<span class="ex-edit-hint"> — toca para editar</span></div>
                   </td>
                   <td><span class="ex-sets">${e.sets}</span></td>
                   <td><span class="ex-reps">${e.reps}</span></td>
