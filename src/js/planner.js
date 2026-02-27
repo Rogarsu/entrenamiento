@@ -37,15 +37,49 @@ const MUSCLE_MAP = {
 };
 
 const PHASE_NAMES = {
-  1: { name: 'Fase 1 — Adaptación',    desc: 'Semanas iniciales: aprendizaje técnico, acondicionamiento articular y establecimiento de la base.', weeks: '4 semanas' },
-  2: { name: 'Fase 2 — Desarrollo',    desc: 'Progresión de cargas y volumen. Mayor intensidad y densidad de entrenamiento.', weeks: '4 semanas' },
-  3: { name: 'Fase 3 — Intensificación', desc: 'Máxima exigencia del mesociclo. Cargas altas, alta densidad y adaptaciones clave.', weeks: '4 semanas' },
-  4: { name: 'Fase 4 — Deload',        desc: 'Semana de descarga. Volumen e intensidad reducidos para optimizar la recuperación y supercompensación.', weeks: '1 semana' },
+  1: { name: 'Fase 1 — Adaptación',      desc: 'Aprendizaje técnico, acondicionamiento articular y establecimiento de la base de volumen (MEV).', weeks: '4 semanas' },
+  2: { name: 'Fase 2 — Desarrollo',      desc: 'Progresión de carga y volumen hacia el rango óptimo (MAV). Mayor intensidad y densidad.', weeks: '4 semanas' },
+  3: { name: 'Fase 3 — Intensificación', desc: 'Máxima exigencia del mesociclo. Cargas altas, volumen cerca del MRV y adaptaciones clave.', weeks: '4 semanas' },
+  4: { name: 'Fase 4 — Deload',          desc: 'Semana de descarga. Volumen reducido al 40-50% para facilitar la recuperación y supercompensación.', weeks: '1 semana' },
+};
+
+// ─── EVIDENCE-BASED PARAMETER TABLES ─────────────────────────────────────────
+
+// Rep ranges vary by goal AND phase (periodization: adaptation → intensification)
+// Phase 1 = higher reps (technique + connective tissue adaptation)
+// Phase 3 = lower reps (intensification toward the strength-hypertrophy intersection)
+// Phase 4 (deload) = moderate reps, submaximal load
+const REP_MATRIX = {
+  strength:    { 1: '6-8',   2: '4-6',   3: '3-5',   4: '8-10'  },
+  hypertrophy: { 1: '12-15', 2: '8-12',  3: '6-10',  4: '12-15' },
+  weight_loss: { 1: '15-20', 2: '12-15', 3: '12-15', 4: '15-20' },
+  endurance:   { 1: '20-25', 2: '15-20', 3: '15-20', 4: '20-25' },
+  general:     { 1: '12-15', 2: '10-12', 3: '8-10',  4: '12-15' },
+};
+
+// Rest periods by goal and exercise type
+// Evidence: strength needs full PCr resynthesis (3-5 min); metabolic protocols use shorter rest
+const REST_MAP = {
+  strength:    { compound: '180-300 seg', isolation: '90-120 seg' },
+  hypertrophy: { compound: '90-120 seg',  isolation: '60-90 seg'  },
+  weight_loss: { compound: '60-75 seg',   isolation: '45-60 seg'  },
+  endurance:   { compound: '45-60 seg',   isolation: '30-45 seg'  },
+  general:     { compound: '90 seg',      isolation: '60 seg'     },
+};
+
+// RIR (Reps In Reserve) target — how close to failure the user should train
+// Evidence: RIR 1-3 produces equal hypertrophy to failure with less recovery cost
+const RIR_NOTE = {
+  strength:    'RIR 1-2 · deja 1-2 reps en el tanque',
+  hypertrophy: 'RIR 1-3 · esfuerzo alto sin llegar al fallo',
+  weight_loss: 'RIR 2-3 · mantén buena técnica a ritmo alto',
+  endurance:   'RIR 3-4 · ritmo sostenible y controlado',
+  general:     'RIR 2-3 · esfuerzo moderado-alto',
 };
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 
-function _pick(arr, n, difficulty, env) {
+function _pick(arr, n, difficulty, env, preferLengthened) {
   const filtered = arr.filter(e => {
     const envOk = env === 'gym'
       ? true
@@ -59,22 +93,52 @@ function _pick(arr, n, difficulty, env) {
         : true;
     return envOk && diffOk && e.category !== 'cardio' && e.category !== 'mobility';
   });
-  const shuffled = [...filtered].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, n);
+
+  // Prefer exercises that load the muscle in its lengthened/stretched position.
+  // Evidence (Pedrosa 2022, Maeo 2023): lengthened-position loading produces
+  // equal or greater hypertrophy than shortened-position at matched volume.
+  const sorted = [...filtered].sort((a, b) => {
+    if (preferLengthened) {
+      if (a.lengthened && !b.lengthened) return -1;
+      if (!a.lengthened && b.lengthened) return 1;
+    }
+    return Math.random() - 0.5;
+  });
+
+  return sorted.slice(0, n);
 }
 
-function _exForMuscle(muscle, difficulty, env, n = 2) {
+function _exForMuscle(muscle, difficulty, env, n = 2, objetivo = 'general') {
   const pool = EXERCISES.filter(e => e.muscle_primary === muscle);
-  return _pick(pool, n, difficulty, env);
+  // Prioritize lengthened-position exercises for hypertrophy and strength goals
+  const preferLengthened = objetivo === 'hypertrophy' || objetivo === 'strength';
+  return _pick(pool, n, difficulty, env, preferLengthened);
 }
 
-function _toSessionExercise(ex, objetivo) {
-  let sets = ex.sets_default;
-  let reps = ex.reps_default;
+function _toSessionExercise(ex, objetivo, phase, isDeload) {
+  // ── Volume progression: MEV (phase 1) → MAV (phase 3), deload at 2 sets ──
+  // Evidence: volume-hypertrophy dose-response (Schoenfeld 2017, Krieger 2010)
+  let sets;
+  if (isDeload) {
+    sets = 2;
+  } else {
+    const phaseAdj = [0, 0, 1, 2][Math.min((phase || 1) - 1, 3)];
+    const cap = (ex.category === 'compound' || ex.category === 'core') ? 5 : 4;
+    sets = Math.min(ex.sets_default + phaseAdj, cap);
+  }
 
-  if (objetivo === 'strength') { sets = Math.min(sets + 1, 5); reps = '4-6'; }
-  else if (objetivo === 'hypertrophy') { sets = Math.max(sets, 3); reps = ex.reps_default || '8-12'; }
-  else if (objetivo === 'endurance' || objetivo === 'weight_loss') { reps = '15-20'; }
+  // ── Rep range: periodized by goal × phase ──────────────────────────────────
+  const repMatrix = REP_MATRIX[objetivo] || REP_MATRIX.general;
+  const phaseKey = isDeload ? 4 : Math.min(phase || 1, 3);
+  const reps = repMatrix[phaseKey] || ex.reps_default;
+
+  // ── Rest: goal-specific, compound vs isolation ────────────────────────────
+  const restMap = REST_MAP[objetivo] || REST_MAP.general;
+  const isIsolation = ex.category === 'isolation';
+  const rest = isIsolation ? restMap.isolation : restMap.compound;
+
+  // ── Notes: RIR target ─────────────────────────────────────────────────────
+  const notes = RIR_NOTE[objetivo] || RIR_NOTE.general;
 
   return {
     id: ex.id,
@@ -83,9 +147,9 @@ function _toSessionExercise(ex, objetivo) {
     equip: ex.equip,
     sets: String(sets),
     reps,
-    rest: `${ex.rest_seconds} seg`,
+    rest,
     weight_guide: ex.weight_guide,
-    notes: '',
+    notes,
   };
 }
 
@@ -116,16 +180,13 @@ function _postSection() {
 export function generatePlan(answers) {
   const { objetivo, nivel, dias, duracion, entorno, enfoque, semanas } = answers;
 
-  // Determine phases based on semanas
   const totalPhases = semanas >= 12 ? 4 : semanas >= 8 ? 3 : 2;
   const weeksPerPhase = Math.floor(semanas / totalPhases);
 
-  // Sessions per week from split template
   const splitDays = SPLIT_TEMPLATES[enfoque] || SPLIT_TEMPLATES['full_body'];
   const sessionsPerWeek = Math.min(dias, splitDays.length);
   const dayTemplates = splitDays.slice(0, sessionsPerWeek);
 
-  // Exercises per session based on duration
   const exCount = duracion <= 45 ? 4 : duracion <= 60 ? 5 : duracion <= 75 ? 6 : 7;
 
   const sessions = [];
@@ -141,33 +202,31 @@ export function generatePlan(answers) {
         const blocks = [];
 
         if (!isDeload) {
-          // Build exercise blocks for each muscle group
           const exPerMuscle = Math.max(1, Math.floor(exCount / muscles.length));
           for (const muscle of muscles) {
-            const exs = _exForMuscle(muscle, nivel, entorno, exPerMuscle);
+            const exs = _exForMuscle(muscle, nivel, entorno, exPerMuscle, objetivo);
             if (exs.length > 0) {
               blocks.push(_buildBlock(
                 _muscleBlockName(muscle),
-                exs.map(e => _toSessionExercise(e, objetivo))
+                exs.map(e => _toSessionExercise(e, objetivo, phase, false))
               ));
             }
           }
         } else {
-          // Deload: full body lighter
+          // Deload: full body, beginner exercises, 2 sets each
           const deloadMuscles = ['quads', 'chest', 'back', 'core'];
           for (const muscle of deloadMuscles) {
-            const exs = _exForMuscle(muscle, 'beginner', entorno, 1);
+            const exs = _exForMuscle(muscle, 'beginner', entorno, 1, 'general');
             if (exs.length > 0) {
-              const ex = _toSessionExercise(exs[0], 'general');
-              ex.sets = '2';
-              blocks.push(_buildBlock(_muscleBlockName(muscle), [ex]));
+              blocks.push(_buildBlock(
+                _muscleBlockName(muscle),
+                [_toSessionExercise(exs[0], 'general', 4, true)]
+              ));
             }
           }
         }
 
-        const sessionPhase = totalPhases >= 4 && phase === totalPhases
-          ? 4
-          : Math.min(phase, 4);
+        const sessionPhase = totalPhases >= 4 && phase === totalPhases ? 4 : Math.min(phase, 4);
 
         sessions.push({
           id: sessionId++,
@@ -176,7 +235,7 @@ export function generatePlan(answers) {
           type: _splitType(templateName),
           intensity: _phaseIntensity(phase, totalPhases, isDeload),
           duration: `${duracion} min`,
-          muscles: muscles,
+          muscles,
           pre: _preSection(),
           workout: { blocks },
           post: _postSection(),
@@ -215,7 +274,6 @@ function _phaseIntensity(phase, total, isDeload) {
 }
 
 // ─── PHASE METADATA BUILDER ──────────────────────────────────────────────────
-// Returns PHASES-compatible object for the generated plan
 
 export function generatePhasesMeta(answers) {
   const { semanas } = answers;
