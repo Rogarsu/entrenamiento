@@ -386,6 +386,67 @@ const FUNDAMENTOS = [
     content: ['<strong>Creatina monohidrato (3–5g/día):</strong> El suplemento más estudiado y efectivo. Mejora fuerza, potencia explosiva y masa muscular. No necesita carga. Tómala diariamente sin importar el horario.', '<strong>Proteína en polvo (whey):</strong> Práctica para alcanzar la ingesta proteica cuando la comida real no alcanza. Es simplemente proteína de rápida absorción — completamente opcional.', '<strong>Vitamina D3 (1000–2000 UI/día):</strong> La mayoría tenemos deficiencia. Impacta rendimiento muscular, inmunidad y testosterona.', '<strong>Omega-3 (1–3g EPA+DHA/día):</strong> Antiinflamatorio, mejora recuperación. Especialmente útil si no consumes pescado azul 2–3 veces/semana.'] },
 ];
 
+// ── RECIPES ───────────────────────────────────────────────────────────────────
+
+const RECIPES = {
+  wake: [
+    { name: 'Avena proteica con plátano', time: '5 min', servings: 1,
+      ingredients: ['80g avena en hojuelas', '250ml leche o bebida vegetal', '1 plátano maduro', '1 scoop proteína en polvo (opcional)', '1 cdta miel', 'Canela al gusto'],
+      steps: ['Calienta la leche con la avena 2-3 min a fuego medio, revolviendo constantemente.', 'Retira del fuego, mezcla la proteína en polvo y la miel hasta disolver.', 'Sirve en bowl con el plátano en rodajas y espolvorea canela.'] },
+    { name: 'Revuelto de claras con tostada integral', time: '7 min', servings: 1,
+      ingredients: ['5 claras de huevo + 1 yema', '2 rebanadas de pan integral', '1 tomate pequeño', 'Sal, pimienta y orégano', '1 cdta aceite de oliva'],
+      steps: ['Bate las claras con la yema, sal y pimienta.', 'Calienta el aceite en sartén antiadherente a fuego medio. Vierte los huevos y revuelve suavemente hasta cuajar (2-3 min).', 'Tuesta el pan. Sirve el revuelto con tomate en rodajas y espolvorea orégano.'] },
+  ],
+  midmorning: [
+    { name: 'Bowl de yogur griego con granola', time: '2 min', servings: 1,
+      ingredients: ['200g yogur griego natural', '30g granola sin azúcar añadida', '1 puñado fresas o arándanos', '1 cdta miel'],
+      steps: ['Vierte el yogur en un bowl amplio.', 'Distribuye la granola y las frutas por encima.', 'Termina con la miel. Consume de inmediato para que la granola no se ablande.'] },
+    { name: 'Tostada con atún y aguacate', time: '5 min', servings: 1,
+      ingredients: ['2 rebanadas pan integral', '1 lata pequeña de atún en agua', '½ aguacate maduro', 'Jugo de ½ limón', 'Sal, pimienta y tomates cherry (opcional)'],
+      steps: ['Tuesta el pan al punto deseado.', 'Aplasta el aguacate con el limón, sal y pimienta hasta obtener una pasta.', 'Escurre bien el atún. Unta el aguacate en las tostadas y coloca el atún encima. Añade tomatitos si deseas.'] },
+  ],
+  lunch: [
+    { name: 'Arroz con pollo y vegetales salteados', time: '20 min', servings: 1,
+      ingredients: ['150g arroz cocido', '180g pechuga de pollo', '1 taza brócoli + zanahoria', '2 dientes de ajo', 'Aceite de oliva, sal, pimienta, comino', 'Salsa de soja al gusto'],
+      steps: ['Condimenta el pollo con ajo picado, sal, pimienta y comino. Cocina en sartén a fuego medio-alto, 6-8 min por lado.', 'En el mismo sartén, saltea los vegetales con un chorrito de aceite 4-5 min hasta tiernos.', 'Sirve el pollo en tiras sobre el arroz con los vegetales salteados. Añade soja al gusto.'] },
+    { name: 'Bowl de lentejas con carne magra', time: '25 min', servings: 1,
+      ingredients: ['150g lentejas cocidas', '150g carne molida o pollo picado', '½ cebolla', '1 tomate mediano', '1 diente de ajo', 'Comino, sal, pimentón ahumado'],
+      steps: ['Sofríe la cebolla y el ajo picados en aceite de oliva a fuego medio, 3 min.', 'Agrega la carne y saltea hasta dorar bien, unos 5 min.', 'Incorpora el tomate picado y las lentejas cocidas. Condimenta con comino, sal y pimentón. Cocina 5 min más.'] },
+  ],
+  dinner: [
+    { name: 'Salmón a la plancha con batata y brócoli', time: '20 min', servings: 1,
+      ingredients: ['180g filete de salmón', '150g batata o boniato', '1 taza de brócoli', 'Jugo de ½ limón', 'Eneldo o perejil fresco', 'Aceite de oliva, sal, pimienta'],
+      steps: ['Cocina la batata en microondas 8 min (o al horno 25 min a 200°C).', 'Cuece el brócoli al vapor 5 min (o microondas con un poco de agua, 3 min).', 'Sella el salmón en sartén con aceite, 3-4 min por lado. Exprime limón y espolvorea eneldo al servir.'] },
+    { name: 'Pollo al horno con vegetales mediterráneos', time: '35 min', servings: 1,
+      ingredients: ['200g pollo (muslo o pechuga)', '1 calabacín', '1 pimiento rojo', '½ berenjena', 'Ajo en polvo, orégano, paprika', 'Aceite de oliva, sal'],
+      steps: ['Precalienta el horno a 200°C.', 'Corta los vegetales en trozos medianos. Coloca el pollo y los vegetales en bandeja para horno.', 'Condimenta todo con especias, sal y un chorrito de aceite. Hornea 30-35 min hasta que el pollo esté dorado y cocido.'] },
+  ],
+  lastmeal: [
+    { name: 'Bowl de requesón con nueces y canela', time: '2 min', servings: 1,
+      ingredients: ['200g requesón o cottage cheese', '15g nueces troceadas', '1 cdta miel', 'Canela molida al gusto'],
+      steps: ['Sirve el requesón frío en un bowl.', 'Agrega las nueces troceadas por encima.', 'Termina con miel y una buena pizca de canela. Consume 30-60 min antes de dormir.'] },
+    { name: 'Batido nocturno de caseína', time: '2 min', servings: 1,
+      ingredients: ['250ml leche entera o semi', '1 scoop proteína en polvo (caseína o whey)', '1 cda mantequilla de maní natural'],
+      steps: ['Vierte la leche en shaker o batidora.', 'Añade la proteína y la mantequilla de maní.', 'Agita o bate 30 seg hasta obtener mezcla homogénea. Bebe 30-60 min antes de dormir.'] },
+  ],
+  pre: [
+    { name: 'Avena pre-entreno energética', time: '5 min', servings: 1,
+      ingredients: ['80g avena en hojuelas', '200ml leche', '1 plátano maduro', '1 cda miel', '1 scoop proteína en polvo (opcional)'],
+      steps: ['Cocina la avena con la leche 3 min en microondas o sartén a fuego medio.', 'Retira del fuego. Si usas proteína, mézclala ahora. Añade miel.', 'Sirve con el plátano en rodajas. Consume 60-90 min antes de entrenar.'] },
+    { name: 'Arroz con pollo compacto', time: '15 min', servings: 1,
+      ingredients: ['120g arroz blanco cocido', '150g pechuga de pollo', 'Ajo en polvo, sal, orégano', '1 cdta aceite de oliva'],
+      steps: ['Sazona el pollo y cocina en sartén antiadherente 6-8 min por lado hasta dorado.', 'Corta en tiras y sirve sobre el arroz en bowl.', 'Añade un chorrito de aceite. Consume 60-90 min antes del entrenamiento.'] },
+  ],
+  post: [
+    { name: 'Batido de recuperación rápido', time: '2 min', servings: 1,
+      ingredients: ['250ml leche o bebida vegetal', '1 scoop proteína whey', '1 plátano maduro', '30g avena rápida o 1 cda miel'],
+      steps: ['Coloca todos los ingredientes en la batidora.', 'Bate 30 seg hasta obtener mezcla homogénea.', 'Bebe dentro de los 30-45 min post-entrenamiento. Si no tienes batidora, usa shaker: proteína + leche + plátano aplastado.'] },
+    { name: 'Arroz con carne post-entreno', time: '15 min', servings: 1,
+      ingredients: ['150g arroz blanco cocido (absorción rápida)', '180g carne molida o pollo', 'Vegetales al gusto', 'Ajo, sal, salsa de soja'],
+      steps: ['Saltea la carne con ajo picado en sartén a fuego medio-alto, 5-7 min.', 'Añade los vegetales y saltea 3 min más. Sazona con soja.', 'Mezcla con el arroz ya cocido. Come dentro de los 30-45 min post-entrenamiento.'] },
+  ],
+};
+
 // ── STATE ─────────────────────────────────────────────────────────────────────
 
 let _activeTab    = 'plan';
@@ -429,35 +490,56 @@ function _generatePlan(meta) {
 // ── SCHEDULE BUILDER ──────────────────────────────────────────────────────────
 
 function _buildSchedule(trainingHour, duracionMin, objetivo, sesNut) {
-  const durH   = (duracionMin || 60) / 60;
-  const preOff = sesNut?.pre.preOffset || 1.25;
-  const wakeH  = Math.max(5, trainingHour - 4.5);
-  const preH   = trainingHour - preOff;
-  const postH  = trainingHour + durH + 0.5;  // 30 min after session ends
-  const dinnerH = Math.min(21.5, postH + 2);
-  const lastH   = Math.min(22.5, dinnerH + 1.5);
+  const durH    = (duracionMin || 60) / 60;
+  const preOff  = sesNut?.pre.preOffset || 1.25;
+  const wakeH   = Math.max(5, trainingHour - 4.5);
+  const rawPreH = trainingHour - preOff;
+  const postH   = trainingHour + durH + 0.5;
 
-  // Show midmorning only if there's a 2.5h+ gap between wake and pre
-  const showMid    = (preH - wakeH) >= 2.5;
-  // Show lunch slot only if there's a long enough gap between midmorning and pre
-  const midH       = wakeH + 2;
-  const showLunch  = showMid && (preH - midH) >= 2.5;
-  // Last meal: not for weight_loss
-  const showLast   = objetivo !== 'weight_loss';
+  // Early training: pre-workout would be before or too close to wake → combine into one
+  const earlyTraining = rawPreH < wakeH + 0.3;
+  const preH          = earlyTraining ? wakeH : rawPreH;
+
+  // Pre-training optional meals
+  const showMid   = !earlyTraining && (preH - wakeH) >= 2.5;
+  const midH      = wakeH + 2;
+  const showLunch = showMid && (preH - midH) >= 2.5;
+
+  // Dinner: skip if training ended after 8:30pm (post-workout IS the last meal)
+  const showDinner = postH < 20.5;
+  const dinnerH    = showDinner ? Math.min(22, Math.max(postH + 1.5, 18)) : null;
+
+  // Post-training filler meals: only when there is a big gap before dinner
+  const postGap       = showDinner ? dinnerH - postH : 0;
+  const showMidPost   = postGap >= 4;
+  const midPostH      = showMidPost ? postH + 2 : null;
+  const showLunchPost = postGap >= 6;
+  const lunchPostH    = showLunchPost ? Math.min(dinnerH - 2.5, postH + 4.5) : null;
+
+  // Last meal: not for weight_loss, and only if dinner is early enough
+  const showLast = showDinner && objetivo !== 'weight_loss' && dinnerH <= 21;
+  const lastH    = showLast ? Math.min(22.5, dinnerH + 1.5) : null;
 
   return [
-    { id: 'wake',       time: _fmt(wakeH),        type: 'normal' },
-    showMid   && { id: 'midmorning', time: _fmt(wakeH + 2),    type: 'normal' },
-    showLunch && { id: 'lunch',      time: _fmt(midH + 2.5),   type: 'normal' },
-    { id: 'pre',        time: _fmt(preH),          type: 'pre' },
-    { id: 'training',   time: _fmt(trainingHour),  type: 'training', duracion: duracionMin },
-    { id: 'post',       time: _fmt(postH),          type: 'post' },
-    { id: 'dinner',     time: _fmt(dinnerH),        type: 'normal' },
-    showLast  && { id: 'lastmeal',  time: _fmt(lastH),         type: 'last' },
+    earlyTraining
+      ? { id: 'pre',        time: _fmt(preH),          type: 'pre', earlyWake: true }
+      : { id: 'wake',       time: _fmt(wakeH),          type: 'normal' },
+    !earlyTraining && showMid      && { id: 'midmorning', time: _fmt(midH),       type: 'normal' },
+    !earlyTraining && showLunch    && { id: 'lunch',      time: _fmt(midH + 2.5), type: 'normal' },
+    !earlyTraining                 && { id: 'pre',        time: _fmt(preH),        type: 'pre' },
+    { id: 'training',  time: _fmt(trainingHour), type: 'training', duracion: duracionMin },
+    { id: 'post',      time: _fmt(postH),         type: 'post' },
+    showMidPost   && { id: 'midpost',   time: _fmt(midPostH),   type: 'normal' },
+    showLunchPost && { id: 'lunchpost', time: _fmt(lunchPostH), type: 'normal' },
+    showDinner    && { id: 'dinner',    time: _fmt(dinnerH),    type: 'normal' },
+    showLast      && { id: 'lastmeal',  time: _fmt(lastH),      type: 'last' },
   ].filter(Boolean);
 }
 
 // ── RENDER: TIMELINE ──────────────────────────────────────────────────────────
+
+// midpost / lunchpost reuse the same MEAL_CONTENT keys
+const _SLOT_CONTENT_MAP = { midpost: 'midmorning', lunchpost: 'lunch' };
 
 function _renderTimeline(plan) {
   const { objetivo, sesNut, carbLevel, nextSes, hydration, duracion } = plan;
@@ -490,14 +572,18 @@ function _renderTimeline(plan) {
     // PRE-WORKOUT
     if (slot.id === 'pre') {
       if (!sesNut) return '';
+      const earlyNote = slot.earlyWake
+        ? `<p class="nut-tl-early-note"><i class="ti ti-sun"></i> Primera comida del día · actúa como pre-entreno</p>`
+        : '';
       return `
         <div class="nut-tl-item nut-tl-item--pre">
           <div class="nut-tl-time">${slot.time}</div>
           <div class="nut-tl-line"></div>
           <div class="nut-tl-dot"></div>
           <div class="nut-tl-card nut-tl-card--pre">
+            ${earlyNote}
             <div class="nut-tl-card-header">
-              <span class="nut-tl-card-label">Pre-Entreno</span>
+              <button class="nut-tl-card-label nut-tl-card-label--btn" onclick="nutOpenRecipeModal('pre')">Pre-Entreno <i class="ti ti-chef-hat"></i></button>
               <span class="nut-tl-badge nut-tl-badge--pre">${sesNut.pre.timing}</span>
             </div>
             <p class="nut-tl-focus">${sesNut.pre.focus}</p>
@@ -517,7 +603,7 @@ function _renderTimeline(plan) {
           <div class="nut-tl-dot"></div>
           <div class="nut-tl-card nut-tl-card--post">
             <div class="nut-tl-card-header">
-              <span class="nut-tl-card-label">Post-Entreno</span>
+              <button class="nut-tl-card-label nut-tl-card-label--btn" onclick="nutOpenRecipeModal('post')">Post-Entreno <i class="ti ti-chef-hat"></i></button>
               <span class="nut-tl-badge nut-tl-badge--post">${sesNut.post.timing}</span>
             </div>
             <p class="nut-tl-focus">${sesNut.post.focus}</p>
@@ -527,8 +613,9 @@ function _renderTimeline(plan) {
         </div>`;
     }
 
-    // NORMAL / LAST MEAL
-    const c = MEAL_CONTENT[slot.id]?.[objetivo];
+    // NORMAL / LAST MEAL (midpost / lunchpost → reuse midmorning / lunch content)
+    const contentId = _SLOT_CONTENT_MAP[slot.id] || slot.id;
+    const c = MEAL_CONTENT[contentId]?.[objetivo];
     if (!c) return '';
 
     const isLast   = slot.id === 'lastmeal';
@@ -541,7 +628,7 @@ function _renderTimeline(plan) {
         <div class="nut-tl-dot${dotClass}"></div>
         <div class="nut-tl-card${isLast ? ' nut-tl-card--last' : ''}">
           <div class="nut-tl-card-header">
-            <span class="nut-tl-card-label">${c.label}</span>
+            <button class="nut-tl-card-label nut-tl-card-label--btn" onclick="nutOpenRecipeModal('${contentId}')">${c.label} <i class="ti ti-chef-hat"></i></button>
             ${c.sublabel ? `<span class="nut-tl-sublabel">${c.sublabel}</span>` : ''}
           </div>
           <p class="nut-tl-focus">${c.note}</p>
@@ -719,4 +806,40 @@ export function nutSetTrainingHour(hour) {
   _trainingHour = hour;
   try { localStorage.setItem('sv_nut_train_hour', hour); } catch(e) {}
   _build();
+}
+
+export function nutOpenRecipeModal(slotId) {
+  const recipes = RECIPES[slotId];
+  if (!recipes) return;
+
+  const { objetivo } = _generatePlan(getPlanMeta());
+  const mealLabel = MEAL_CONTENT[slotId]?.[objetivo]?.label
+    || (slotId === 'pre' ? 'Pre-Entreno' : slotId === 'post' ? 'Post-Entreno' : slotId);
+
+  document.getElementById('nutRecipeTitle').textContent = mealLabel;
+  document.getElementById('nutRecipeCards').innerHTML = recipes.map((r, i) => `
+    <div class="nut-recipe-card">
+      <div class="nut-recipe-card-name">${r.name}</div>
+      <div class="nut-recipe-meta">
+        <span><i class="ti ti-clock"></i> ${r.time}</span>
+        <span><i class="ti ti-bowl-spoon"></i> ${r.servings} porción</span>
+      </div>
+      <div class="nut-recipe-cols">
+        <div class="nut-recipe-section">
+          <div class="nut-recipe-section-title"><i class="ti ti-basket"></i> Ingredientes</div>
+          <ul class="nut-recipe-list">${r.ingredients.map(ing => `<li>${ing}</li>`).join('')}</ul>
+        </div>
+        <div class="nut-recipe-section">
+          <div class="nut-recipe-section-title"><i class="ti ti-list-numbers"></i> Preparación</div>
+          <ol class="nut-recipe-steps">${r.steps.map(s => `<li>${s}</li>`).join('')}</ol>
+        </div>
+      </div>
+    </div>
+  `).join('<div class="nut-recipe-divider"></div>');
+
+  document.getElementById('nutRecipeModal').style.display = 'flex';
+}
+
+export function nutCloseRecipeModal() {
+  document.getElementById('nutRecipeModal').style.display = 'none';
 }

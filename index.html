@@ -269,6 +269,18 @@
   </div>
 </div>
 
+<!-- RECIPE MODAL — Nutrición -->
+<div id="nutRecipeModal" class="nut-recipe-overlay" style="display:none" onclick="if(event.target===this) nutCloseRecipeModal()">
+  <div class="nut-recipe-box">
+    <div class="nut-recipe-header">
+      <span class="nut-recipe-chef-ico"><i class="ti ti-chef-hat"></i></span>
+      <span id="nutRecipeTitle" class="nut-recipe-title"></span>
+      <button class="nut-recipe-close" onclick="nutCloseRecipeModal()"><i class="ti ti-x"></i></button>
+    </div>
+    <div id="nutRecipeCards" class="nut-recipe-cards"></div>
+  </div>
+</div>
+
 <!-- PLAN MODAL — Nuevo Ciclo -->
 <div id="planModal" class="plan-modal-overlay" style="display:none">
   <div class="plan-modal-box">

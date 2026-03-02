@@ -1043,6 +1043,213 @@
 
 .nut-tl-training-water i { flex-shrink: 0; margin-top: 1px; }
 
+/* ── CLICKABLE MEAL LABEL BUTTON ─────────────────────────────────────────── */
+
+.nut-tl-card-label--btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  text-align: left;
+  transition: color .15s;
+}
+
+.nut-tl-card-label--btn:hover { color: var(--accent); }
+
+.nut-tl-card-label--btn i {
+  font-size: 13px;
+  color: var(--text3);
+  transition: color .15s;
+}
+
+.nut-tl-card-label--btn:hover i { color: var(--accent); }
+
+/* ── EARLY TRAINING NOTE ─────────────────────────────────────────────────── */
+
+.nut-tl-early-note {
+  font-size: 11px;
+  color: var(--amber);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0 0 8px;
+  padding: 5px 8px;
+  background: rgba(245, 158, 11, 0.08);
+  border-radius: 6px;
+}
+
+/* ── RECIPE MODAL ─────────────────────────────────────────────────────────── */
+
+.nut-recipe-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .65);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1300;
+  padding: 0;
+}
+
+.nut-recipe-box {
+  background: var(--bg);
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  max-width: 680px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.nut-recipe-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.nut-recipe-chef-ico {
+  font-size: 20px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.nut-recipe-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  flex: 1;
+}
+
+.nut-recipe-close {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text3);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background .15s;
+}
+
+.nut-recipe-close:hover { background: var(--bg-card); }
+
+.nut-recipe-cards {
+  overflow-y: auto;
+  padding: 16px 20px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.nut-recipe-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 16px 0;
+}
+
+.nut-recipe-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nut-recipe-card-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.nut-recipe-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--text3);
+  font-family: var(--font-mono);
+}
+
+.nut-recipe-meta i { margin-right: 3px; }
+
+.nut-recipe-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.nut-recipe-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text3);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.nut-recipe-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nut-recipe-list li {
+  font-size: 12px;
+  color: var(--text2);
+  padding-left: 12px;
+  position: relative;
+  line-height: 1.5;
+}
+
+.nut-recipe-list li::before {
+  content: '·';
+  position: absolute;
+  left: 2px;
+  color: var(--text3);
+}
+
+.nut-recipe-steps {
+  padding: 0 0 0 18px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nut-recipe-steps li {
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+  .nut-recipe-cols { grid-template-columns: 1fr; }
+  .nut-recipe-overlay { align-items: flex-end; }
+}
+
+@media (min-width: 769px) {
+  .nut-recipe-overlay { align-items: center; padding: 20px; }
+  .nut-recipe-box { border-radius: 20px; max-height: 80vh; }
+}
+
 /* ── RESPONSIVE ───────────────────────────────────────────────────────────── */
 
 @media (max-width: 400px) {
