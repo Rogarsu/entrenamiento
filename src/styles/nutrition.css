@@ -763,6 +763,37 @@
   color: #fff;
 }
 
+/* ── VIEW TOGGLE (hoy / próxima) ─────────────────────────────────────────── */
+
+.nut-view-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.nut-view-chip {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+}
+
+.nut-view-chip--active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
 /* ── SESSION HEADER ──────────────────────────────────────────────────────── */
 
 .nut-ses-header {

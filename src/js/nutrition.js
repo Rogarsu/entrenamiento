@@ -452,6 +452,7 @@ const RECIPES = {
 let _activeTab    = 'plan';
 let _openFundId   = null;
 let _trainingHour = parseInt(localStorage.getItem('sv_nut_train_hour') || '17');
+let _nutView      = 'today'; // 'today' | 'next' — only relevant when doneToday
 
 // ── TIME HELPER ───────────────────────────────────────────────────────────────
 
@@ -473,17 +474,18 @@ function _generatePlan(meta) {
   const allDone  = sessions.length > 0 && sessions.every(s => isDone(s.id));
 
   // If a session was completed today, keep showing its nutrition for the rest of the day
-  const todayId  = getLastCompletedToday();
-  const todaySes = todayId ? sessions.find(s => s.id === todayId) : null;
-  const doneToday = !!todaySes;
-  const nextSes  = doneToday ? todaySes : (sessions.find(s => !isDone(s.id)) || null);
+  const todayId    = getLastCompletedToday();
+  const todaySes   = todayId ? sessions.find(s => s.id === todayId) : null;
+  const doneToday  = !!todaySes;
+  const realNextSes = sessions.find(s => !isDone(s.id)) || null; // next pending (after today's)
+  const nextSes    = (doneToday && _nutView === 'today') ? todaySes : realNextSes;
 
   const hydKey    = duracion <= 45 ? 45 : duracion >= 90 ? 90 : duracion >= 75 ? 75 : 60;
   const sesNut    = nextSes ? (SESSION_NUTRITION[nextSes.type] || SESSION_NUTRITION.F) : null;
   const carbLevel = sesNut ? (CARB_LEVEL[objetivo]?.[sesNut.intensity] || '') : '';
 
   return {
-    objetivo, nivel, hasMeta: !!meta, allDone, doneToday,
+    objetivo, nivel, hasMeta: !!meta, allDone, doneToday, realNextSes,
     nextSes, sesNut, carbLevel, duracion,
     protein:   PROTEIN_RANGES[objetivo]?.[nivel] || '1.6–2.0',
     caloric:   CALORIC_APPROACH[objetivo]        || CALORIC_APPROACH.general,
@@ -672,13 +674,25 @@ function _renderPlan(plan) {
       </div>
     </div>`;
 
-  // Compact next session header
+  // View toggle: only shown when a session was completed today AND there's a next one
+  const viewToggle = plan.doneToday && plan.realNextSes ? `
+    <div class="nut-view-toggle">
+      <button class="nut-view-chip${_nutView === 'today' ? ' nut-view-chip--active' : ''}" onclick="nutSetView('today')">
+        <i class="ti ti-calendar-check"></i> Sesión de hoy
+      </button>
+      <button class="nut-view-chip${_nutView === 'next' ? ' nut-view-chip--active' : ''}" onclick="nutSetView('next')">
+        <i class="ti ti-calendar-forward"></i> Próxima sesión
+      </button>
+    </div>` : '';
+
+  // Compact session header
+  const showingToday = plan.doneToday && _nutView === 'today';
   const sesHeader = plan.nextSes && plan.sesNut ? `
     <div class="nut-ses-header" style="border-color:${plan.sesNut.color}33">
-      <span class="nut-ses-header-label">${plan.doneToday ? 'Sesión de hoy' : 'Próxima sesión'}</span>
+      <span class="nut-ses-header-label">${showingToday ? 'Sesión de hoy' : 'Próxima sesión'}</span>
       <span class="nut-ses-header-name">Sesión ${String(plan.nextSes.id).padStart(2, '0')} — ${plan.nextSes.name.split('—')[1]?.trim() || plan.nextSes.name}</span>
       <span class="nut-ses-type-chip" style="color:${plan.sesNut.color};background:${plan.sesNut.color}14;border-color:${plan.sesNut.color}44">${plan.sesNut.label}</span>
-      ${plan.doneToday ? `<span class="nut-ses-done-badge"><i class="ti ti-check"></i> Completada hoy</span>` : ''}
+      ${showingToday ? `<span class="nut-ses-done-badge"><i class="ti ti-check"></i> Completada hoy</span>` : ''}
     </div>` : '';
 
   // Timeline title
@@ -739,7 +753,7 @@ function _renderPlan(plan) {
       ${macros}${restDay}`;
   }
 
-  return `${noMeta}${selector}${sesHeader}${tlTitle}${_renderTimeline(plan)}${macros}${restDay}`;
+  return `${noMeta}${selector}${viewToggle}${sesHeader}${tlTitle}${_renderTimeline(plan)}${macros}${restDay}`;
 }
 
 // ── RENDER: FUNDAMENTOS ───────────────────────────────────────────────────────
@@ -785,10 +799,12 @@ function _build() {
 // ── PUBLIC API ────────────────────────────────────────────────────────────────
 
 export function showNutritionPage() {
-  _activeTab = 'plan'; _openFundId = null;
+  _activeTab = 'plan'; _openFundId = null; _nutView = 'today';
   document.getElementById('nutritionPage').classList.add('open');
   _build();
 }
+
+export function nutSetView(v) { _nutView = v; _build(); }
 
 export function hideNutritionPage() {
   document.getElementById('nutritionPage').classList.remove('open');
