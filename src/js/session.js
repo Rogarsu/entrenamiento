@@ -9,6 +9,11 @@ export function loadSession(id) {
   const s = getPlan().find(x => x.id === id);
   if (!s) return;
 
+  // Close any overlay page so the main view is visible
+  window.hideNutritionPage?.();
+  window.hideHistPage?.();
+  window.hideReportsPage?.();
+
   document.querySelectorAll('.session-item').forEach(el => el.classList.remove('active'));
   const si = document.getElementById(`si-${id}`);
   if (si) { si.classList.add('active'); si.scrollIntoView({ block: 'nearest' }); }
