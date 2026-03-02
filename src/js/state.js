@@ -1,4 +1,4 @@
-import { upsertSessionLog } from './db.js';
+import { upsertSessionLog, upsertNutritionLog } from './db.js';
 import { SESSIONS as DEFAULT_SESSIONS } from '../data/sessions.js';
 
 let _userId = null;
@@ -71,6 +71,27 @@ export function getPlanMeta() {
 export function clearSessionLogs() {
   state.logs = [];
   try { localStorage.removeItem('sv_logs'); } catch(e) {}
+}
+
+// ── Meal log ───────────────────────────────────────────────────────────────────
+
+let _mealLog = { date: null, slots: new Set() };
+
+export function getMealChecks() { return _mealLog.slots; }
+
+export function initMealLog(slots) {
+  const today = new Date().toISOString().slice(0, 10);
+  _mealLog = { date: today, slots: new Set(slots || []) };
+}
+
+export function toggleMealSlot(slotId, sessionId) {
+  const today = new Date().toISOString().slice(0, 10);
+  if (_mealLog.date !== today) _mealLog = { date: today, slots: new Set() };
+  if (_mealLog.slots.has(slotId)) _mealLog.slots.delete(slotId);
+  else _mealLog.slots.add(slotId);
+  const arr = [..._mealLog.slots];
+  try { localStorage.setItem(`sv_meal_${today}`, JSON.stringify(arr)); } catch(e) {}
+  if (_userId) upsertNutritionLog(_userId, today, sessionId, arr).catch(console.error);
 }
 
 // ── Today's session ────────────────────────────────────────────────────────────

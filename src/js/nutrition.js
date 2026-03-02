@@ -4,7 +4,8 @@
 // y al tipo de sesión (piernas, pecho, espalda, etc.).
 // Tab "Fundamentos": tarjetas acordeón educativas.
 
-import { getPlanMeta, getPlan, isDone, getLastCompletedToday } from './state.js';
+import { getPlanMeta, getPlan, isDone, getLastCompletedToday, getMealChecks, initMealLog, toggleMealSlot, getUserId } from './state.js';
+import { fetchNutritionLog } from './db.js';
 
 // ── TRAINING TIME OPTIONS ─────────────────────────────────────────────────────
 
@@ -579,6 +580,7 @@ function _renderTimeline(plan) {
     // PRE-WORKOUT
     if (slot.id === 'pre') {
       if (!sesNut) return '';
+      const preChecked = getMealChecks().has('pre');
       const earlyNote = slot.earlyWake
         ? `<p class="nut-tl-early-note"><i class="ti ti-sun"></i> Primera comida del día · actúa como pre-entreno</p>`
         : '';
@@ -587,11 +589,12 @@ function _renderTimeline(plan) {
           <div class="nut-tl-time">${slot.time}</div>
           <div class="nut-tl-line"></div>
           <div class="nut-tl-dot"></div>
-          <div class="nut-tl-card nut-tl-card--pre">
+          <div class="nut-tl-card nut-tl-card--pre${preChecked ? ' nut-tl-card--done' : ''}">
             ${earlyNote}
             <div class="nut-tl-card-header">
               <button class="nut-tl-card-label nut-tl-card-label--btn" onclick="nutOpenRecipeModal('pre')">Pre-Entreno <i class="ti ti-chef-hat"></i></button>
               <span class="nut-tl-badge nut-tl-badge--pre">${sesNut.pre.timing}</span>
+              <button class="nut-meal-check${preChecked ? ' nut-meal-check--done' : ''}" onclick="nutToggleMeal('pre')" title="Marcar como hecho"><i class="ti ti-check"></i></button>
             </div>
             <p class="nut-tl-focus">${sesNut.pre.focus}</p>
             <ul class="nut-meal-items">${sesNut.pre.foods.map(f => `<li>${f}</li>`).join('')}</ul>
@@ -603,15 +606,17 @@ function _renderTimeline(plan) {
     // POST-WORKOUT
     if (slot.id === 'post') {
       if (!sesNut) return '';
+      const postChecked = getMealChecks().has('post');
       return `
         <div class="nut-tl-item nut-tl-item--post">
           <div class="nut-tl-time">${slot.time}</div>
           <div class="nut-tl-line"></div>
           <div class="nut-tl-dot"></div>
-          <div class="nut-tl-card nut-tl-card--post">
+          <div class="nut-tl-card nut-tl-card--post${postChecked ? ' nut-tl-card--done' : ''}">
             <div class="nut-tl-card-header">
               <button class="nut-tl-card-label nut-tl-card-label--btn" onclick="nutOpenRecipeModal('post')">Post-Entreno <i class="ti ti-chef-hat"></i></button>
               <span class="nut-tl-badge nut-tl-badge--post">${sesNut.post.timing}</span>
+              <button class="nut-meal-check${postChecked ? ' nut-meal-check--done' : ''}" onclick="nutToggleMeal('post')" title="Marcar como hecho"><i class="ti ti-check"></i></button>
             </div>
             <p class="nut-tl-focus">${sesNut.post.focus}</p>
             <div class="nut-protein-chip"><i class="ti ti-meat"></i> <strong>${sesNut.post.protein}</strong></div>
@@ -625,18 +630,20 @@ function _renderTimeline(plan) {
     const c = MEAL_CONTENT[contentId]?.[objetivo];
     if (!c) return '';
 
-    const isLast   = slot.id === 'lastmeal';
-    const dotClass = isLast ? ' nut-tl-dot--last' : '';
+    const isLast      = slot.id === 'lastmeal';
+    const dotClass    = isLast ? ' nut-tl-dot--last' : '';
+    const slotChecked = getMealChecks().has(slot.id);
 
     return `
       <div class="nut-tl-item nut-tl-item--${slot.type}">
         <div class="nut-tl-time">${slot.time}</div>
         <div class="nut-tl-line"></div>
         <div class="nut-tl-dot${dotClass}"></div>
-        <div class="nut-tl-card${isLast ? ' nut-tl-card--last' : ''}">
+        <div class="nut-tl-card${isLast ? ' nut-tl-card--last' : ''}${slotChecked ? ' nut-tl-card--done' : ''}">
           <div class="nut-tl-card-header">
             <button class="nut-tl-card-label nut-tl-card-label--btn" onclick="nutOpenRecipeModal('${contentId}')">${c.label} <i class="ti ti-chef-hat"></i></button>
             ${c.sublabel ? `<span class="nut-tl-sublabel">${c.sublabel}</span>` : ''}
+            <button class="nut-meal-check${slotChecked ? ' nut-meal-check--done' : ''}" onclick="nutToggleMeal('${slot.id}')" title="Marcar como hecho"><i class="ti ti-check"></i></button>
           </div>
           <p class="nut-tl-focus">${c.note}</p>
           <ul class="nut-meal-items">${c.foods.map(f => `<li>${f}</li>`).join('')}</ul>
@@ -800,11 +807,30 @@ function _build() {
 
 export function showNutritionPage() {
   _activeTab = 'plan'; _openFundId = null; _nutView = 'today';
+  // Load meal log from localStorage immediately, then sync from Supabase
+  const today = new Date().toISOString().slice(0, 10);
+  try { initMealLog(JSON.parse(localStorage.getItem(`sv_meal_${today}`) || '[]')); } catch(e) { initMealLog([]); }
   document.getElementById('nutritionPage').classList.add('open');
   _build();
+  const uid = getUserId();
+  if (uid) {
+    fetchNutritionLog(uid, today).then(data => {
+      if (data?.completed_slots?.length) {
+        initMealLog(data.completed_slots);
+        localStorage.setItem(`sv_meal_${today}`, JSON.stringify(data.completed_slots));
+        _build();
+      }
+    }).catch(() => {});
+  }
 }
 
 export function nutSetView(v) { _nutView = v; _build(); }
+
+export function nutToggleMeal(slotId) {
+  const plan = _generatePlan(getPlanMeta());
+  toggleMealSlot(slotId, plan.nextSes?.id ?? null);
+  _build();
+}
 
 export function hideNutritionPage() {
   document.getElementById('nutritionPage').classList.remove('open');

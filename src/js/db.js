@@ -69,3 +69,27 @@ export async function deleteUserLogs(userId) {
     supabase.from('exercise_logs').delete().eq('user_id', userId),
   ]);
 }
+
+// ── NUTRITION LOGS ──────────────────────────────────────────────────────────
+
+export async function fetchNutritionLog(userId, date) {
+  const { data, error } = await supabase
+    .from('nutrition_logs')
+    .select('completed_slots, session_id')
+    .eq('user_id', userId)
+    .eq('log_date', date)
+    .single();
+  if (error) return null;
+  return data;
+}
+
+export async function upsertNutritionLog(userId, date, sessionId, completedSlots) {
+  const { error } = await supabase.from('nutrition_logs').upsert({
+    user_id: userId,
+    log_date: date,
+    session_id: sessionId,
+    completed_slots: completedSlots,
+    updated_at: new Date().toISOString(),
+  }, { onConflict: 'user_id,log_date' });
+  if (error) console.error('upsert nutrition_log:', error);
+}
