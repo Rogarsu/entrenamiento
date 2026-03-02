@@ -62,3 +62,10 @@ export async function upsertUserPlan(userId, sessions) {
   }, { onConflict: 'user_id' });
   if (error) console.error('upsert training_plan:', error);
 }
+
+export async function deleteUserLogs(userId) {
+  await Promise.all([
+    supabase.from('session_logs').delete().eq('user_id', userId),
+    supabase.from('exercise_logs').delete().eq('user_id', userId),
+  ]);
+}

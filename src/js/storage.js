@@ -46,6 +46,11 @@ export function getLastExLog(exId, currentSessionId) {
   return entries.length ? entries[0][1] : null;
 }
 
+export function clearExLogs() {
+  _exLogs = {};
+  try { localStorage.removeItem('sv_ex_logs'); } catch(e) {}
+}
+
 export function saveExLog(exId, sessionId, sets, targetReps, muscle) {
   const now = new Date();
   const data = {

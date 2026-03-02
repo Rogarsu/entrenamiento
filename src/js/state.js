@@ -57,3 +57,18 @@ export function isDone(id) {
 export function getLog(id) {
   return state.logs.find(l => l.sessionId === id);
 }
+
+// ── Plan meta (onboarding answers) ────────────────────────────────────────────
+
+export function savePlanMeta(answers) {
+  try { localStorage.setItem('sv_plan_meta', JSON.stringify(answers)); } catch(e) {}
+}
+
+export function getPlanMeta() {
+  try { return JSON.parse(localStorage.getItem('sv_plan_meta') || 'null'); } catch(e) { return null; }
+}
+
+export function clearSessionLogs() {
+  state.logs = [];
+  try { localStorage.removeItem('sv_logs'); } catch(e) {}
+}

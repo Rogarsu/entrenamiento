@@ -3,9 +3,9 @@
 // On completion, generates a plan via planner.js and saves it to Supabase.
 
 import { generatePlan, generatePhasesMeta } from './planner.js';
-import { setPlan } from './state.js';
-import { upsertUserPlan } from './db.js';
-import { getUserId } from './state.js';
+import { setPlan, getUserId, savePlanMeta, getPlanMeta, clearSessionLogs } from './state.js';
+import { upsertUserPlan, deleteUserLogs } from './db.js';
+import { clearExLogs } from './storage.js';
 import { buildStats } from './stats.js';
 import { buildSidebar } from './sidebar.js';
 
@@ -173,6 +173,7 @@ window._obBack = function() {
 async function _finishOnboarding() {
   _renderGenerating();
   try {
+    savePlanMeta(_ob.answers);
     const sessions = generatePlan(_ob.answers);
     const userId = getUserId();
     if (userId) {
@@ -214,4 +215,46 @@ export function showOnboarding() {
 export function hideOnboarding() {
   document.getElementById('onboardingOverlay').style.display = 'none';
   document.getElementById('appContent').style.display = '';
+}
+
+// ── Plan modal (Nuevo Ciclo) ──────────────────────────────────────────────────
+
+export function openPlanModal() {
+  document.getElementById('planModal').style.display = 'flex';
+}
+
+export function closePlanModal() {
+  document.getElementById('planModal').style.display = 'none';
+}
+
+// ── Reset modal (Reiniciar Progreso) ─────────────────────────────────────────
+
+export function openResetModal() {
+  document.getElementById('resetModal').style.display = 'flex';
+}
+
+export function closeResetModal() {
+  document.getElementById('resetModal').style.display = 'none';
+}
+
+export async function resetProgress() {
+  closeResetModal();
+  clearSessionLogs();
+  clearExLogs();
+  const userId = getUserId();
+  if (userId) deleteUserLogs(userId).catch(console.error);
+  buildStats();
+  buildSidebar();
+}
+
+export function showNewCycle(keepLogs) {
+  closePlanModal();
+  if (!keepLogs) clearSessionLogs();
+  const prev = getPlanMeta();
+  _ob.step = 0;
+  _ob.answers = prev ? { ...prev } : {};
+  document.getElementById('authOverlay').style.display = 'none';
+  document.getElementById('appContent').style.display = 'none';
+  document.getElementById('onboardingOverlay').style.display = 'flex';
+  _render(); // _render ya marca como 'selected' las opciones que coincidan con _ob.answers
 }

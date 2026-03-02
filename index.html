@@ -102,6 +102,9 @@
       <button class="nav-dd-item active-hist" id="navItemHistorial" onclick="navGoHistorial()">📋 Historial</button>
       <button class="nav-dd-item" id="navItemReportes" onclick="navGoReportes()">📄 Reportes</button>
       <div class="nav-dd-divider"></div>
+      <button class="nav-dd-item" onclick="openPlanModal(); closeNavDropdown()">🔄 Nuevo Ciclo</button>
+      <button class="nav-dd-item" onclick="openResetModal(); closeNavDropdown()">↺ Reiniciar Progreso</button>
+      <div class="nav-dd-divider"></div>
       <button class="nav-dd-item" onclick="authSignOut()" style="color:var(--text3)">🚪 Cerrar sesión</button>
     </div>
   </div>
@@ -244,6 +247,31 @@
 </div>
 
 </div><!-- /#appContent -->
+
+<!-- RESET MODAL — Reiniciar Progreso -->
+<div id="resetModal" class="plan-modal-overlay" style="display:none">
+  <div class="plan-modal-box">
+    <div class="plan-modal-title">↺ Reiniciar Progreso</div>
+    <p class="plan-modal-desc">Se borrarán todas las marcas de sesiones completadas y el historial de pesos registrados. Tu plan se mantiene intacto.</p>
+    <div class="plan-modal-btns">
+      <button class="plan-modal-btn plan-modal-btn--clear"  onclick="resetProgress()">Sí, borrar progreso</button>
+      <button class="plan-modal-btn plan-modal-btn--cancel" onclick="closeResetModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- PLAN MODAL — Nuevo Ciclo -->
+<div id="planModal" class="plan-modal-overlay" style="display:none">
+  <div class="plan-modal-box">
+    <div class="plan-modal-title">🔄 Nuevo Ciclo</div>
+    <p class="plan-modal-desc">¿Quieres conservar el historial de sesiones completadas del ciclo anterior?</p>
+    <div class="plan-modal-btns">
+      <button class="plan-modal-btn plan-modal-btn--keep"   onclick="showNewCycle(true)">Sí, conservar historial</button>
+      <button class="plan-modal-btn plan-modal-btn--clear"  onclick="showNewCycle(false)">No, empezar desde cero</button>
+      <button class="plan-modal-btn plan-modal-btn--cancel" onclick="closePlanModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

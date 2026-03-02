@@ -23,6 +23,7 @@ import { openWellnessCheck, closeWellnessModal } from './js/wellness.js';
 import { initAuth, authToggleTab, authSignIn, authSignUp, authSignInGoogle, authSignOut } from './js/auth.js';
 import { dismissMigration, migrateLocalData as _migrate } from './js/migrate.js';
 import { getUserId } from './js/state.js';
+import { openPlanModal, closePlanModal, showNewCycle, openResetModal, closeResetModal, resetProgress } from './js/onboarding.js';
 
 // ===== EXPONER A WINDOW (para onclick en HTML) =====
 window.toggleSidebar = toggleSidebar;
@@ -57,6 +58,12 @@ window.authSignInGoogle = authSignInGoogle;
 window.authSignOut = authSignOut;
 window.migrateLocalData = () => _migrate(getUserId());
 window.dismissMigration = dismissMigration;
+window.openPlanModal  = openPlanModal;
+window.closePlanModal = closePlanModal;
+window.showNewCycle   = showNewCycle;
+window.openResetModal  = openResetModal;
+window.closeResetModal = closeResetModal;
+window.resetProgress   = resetProgress;
 
 // ===== INIT =====
 // buildStats() and buildSidebar() are called inside initAuth()
