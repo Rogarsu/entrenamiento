@@ -72,3 +72,14 @@ export function clearSessionLogs() {
   state.logs = [];
   try { localStorage.removeItem('sv_logs'); } catch(e) {}
 }
+
+// ── Today's session ────────────────────────────────────────────────────────────
+
+export function getLastCompletedToday() {
+  const todayLocal = new Date().toLocaleDateString('es-CO'); // e.g. '15/1/2025'
+  const todayISO   = new Date().toISOString().slice(0, 10);  // e.g. '2025-01-15'
+  const log = [...state.logs].reverse().find(l =>
+    l.date === todayLocal || (l.date && l.date.slice(0, 10) === todayISO)
+  );
+  return log ? log.sessionId : null;
+}
