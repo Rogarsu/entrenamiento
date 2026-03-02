@@ -16,11 +16,11 @@ export function setNavPage(page) {
   const itemReportes = document.getElementById('navItemReportes');
 
   const labels = {
-    fisico: '🏋️ Físico',
-    historial: '📋 Historial',
-    reportes: '📄 Reportes',
+    fisico:    '<i class="ti ti-barbell"></i> Físico',
+    historial: '<i class="ti ti-clipboard-list"></i> Historial',
+    reportes:  '<i class="ti ti-file-description"></i> Reportes',
   };
-  if (label) label.textContent = labels[page] || labels.fisico;
+  if (label) label.innerHTML = labels[page] || labels.fisico;
 
   itemFisico?.classList.toggle('active', page === 'fisico');
   itemHistorial?.classList.toggle('active', page === 'historial');

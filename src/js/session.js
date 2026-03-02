@@ -29,9 +29,9 @@ export function loadSession(id) {
       <div class="session-meta">
         <span class="meta-badge ${phaseColors[s.phase]}">FASE ${s.phase}</span>
         <span class="meta-badge ${intColors[s.intensity] || 'mb-gray'}">${s.intensity}</span>
-        <span class="meta-badge mb-gray">⏱ ${s.duration}</span>
+        <span class="meta-badge mb-gray"><i class="ti ti-clock"></i> ${s.duration}</span>
         <span class="meta-badge mb-gray">${typeName[s.type] || s.type}</span>
-        ${done ? '<span class="meta-badge" style="border-color:var(--green);color:var(--green);background:rgba(34,197,94,0.1)">✓ COMPLETADA</span>' : ''}
+        ${done ? '<span class="meta-badge" style="border-color:var(--green);color:var(--green);background:rgba(34,197,94,0.1)"><i class="ti ti-check"></i> COMPLETADA</span>' : ''}
       </div>
     </div>
 
@@ -47,9 +47,9 @@ export function loadSession(id) {
     </div>` : ''}
 
     <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab(this,'pre')">🔥 Pre-Entreno</button>
-      <button class="tab-btn" onclick="switchTab(this,'workout')">💪 Entreno</button>
-      <button class="tab-btn" onclick="switchTab(this,'post')">🧘 Post-Entreno</button>
+      <button class="tab-btn active" onclick="switchTab(this,'pre')"><i class="ti ti-flame"></i> Pre-Entreno</button>
+      <button class="tab-btn" onclick="switchTab(this,'workout')"><i class="ti ti-dumbbell"></i> Entreno</button>
+      <button class="tab-btn" onclick="switchTab(this,'post')"><i class="ti ti-heart"></i> Post-Entreno</button>
     </div>
 
     <!-- PRE TAB -->
@@ -60,11 +60,11 @@ export function loadSession(id) {
       </div>
       <div class="section-card">
         <div class="sc-label">Calentamiento específico</div>
-        ${s.pre.warmup.map(w => `<div class="info-item info-clickable" onclick="openExModal('pre','${escStr(w)}','Calentamiento','Sin equipamiento')"><span class="info-bullet">→</span><span class="info-text">${w}</span><span class="img-icon">🖼</span></div>`).join('')}
+        ${s.pre.warmup.map(w => `<div class="info-item info-clickable" onclick="openExModal('pre','${escStr(w)}','Calentamiento','Sin equipamiento')"><span class="info-bullet">→</span><span class="info-text">${w}</span><span class="img-icon"><i class="ti ti-photo"></i></span></div>`).join('')}
       </div>
       <div class="section-card">
         <div class="sc-label">Movilidad articular</div>
-        ${s.pre.mobility.map(m => `<div class="info-item info-clickable" onclick="openExModal('pre','${escStr(m)}','Movilidad articular','Sin equipamiento')"><span class="info-bullet">○</span><span class="info-text">${m}</span><span class="img-icon">🖼</span></div>`).join('')}
+        ${s.pre.mobility.map(m => `<div class="info-item info-clickable" onclick="openExModal('pre','${escStr(m)}','Movilidad articular','Sin equipamiento')"><span class="info-bullet">○</span><span class="info-text">${m}</span><span class="img-icon"><i class="ti ti-photo"></i></span></div>`).join('')}
       </div>
       <div class="section-card" style="border-color:rgba(245,158,11,0.25);background:rgba(245,158,11,0.04)">
         <div class="sc-label" style="color:var(--amber)">Mentalidad</div>
@@ -76,7 +76,7 @@ export function loadSession(id) {
     <div class="tab-content" id="tab-workout">
       ${s.workout.blocks.map(bl => `
         <div class="block-title">${bl.name}</div>
-        ${bl.note ? `<div class="block-note">⚡ ${bl.note}</div>` : ''}
+        ${bl.note ? `<div class="block-note"><i class="ti ti-bolt"></i> ${bl.note}</div>` : ''}
         <div class="ex-table-container">
           <table class="ex-table">
             <thead><tr>
@@ -100,10 +100,10 @@ export function loadSession(id) {
                   if (exRec.type === 'same') {
                     const r = exRec.rec;
                     const arr = r.dir === 'up' ? '↑' : r.dir === 'down' ? '↓' : '→';
-                    badgeHtml = `<div class="ex-rec-badge" id="rec_badge_${e.id}">📈 ${r.nextWeight} kg × ${r.targetReps} reps ${arr}</div>`;
+                    badgeHtml = `<div class="ex-rec-badge" id="rec_badge_${e.id}"><i class="ti ti-trending-up"></i> ${r.nextWeight} kg × ${r.targetReps} reps ${arr}</div>`;
                   } else if (exRec.type === 'related' && exRec.crossRec.suggestedWeight) {
                     const icon = exRec.crossRec.level === 'high' ? '↑' : exRec.crossRec.level === 'low' ? '↓' : '→';
-                    badgeHtml = `<div class="ex-rec-badge" id="rec_badge_${e.id}" style="color:var(--cyan)">📊 ~${exRec.crossRec.suggestedWeight} kg ${icon}</div>`;
+                    badgeHtml = `<div class="ex-rec-badge" id="rec_badge_${e.id}" style="color:var(--cyan)"><i class="ti ti-chart-bar"></i> ~${exRec.crossRec.suggestedWeight} kg ${icon}</div>`;
                   } else {
                     badgeHtml = `<div class="ex-rec-badge" id="rec_badge_${e.id}" style="display:none"></div>`;
                   }
@@ -114,10 +114,10 @@ export function loadSession(id) {
                 <tr>
                   <td>
                     <div class="ex-name${hasLog ? ' ex-logged' : ''}" onclick="openExModal('${e.id}','${escStr(e.name)}','${escStr(e.muscle)}','${escStr(e.equip)}','${e.sets}','${escStr(e.reps)}','${escStr(e.weight_guide || '')}')">
-                      <span class="img-icon" id="ex_icon_${e.id}">${hasLog ? '✏️' : '🖼'}</span> ${e.name}
+                      <span class="img-icon" id="ex_icon_${e.id}">${hasLog ? '<i class="ti ti-pencil"></i>' : '<i class="ti ti-photo"></i>'}</span> ${e.name}
                     </div>
                     <div class="ex-muscle">${e.muscle}</div>
-                    <div class="ex-log-row" id="ex_log_sum_${e.id}"${hasLog ? '' : ' style="display:none"'}>✓ ${logSummary}<span class="ex-edit-hint"> — toca para editar</span></div>
+                    <div class="ex-log-row" id="ex_log_sum_${e.id}"${hasLog ? '' : ' style="display:none"'}><i class="ti ti-check"></i> ${logSummary}<span class="ex-edit-hint"> — toca para editar</span></div>
                   </td>
                   <td><span class="ex-sets">${e.sets}</span></td>
                   <td><span class="ex-reps">${e.reps}</span></td>
@@ -136,11 +136,11 @@ export function loadSession(id) {
     <div class="tab-content" id="tab-post">
       <div class="section-card">
         <div class="sc-label">Enfriamiento</div>
-        ${s.post.cooldown.map(c => `<div class="info-item info-clickable" onclick="openExModal('post','${escStr(c)}','Enfriamiento','Sin equipamiento')"><span class="info-bullet">↓</span><span class="info-text">${c}</span><span class="img-icon">🖼</span></div>`).join('')}
+        ${s.post.cooldown.map(c => `<div class="info-item info-clickable" onclick="openExModal('post','${escStr(c)}','Enfriamiento','Sin equipamiento')"><span class="info-bullet">↓</span><span class="info-text">${c}</span><span class="img-icon"><i class="ti ti-photo"></i></span></div>`).join('')}
       </div>
       <div class="section-card">
         <div class="sc-label">Estiramientos</div>
-        ${s.post.stretches.map(st => `<div class="info-item info-clickable" onclick="openExModal('post','${escStr(st)}','Estiramiento','Colchoneta / Sin equipamiento')"><span class="info-bullet">~</span><span class="info-text">${st}</span><span class="img-icon">🖼</span></div>`).join('')}
+        ${s.post.stretches.map(st => `<div class="info-item info-clickable" onclick="openExModal('post','${escStr(st)}','Estiramiento','Colchoneta / Sin equipamiento')"><span class="info-bullet">~</span><span class="info-text">${st}</span><span class="img-icon"><i class="ti ti-photo"></i></span></div>`).join('')}
       </div>
       <div class="section-card" style="border-color:rgba(6,182,212,0.25);background:rgba(6,182,212,0.04)">
         <div class="sc-label" style="color:var(--cyan)">Nutrición post-entreno</div>
@@ -155,8 +155,8 @@ export function loadSession(id) {
     <!-- MARK DONE -->
     <div class="mark-section">
       ${done
-        ? `<button class="mark-btn already-done" disabled>✓ Sesión ya registrada</button>`
-        : `<button class="mark-btn" onclick="openLogForm()">✓ Marcar como completada</button>`
+        ? `<button class="mark-btn already-done" disabled><i class="ti ti-check"></i> Sesión ya registrada</button>`
+        : `<button class="mark-btn" onclick="openLogForm()"><i class="ti ti-check"></i> Marcar como completada</button>`
       }
       <div class="log-form" id="logForm">
         <div class="log-grid">
@@ -167,7 +167,7 @@ export function loadSession(id) {
           <div class="log-field log-input-full"><label class="log-label">Notas y pesos usados</label><textarea class="log-input" id="logNotes" placeholder="Ejercicios, sensaciones, pesos utilizados..."></textarea></div>
         </div>
         <div class="log-actions">
-          <button class="btn-save" onclick="saveLog()">💾 Guardar</button>
+          <button class="btn-save" onclick="saveLog()"><i class="ti ti-device-floppy"></i> Guardar</button>
           <button class="btn-cancel" onclick="closeLogForm()">Cancelar</button>
         </div>
       </div>

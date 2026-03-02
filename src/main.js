@@ -1,4 +1,5 @@
 // ===== ESTILOS =====
+import '@tabler/icons-webfont/dist/tabler-icons.min.css';
 import './styles/base.css';
 import './styles/nav.css';
 import './styles/layout.css';

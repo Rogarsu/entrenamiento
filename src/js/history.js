@@ -75,7 +75,7 @@ function _renderTable(rows) {
   }
 
   const sortTh = document.getElementById('histSortTh');
-  if (sortTh) sortTh.innerHTML = `Fecha & Hora <span class="hist-sort-icon">${_state.sortDir === 'desc' ? '↓' : '↑'}</span>`;
+  if (sortTh) sortTh.innerHTML = `Fecha & Hora <span class="hist-sort-icon"><i class="ti ti-arrow-${_state.sortDir === 'desc' ? 'down' : 'up'}"></i></span>`;
 }
 
 function _renderFilters(all) {
@@ -89,7 +89,7 @@ function _renderFilters(all) {
       ].join('')}
     </div>
     <div class="hist-filter-row">
-      <input class="hist-search" type="text" placeholder="🔍 Buscar ejercicio..." value="${_state.ex}" oninput="histSetEx(this.value)">
+      <input class="hist-search" type="text" placeholder="Buscar ejercicio..." value="${_state.ex}" oninput="histSetEx(this.value)">
     </div>`;
 }
 

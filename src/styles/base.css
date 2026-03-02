@@ -40,6 +40,15 @@ body {
   line-height: 1.5;
 }
 
+/* TABLER ICONS — ajustes de tamaño por contexto */
+.ob-option-icon .ti { font-size: 1.8rem; }
+.empty-icon .ti     { font-size: 3.5rem; color: var(--text3); }
+.report-card-icon .ti  { font-size: 2.2rem; }
+.report-soon-icon .ti  { font-size: 1.4rem; }
+.migration-icon .ti    { font-size: 1.1rem; }
+.wellness-fab-icon .ti { font-size: 1.2rem; }
+.auth-logo .ti         { font-size: 1.1em; }
+
 /* SCROLLBAR */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg2); }

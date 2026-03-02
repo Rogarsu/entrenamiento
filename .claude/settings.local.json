@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git stash:*)",
+      "Bash(git pull:*)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)",
+      "Bash(git mv:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(python3:*)",
+      "Bash(node --version:*)",
+      "Bash(npm:*)",
+      "Bash(cmd /c \"copy /Y \"\"c:\\\\Users\\\\USUARIO\\\\OneDrive\\\\Documentos\\\\Roberto\\\\Goals\\\\Entrenamiento\\\\dist\\\\index.html\"\" \"\"c:\\\\Users\\\\USUARIO\\\\OneDrive\\\\Documentos\\\\Roberto\\\\Goals\\\\Entrenamiento\\\\index.html\"\"\")",
+      "Bash(cmd /c \"type nul > \"\"c:\\\\Users\\\\USUARIO\\\\OneDrive\\\\Documentos\\\\Roberto\\\\Goals\\\\Entrenamiento\\\\.nojekyll\"\"\")",
+      "Bash(powershell -Command:*)"
+    ]
+  }
+}

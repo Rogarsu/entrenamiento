@@ -17,11 +17,11 @@ const QUESTIONS = [
     title: '¿Cuál es tu objetivo principal?',
     subtitle: 'Esto determinará la estructura y enfoque de tu plan.',
     options: [
-      { value: 'strength',    label: 'Ganar fuerza',      icon: '🏋️', desc: 'Cargas altas, pocas reps' },
-      { value: 'hypertrophy', label: 'Ganar músculo',     icon: '💪', desc: 'Volumen e hipertrofia' },
-      { value: 'weight_loss', label: 'Perder peso',       icon: '🔥', desc: 'Más repeticiones y cardio' },
-      { value: 'endurance',   label: 'Mejorar resistencia', icon: '🏃', desc: 'Circuitos y resistencia' },
-      { value: 'general',     label: 'Condición general',  icon: '⚡', desc: 'Equilibrio completo' },
+      { value: 'strength',    label: 'Ganar fuerza',        icon: '<i class="ti ti-barbell"></i>',      desc: 'Cargas altas, pocas reps' },
+      { value: 'hypertrophy', label: 'Ganar músculo',       icon: '<i class="ti ti-dumbbell"></i>',     desc: 'Volumen e hipertrofia' },
+      { value: 'weight_loss', label: 'Perder peso',         icon: '<i class="ti ti-flame"></i>',        desc: 'Más repeticiones y cardio' },
+      { value: 'endurance',   label: 'Mejorar resistencia', icon: '<i class="ti ti-run"></i>',          desc: 'Circuitos y resistencia' },
+      { value: 'general',     label: 'Condición general',   icon: '<i class="ti ti-bolt"></i>',         desc: 'Equilibrio completo' },
     ],
   },
   {
@@ -29,9 +29,9 @@ const QUESTIONS = [
     title: '¿Cuál es tu nivel de experiencia?',
     subtitle: 'Sé honesto — es clave para evitar lesiones y progresar bien.',
     options: [
-      { value: 'beginner',     label: 'Principiante',   icon: '🌱', desc: 'Menos de 1 año entrenando' },
-      { value: 'intermediate', label: 'Intermedio',     icon: '📈', desc: '1-3 años de experiencia' },
-      { value: 'advanced',     label: 'Avanzado',       icon: '🔥', desc: 'Más de 3 años, técnica sólida' },
+      { value: 'beginner',     label: 'Principiante', icon: '<i class="ti ti-plant"></i>',       desc: 'Menos de 1 año entrenando' },
+      { value: 'intermediate', label: 'Intermedio',   icon: '<i class="ti ti-trending-up"></i>', desc: '1-3 años de experiencia' },
+      { value: 'advanced',     label: 'Avanzado',     icon: '<i class="ti ti-medal"></i>',       desc: 'Más de 3 años, técnica sólida' },
     ],
   },
   {
@@ -39,10 +39,10 @@ const QUESTIONS = [
     title: '¿Cuántos días a la semana puedes entrenar?',
     subtitle: 'Considera tus compromisos reales, no los ideales.',
     options: [
-      { value: 2, label: '2 días',  icon: '📅', desc: 'Mínimo, pero efectivo' },
-      { value: 3, label: '3 días',  icon: '📅', desc: 'Recomendado para la mayoría' },
-      { value: 4, label: '4 días',  icon: '📅', desc: 'Alta frecuencia' },
-      { value: 5, label: '5 días',  icon: '📅', desc: 'Alto volumen semanal' },
+      { value: 2, label: '2 días', icon: '<i class="ti ti-calendar"></i>', desc: 'Mínimo, pero efectivo' },
+      { value: 3, label: '3 días', icon: '<i class="ti ti-calendar"></i>', desc: 'Recomendado para la mayoría' },
+      { value: 4, label: '4 días', icon: '<i class="ti ti-calendar"></i>', desc: 'Alta frecuencia' },
+      { value: 5, label: '5 días', icon: '<i class="ti ti-calendar"></i>', desc: 'Alto volumen semanal' },
     ],
   },
   {
@@ -50,10 +50,10 @@ const QUESTIONS = [
     title: '¿Cuánto tiempo tienes por sesión?',
     subtitle: 'Incluye calentamiento y enfriamiento.',
     options: [
-      { value: 45, label: '45 minutos',  icon: '⏱', desc: 'Sesiones cortas e intensas' },
-      { value: 60, label: '60 minutos',  icon: '⏱', desc: 'Lo más común y equilibrado' },
-      { value: 75, label: '75 minutos',  icon: '⏱', desc: 'Sesiones completas' },
-      { value: 90, label: '90 minutos',  icon: '⏱', desc: 'Máximo volumen por sesión' },
+      { value: 45, label: '45 minutos', icon: '<i class="ti ti-clock"></i>', desc: 'Sesiones cortas e intensas' },
+      { value: 60, label: '60 minutos', icon: '<i class="ti ti-clock"></i>', desc: 'Lo más común y equilibrado' },
+      { value: 75, label: '75 minutos', icon: '<i class="ti ti-clock"></i>', desc: 'Sesiones completas' },
+      { value: 90, label: '90 minutos', icon: '<i class="ti ti-clock"></i>', desc: 'Máximo volumen por sesión' },
     ],
   },
   {
@@ -61,9 +61,9 @@ const QUESTIONS = [
     title: '¿Dónde entrenas habitualmente?',
     subtitle: 'Esto define los ejercicios disponibles en tu plan.',
     options: [
-      { value: 'no_equipment', label: 'Sin equipamiento',  icon: '🏠', desc: 'Solo con el peso corporal' },
-      { value: 'home',         label: 'Casa con equipo',   icon: '🏋️', desc: 'Mancuernas, bandas, banco' },
-      { value: 'gym',          label: 'Gimnasio',          icon: '🏟️', desc: 'Acceso a máquinas y barras' },
+      { value: 'no_equipment', label: 'Sin equipamiento', icon: '<i class="ti ti-home"></i>',     desc: 'Solo con el peso corporal' },
+      { value: 'home',         label: 'Casa con equipo',  icon: '<i class="ti ti-barbell"></i>', desc: 'Mancuernas, bandas, banco' },
+      { value: 'gym',          label: 'Gimnasio',         icon: '<i class="ti ti-building"></i>', desc: 'Acceso a máquinas y barras' },
     ],
   },
   {
@@ -71,9 +71,9 @@ const QUESTIONS = [
     title: '¿Qué tipo de división de entrenamiento prefieres?',
     subtitle: 'Si no estás seguro, elige Full Body — es el más versátil.',
     options: [
-      { value: 'full_body',       label: 'Full Body',          icon: '🔄', desc: 'Todo el cuerpo por sesión' },
-      { value: 'upper_lower',     label: 'Superior / Inferior', icon: '↕️', desc: 'Tren superior vs inferior' },
-      { value: 'push_pull_legs',  label: 'Push / Pull / Legs',  icon: '🔁', desc: 'Empuje, jalón y piernas' },
+      { value: 'full_body',      label: 'Full Body',           icon: '<i class="ti ti-refresh"></i>',          desc: 'Todo el cuerpo por sesión' },
+      { value: 'upper_lower',    label: 'Superior / Inferior', icon: '<i class="ti ti-arrows-sort"></i>',      desc: 'Tren superior vs inferior' },
+      { value: 'push_pull_legs', label: 'Push / Pull / Legs',  icon: '<i class="ti ti-repeat"></i>',          desc: 'Empuje, jalón y piernas' },
     ],
   },
   {
@@ -81,9 +81,9 @@ const QUESTIONS = [
     title: '¿Cuántas semanas quieres que dure tu plan?',
     subtitle: 'Puedes regenerar el plan cuando termines.',
     options: [
-      { value: 4,  label: '4 semanas',  icon: '📆', desc: 'Plan corto e intenso' },
-      { value: 8,  label: '8 semanas',  icon: '📆', desc: 'El más equilibrado' },
-      { value: 12, label: '12 semanas', icon: '📆', desc: 'Plan completo por fases' },
+      { value: 4,  label: '4 semanas',  icon: '<i class="ti ti-calendar-event"></i>', desc: 'Plan corto e intenso' },
+      { value: 8,  label: '8 semanas',  icon: '<i class="ti ti-calendar-event"></i>', desc: 'El más equilibrado' },
+      { value: 12, label: '12 semanas', icon: '<i class="ti ti-calendar-event"></i>', desc: 'Plan completo por fases' },
     ],
   },
 ];
@@ -188,7 +188,7 @@ async function _finishOnboarding() {
     console.error('Onboarding error:', err);
     document.getElementById('onboardingContent').innerHTML = `
       <div class="ob-error">
-        <div class="ob-error-icon">⚠️</div>
+        <div class="ob-error-icon"><i class="ti ti-alert-triangle"></i></div>
         <div class="ob-error-msg">Hubo un error al generar tu plan. Inténtalo de nuevo.</div>
         <button class="ob-btn-next" onclick="_obRetry()">Reintentar</button>
       </div>`;

@@ -21,7 +21,7 @@ export function buildSidebar() {
                id="si-${s.id}" onclick="loadSession(${s.id})">
             <div class="s-num">${String(s.id).padStart(2, '0')}</div>
             <div class="s-title">${s.name.split('—')[1]?.trim() || s.name}</div>
-            <div class="s-check ${isDone(s.id) ? 'done' : ''}">${isDone(s.id) ? '✓' : ''}</div>
+            <div class="s-check ${isDone(s.id) ? 'done' : ''}">${isDone(s.id) ? '<i class="ti ti-check"></i>' : ''}</div>
           </div>
         `).join('')}
       </div>
