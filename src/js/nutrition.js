@@ -1,9 +1,10 @@
 // ===== NUTRICIÓN =====
-// Plan nutricional personalizado (basado en onboarding) + guía de fundamentos.
-// Tab "Mi Plan": macros, comidas y timing adaptados al objetivo/nivel/duración.
+// Genera una guía nutricional dinámica basada en la próxima sesión incompleta del plan.
+// Tab "Mi Plan": pre/post-entreno específico al tipo de sesión (piernas, pecho, etc.),
+//               ajustado al objetivo del usuario. Día de descanso siempre visible.
 // Tab "Fundamentos": tarjetas acordeón educativas vinculadas al plan.
 
-import { getPlanMeta } from './state.js';
+import { getPlanMeta, getPlan, isDone } from './state.js';
 
 // ── LABELS ────────────────────────────────────────────────────────────────────
 
@@ -21,7 +22,212 @@ const NIVEL_LABELS = {
   advanced:     'Avanzado',
 };
 
-// ── PLAN DATA ─────────────────────────────────────────────────────────────────
+// ── NUTRICIÓN POR TIPO DE SESIÓN ──────────────────────────────────────────────
+// Qué comer ANTES y DESPUÉS según el músculo que se trabaja.
+
+const SESSION_NUTRITION = {
+  A: {
+    label: 'Piernas',
+    color: 'var(--accent)',
+    pre: {
+      timing: '90 min antes',
+      focus: 'Día de mayor demanda energética del plan — los músculos más grandes requieren más glucógeno',
+      foods: [
+        'Arroz con pollo o carne magra',
+        'Pasta con proteína ligera',
+        'Avena + plátano + proteína en polvo',
+        'Papa cocida + huevos revueltos',
+      ],
+    },
+    post: {
+      timing: '30–45 min después',
+      focus: 'Mayor glucógeno quemado + mayor daño muscular de todo el plan — máxima reposición',
+      protein: '35–45g proteína',
+      foods: [
+        'Arroz + carne magra o pollo',
+        'Batata + proteína en polvo',
+        'Pasta + atún',
+        'Leche + plátano + proteína en polvo',
+      ],
+    },
+    hydration: { level: 'Alta', note: 'Músculos más grandes → mayor temperatura corporal y sudoración' },
+    intensity: 'high',
+  },
+  B: {
+    label: 'Pecho / Tríceps',
+    color: 'var(--cyan)',
+    pre: {
+      timing: '60–90 min antes',
+      focus: 'Carbohidratos moderados + proteína para soportar series de empuje explosivo',
+      foods: [
+        'Arroz con atún o pollo',
+        'Pan integral con huevo',
+        'Avena + proteína en polvo',
+        'Banana + mantequilla de maní',
+      ],
+    },
+    post: {
+      timing: '30–45 min después',
+      focus: 'Proteína para reparar las fibras pectorales y el tríceps bajo carga',
+      protein: '25–35g proteína',
+      foods: [
+        'Shake de proteína + arroz',
+        'Pechuga + papa cocida',
+        'Yogur griego + fruta',
+        'Huevos + tostadas integrales',
+      ],
+    },
+    hydration: { level: 'Moderada-alta', note: '' },
+    intensity: 'medium',
+  },
+  C: {
+    label: 'Espalda / Bíceps',
+    color: 'var(--amber)',
+    pre: {
+      timing: '60–90 min antes',
+      focus: 'La espalda es el grupo muscular más grande del tren superior — carbohidratos moderados-altos',
+      foods: [
+        'Arroz + pollo o carne',
+        'Pan integral con mantequilla de maní',
+        'Avena + clara de huevo',
+        'Batata + atún',
+      ],
+    },
+    post: {
+      timing: '30–45 min después',
+      focus: 'Proteína alta — la espalda tiene el mayor volumen muscular del tren superior',
+      protein: '30–40g proteína',
+      foods: [
+        'Arroz + salmón o carne magra',
+        'Batido de proteína + leche',
+        'Pollo + vegetales + carbohidrato',
+        'Requesón + fruta',
+      ],
+    },
+    hydration: { level: 'Alta', note: 'Jalones y remos activan toda la cadena posterior — alta activación metabólica' },
+    intensity: 'high',
+  },
+  D: {
+    label: 'Hombros',
+    color: 'var(--green)',
+    pre: {
+      timing: '60 min antes',
+      focus: 'Carbohidratos moderados + proteína para el trabajo de deltoides y trapecio',
+      foods: [
+        'Arroz con proteína magra',
+        'Pan integral con huevo',
+        'Fruta + yogur griego',
+        'Avena + leche',
+      ],
+    },
+    post: {
+      timing: '30–60 min después',
+      focus: 'Proteína para reparar deltoides + carbohidratos de recuperación',
+      protein: '20–30g proteína',
+      foods: [
+        'Shake de proteína',
+        'Pollo + arroz',
+        'Yogur griego + granola',
+        'Huevos + tostadas integrales',
+      ],
+    },
+    hydration: { level: 'Moderada', note: '' },
+    intensity: 'medium',
+  },
+  E: {
+    label: 'Cardio',
+    color: 'var(--red)',
+    pre: {
+      timing: '90 min antes',
+      focus: 'Carbohidratos altos — el cardio depende casi exclusivamente del glucógeno como combustible',
+      foods: [
+        'Avena con miel y plátano',
+        'Pan integral con mermelada',
+        'Arroz con proteína ligera',
+        'Fruta + yogur griego',
+      ],
+    },
+    post: {
+      timing: '30 min después',
+      focus: 'Reponer glucógeno rápidamente + algo de proteína para el tejido muscular',
+      protein: '20–25g proteína + carbohidratos prioritarios',
+      foods: [
+        'Fruta + shake de proteína',
+        'Arroz con atún',
+        'Plátano + leche',
+        'Jugo natural + proteína en polvo',
+      ],
+    },
+    hydration: { level: 'Muy alta', note: 'Agrega electrolitos si la sesión dura más de 45 min — una pizca de sal en el agua ayuda' },
+    intensity: 'high',
+  },
+  F: {
+    label: 'Full Body',
+    color: 'var(--accent)',
+    pre: {
+      timing: '90 min antes',
+      focus: 'Full body activa todos los sistemas energéticos — necesitas carbohidratos altos y proteína',
+      foods: [
+        'Arroz + pollo o carne',
+        'Pasta con proteína',
+        'Avena + plátano + proteína en polvo',
+        'Papa cocida + huevos',
+      ],
+    },
+    post: {
+      timing: '30–45 min después',
+      focus: 'Todos los músculos necesitan recuperación simultánea — máxima reposición de nutrientes',
+      protein: '35–45g proteína',
+      foods: [
+        'Arroz + carne magra',
+        'Batido de proteína + leche + plátano',
+        'Pasta + pollo',
+        'Batata + salmón',
+      ],
+    },
+    hydration: { level: 'Muy alta', note: 'Todo el cuerpo activo → máxima pérdida de líquido y electrolitos' },
+    intensity: 'high',
+  },
+  G: {
+    label: 'Deload',
+    color: 'var(--text3)',
+    pre: {
+      timing: '60 min antes',
+      focus: 'Semana de descarga — no requiere alta demanda calórica, come ligero y limpio',
+      foods: [
+        'Fruta + yogur griego',
+        'Pan integral con huevo',
+        'Avena ligera con leche',
+        'Ensalada con proteína',
+      ],
+    },
+    post: {
+      timing: '30–60 min después',
+      focus: 'Proteína moderada para mantener el músculo — carbohidratos mínimos',
+      protein: '20–25g proteína',
+      foods: [
+        'Yogur griego + fruta',
+        'Pollo + ensalada',
+        'Shake de proteína ligero',
+        'Huevos + vegetales al vapor',
+      ],
+    },
+    hydration: { level: 'Normal', note: 'Semana de descarga — misma hidratación base diaria' },
+    intensity: 'low',
+  },
+};
+
+// ── CARBOHIDRATOS AJUSTADOS POR OBJETIVO + INTENSIDAD DE SESIÓN ───────────────
+
+const CARB_LEVEL = {
+  strength:    { high: '5–7g/kg hoy',                    medium: '4–5g/kg hoy',      low: '3–4g/kg hoy' },
+  hypertrophy: { high: '4–6g/kg hoy',                    medium: '3–5g/kg hoy',      low: '2–3g/kg hoy' },
+  weight_loss: { high: '3–4g/kg (prioriza proteína)',     medium: '2–3g/kg hoy',      low: '1.5–2g/kg hoy' },
+  endurance:   { high: '6–8g/kg hoy',                    medium: '5–6g/kg hoy',      low: '4–5g/kg hoy' },
+  general:     { high: '4–5g/kg hoy',                    medium: '3–4g/kg hoy',      low: '2–3g/kg hoy' },
+};
+
+// ── MACROS BASE ───────────────────────────────────────────────────────────────
 
 const PROTEIN_RANGES = {
   strength:    { beginner: '1.6–2.0', intermediate: '1.8–2.2', advanced: '2.0–2.4' },
@@ -39,108 +245,14 @@ const CALORIC_APPROACH = {
   general:     { label: 'Mantenimiento',       detail: '±100–200 kcal/día', color: 'var(--green)' },
 };
 
-const TRAINING_MEALS = {
-  strength: {
-    breakfast: {
-      items: ['Avena con leche y plátano', 'Huevos revueltos (3–4)', 'Tostadas integrales con mantequilla de maní'],
-      macro: 'Alto en carbohidratos y proteína',
-    },
-    pre: {
-      timing: '60–90 min antes',
-      items: ['Arroz con pollo o atún', 'Banana + mantequilla de maní', 'Pan integral con huevo'],
-      macro: 'Carbohidratos de absorción media + proteína',
-    },
-    post: {
-      timing: '30–45 min después',
-      items: ['Batido de proteína con leche', 'Arroz con carne magra', 'Yogur griego + fruta'],
-      macro: '30–40g de proteína + carbohidratos rápidos',
-    },
-    dinner: {
-      items: ['Pechuga de pollo o pescado', 'Vegetales al vapor', 'Arroz o papa cocida'],
-      macro: 'Proteína + carbohidratos moderados',
-    },
-  },
-  hypertrophy: {
-    breakfast: {
-      items: ['Avena con proteína en polvo y fruta', 'Claras de huevo + 2 yemas', 'Tostada integral con aguacate'],
-      macro: 'Carbohidratos + proteína, moderado en grasas',
-    },
-    pre: {
-      timing: '60–90 min antes',
-      items: ['Arroz + pechuga de pollo', 'Tortillas con huevo y avena', 'Banana + batido de proteína'],
-      macro: 'Carbohidratos complejos + proteína',
-    },
-    post: {
-      timing: '30–45 min después',
-      items: ['Shake de proteína (whey)', 'Arroz con pollo o atún', 'Leche con plátano y proteína'],
-      macro: '25–40g proteína + 40–80g carbohidratos',
-    },
-    dinner: {
-      items: ['Carne magra o salmón', 'Vegetales variados salteados', 'Carbohidratos según hambre'],
-      macro: 'Proteína alta, carbohidratos según saciedad',
-    },
-  },
-  weight_loss: {
-    breakfast: {
-      items: ['Claras de huevo (4–5) + 1 yema', 'Avena con agua y canela', 'Frutas bajas en azúcar (fresas, arándanos)'],
-      macro: 'Proteína alta, carbohidratos moderados',
-    },
-    pre: {
-      timing: '45–60 min antes',
-      items: ['Batata pequeña + pollo', 'Yogur bajo en grasa + fruta', 'Arroz integral + atún'],
-      macro: 'Carbohidratos de absorción lenta + proteína',
-    },
-    post: {
-      timing: '30 min después',
-      items: ['Shake de proteína con agua', 'Pollo + vegetales al vapor', 'Atún con ensalada verde'],
-      macro: '25–30g proteína, carbohidratos mínimos',
-    },
-    dinner: {
-      items: ['Pescado o pollo a la plancha', 'Vegetales abundantes', 'Sin o mínimos carbohidratos'],
-      macro: 'Proteína alta, muy bajo en carbohidratos',
-    },
-  },
-  endurance: {
-    breakfast: {
-      items: ['Avena abundante con miel y plátano', 'Pan integral con mantequilla de maní', 'Jugo de naranja natural'],
-      macro: 'Alto en carbohidratos, moderado en proteína',
-    },
-    pre: {
-      timing: '90–120 min antes',
-      items: ['Pasta o arroz con proteína ligera', 'Pan con mermelada y plátano', 'Avena + miel + proteína'],
-      macro: 'Carbohidratos complejos predominantes',
-    },
-    post: {
-      timing: '30 min después',
-      items: ['Batido proteína + jugo o fruta', 'Arroz con atún', 'Banana + yogur griego'],
-      macro: 'Reponer glucógeno + reparar tejido muscular',
-    },
-    dinner: {
-      items: ['Pasta o arroz integral', 'Proteína magra (pollo, huevo)', 'Vegetales cocidos'],
-      macro: 'Carbohidratos para recuperar glucógeno',
-    },
-  },
-  general: {
-    breakfast: {
-      items: ['Huevos (2–3) con tostadas integrales', 'Avena con frutas y nueces', 'Yogur griego + granola'],
-      macro: 'Equilibrado en macros',
-    },
-    pre: {
-      timing: '60–90 min antes',
-      items: ['Fruta + proteína ligera', 'Arroz + pollo', 'Tortillas con huevo y vegetales'],
-      macro: 'Carbohidratos + proteína',
-    },
-    post: {
-      timing: '30–60 min después',
-      items: ['Batido de proteína', 'Yogur + fruta', 'Pollo + arroz'],
-      macro: '20–30g proteína + carbohidratos moderados',
-    },
-    dinner: {
-      items: ['Proteína magra variada', 'Vegetales abundantes', 'Carbohidratos según saciedad'],
-      macro: 'Equilibrado, ligero en grasas',
-    },
-  },
+const HYDRATION_BY_DURATION = {
+  45: { liters: '2.5–3.0', during: '400–600 ml durante', before: '500 ml · 2h antes' },
+  60: { liters: '3.0–3.5', during: '500–700 ml durante', before: '500 ml · 2h antes' },
+  75: { liters: '3.0–3.5', during: '600–800 ml durante', before: '600 ml · 2h antes' },
+  90: { liters: '3.5–4.0', during: '700–1000 ml durante', before: '600 ml · 2h antes' },
 };
+
+// ── DÍA DE DESCANSO POR OBJETIVO ─────────────────────────────────────────────
 
 const REST_MEALS = {
   strength: {
@@ -163,13 +275,6 @@ const REST_MEALS = {
     note: 'Come limpio y nutritivo. Prioriza proteína, vegetales variados y carbohidratos moderados.',
     examples: ['Pollo + vegetales + poco arroz', 'Huevos + aguacate + tostadas', 'Pescado + ensalada', 'Legumbres + vegetales'],
   },
-};
-
-const HYDRATION_BY_DURATION = {
-  45: { liters: '2.5–3.0', during: '400–600 ml durante', before: '500 ml · 2h antes' },
-  60: { liters: '3.0–3.5', during: '500–700 ml durante', before: '500 ml · 2h antes' },
-  75: { liters: '3.0–3.5', during: '600–800 ml durante', before: '600 ml · 2h antes' },
-  90: { liters: '3.5–4.0', during: '700–1000 ml durante', before: '600 ml · 2h antes' },
 };
 
 // ── FUNDAMENTOS ───────────────────────────────────────────────────────────────
@@ -257,7 +362,7 @@ const FUNDAMENTOS = [
 
 // ── INTERNAL STATE ────────────────────────────────────────────────────────────
 
-let _activeTab = 'plan';
+let _activeTab  = 'plan';
 let _openFundId = null;
 
 // ── GENERATOR ─────────────────────────────────────────────────────────────────
@@ -267,117 +372,177 @@ function _generatePlan(meta) {
   const nivel    = meta?.nivel    || 'beginner';
   const duracion = meta?.duracion || 60;
 
-  const hydKey = duracion <= 45 ? 45 : duracion >= 90 ? 90 : duracion >= 75 ? 75 : 60;
+  // Find next incomplete session in order
+  const sessions = getPlan();
+  const nextSes  = sessions.find(s => !isDone(s.id)) || null;
+  const allDone  = sessions.length > 0 && sessions.every(s => isDone(s.id));
+
+  const hydKey    = duracion <= 45 ? 45 : duracion >= 90 ? 90 : duracion >= 75 ? 75 : 60;
+  const sesNut    = nextSes ? (SESSION_NUTRITION[nextSes.type] || SESSION_NUTRITION.F) : null;
+  const carbLevel = sesNut ? (CARB_LEVEL[objetivo]?.[sesNut.intensity] || '') : '';
 
   return {
-    objetivo,
-    nivel,
-    hasMeta: !!meta,
-    protein:       PROTEIN_RANGES[objetivo]?.[nivel] || '1.6–2.0',
-    caloric:       CALORIC_APPROACH[objetivo]        || CALORIC_APPROACH.general,
-    trainingMeals: TRAINING_MEALS[objetivo]          || TRAINING_MEALS.general,
-    restMeals:     REST_MEALS[objetivo]              || REST_MEALS.general,
-    hydration:     HYDRATION_BY_DURATION[hydKey],
+    objetivo, nivel, hasMeta: !!meta, allDone,
+    nextSes, sesNut, carbLevel,
+    protein:   PROTEIN_RANGES[objetivo]?.[nivel] || '1.6–2.0',
+    caloric:   CALORIC_APPROACH[objetivo]        || CALORIC_APPROACH.general,
+    restMeals: REST_MEALS[objetivo]              || REST_MEALS.general,
+    hydration: HYDRATION_BY_DURATION[hydKey],
   };
+}
+
+// ── RENDER HELPERS ────────────────────────────────────────────────────────────
+
+function _renderNextSession(plan) {
+  const { nextSes, sesNut, carbLevel, hydration, objetivo } = plan;
+
+  if (!nextSes || !sesNut) return '';
+
+  const sesNum  = String(nextSes.id).padStart(2, '0');
+  const sesName = nextSes.name.split('—')[1]?.trim() || nextSes.name;
+
+  return `
+    <div class="nut-next-card" style="border-color:${sesNut.color}22">
+      <div class="nut-next-card-header" style="border-color:${sesNut.color}33">
+        <div class="nut-next-label">Próxima sesión</div>
+        <div class="nut-next-session-name">
+          <span class="nut-next-num" style="color:${sesNut.color}">Sesión ${sesNum}</span>
+          <span class="nut-next-title">${sesName}</span>
+        </div>
+        <div class="nut-next-badges">
+          <span class="nut-type-badge" style="background:${sesNut.color}18;color:${sesNut.color};border-color:${sesNut.color}44">
+            ${sesNut.label}
+          </span>
+          <span class="nut-type-badge" style="background:var(--bg);color:var(--text3);border-color:var(--border)">
+            Fase ${nextSes.phase}
+          </span>
+          <span class="nut-type-badge" style="background:var(--bg);color:var(--text3);border-color:var(--border)">
+            ${nextSes.intensity}
+          </span>
+        </div>
+      </div>
+
+      <!-- PRE-ENTRENO -->
+      <div class="nut-section nut-section--pre">
+        <div class="nut-section-header">
+          <span class="nut-section-title nut-section-title--pre">Pre-Entreno</span>
+          <span class="nut-section-timing">${sesNut.pre.timing}</span>
+        </div>
+        <p class="nut-section-focus">${sesNut.pre.focus}</p>
+        <ul class="nut-meal-items">
+          ${sesNut.pre.foods.map(f => `<li>${f}</li>`).join('')}
+        </ul>
+        ${carbLevel ? `<div class="nut-carb-chip"><i class="ti ti-wheat"></i> Carbohidratos: <strong>${carbLevel}</strong></div>` : ''}
+        <button class="nut-fund-link nut-fund-link--block" onclick="nutGoFund('timing')">¿Por qué este timing? →</button>
+      </div>
+
+      <!-- POST-ENTRENO -->
+      <div class="nut-section nut-section--post">
+        <div class="nut-section-header">
+          <span class="nut-section-title nut-section-title--post">Post-Entreno</span>
+          <span class="nut-section-timing">${sesNut.post.timing}</span>
+        </div>
+        <p class="nut-section-focus">${sesNut.post.focus}</p>
+        <div class="nut-protein-chip"><i class="ti ti-meat"></i> <strong>${sesNut.post.protein}</strong></div>
+        <ul class="nut-meal-items">
+          ${sesNut.post.foods.map(f => `<li>${f}</li>`).join('')}
+        </ul>
+        <button class="nut-fund-link nut-fund-link--block" onclick="nutGoFund('proteinas')">¿Por qué tanta proteína? →</button>
+      </div>
+
+      <!-- HIDRATACIÓN -->
+      <div class="nut-section-hydration">
+        <div class="nut-hydration-row">
+          <i class="ti ti-droplets" style="color:var(--cyan)"></i>
+          <div>
+            <span class="nut-hydration-level">Hidratación ${sesNut.hydration.level}</span>
+            <span class="nut-hydration-amounts">${hydration.during} &nbsp;·&nbsp; ${hydration.before}</span>
+          </div>
+        </div>
+        ${sesNut.hydration.note ? `<p class="nut-hydration-note-text">${sesNut.hydration.note}</p>` : ''}
+      </div>
+
+      <!-- SUPLEMENTOS RÁPIDOS -->
+      <div class="nut-supl-row">
+        <i class="ti ti-pill" style="color:var(--text3)"></i>
+        <span>¿Tomar creatina hoy? <strong>Sí</strong> — cualquier momento del día.</span>
+        <button class="nut-fund-link" onclick="nutGoFund('suplementacion')" style="margin-top:0">Ver guía →</button>
+      </div>
+    </div>
+  `;
+}
+
+function _renderAllDone() {
+  return `
+    <div class="nut-all-done-card">
+      <div class="nut-all-done-icon"><i class="ti ti-trophy"></i></div>
+      <div class="nut-all-done-title">¡Completaste todas las sesiones del ciclo!</div>
+      <div class="nut-all-done-sub">Descansa, recupera y considera iniciar un Nuevo Ciclo para continuar progresando.</div>
+    </div>
+  `;
+}
+
+function _renderMacrosBase(plan) {
+  const h = plan.hydration;
+  return `
+    <div class="nut-macros-base">
+      <div class="nut-macros-base-title">Macros diarios base · ${OBJETIVO_LABELS[plan.objetivo] || plan.objetivo} · ${NIVEL_LABELS[plan.nivel] || plan.nivel}</div>
+      <div class="nut-macros-row">
+        <div class="nut-macro-card">
+          <div class="nut-macro-icon" style="color:var(--accent)"><i class="ti ti-meat"></i></div>
+          <div class="nut-macro-val">${plan.protein}</div>
+          <div class="nut-macro-unit">g / kg / día</div>
+          <div class="nut-macro-label">Proteína</div>
+          <button class="nut-fund-link" onclick="nutGoFund('proteinas')">¿Por qué? →</button>
+        </div>
+        <div class="nut-macro-card">
+          <div class="nut-macro-icon" style="color:${plan.caloric.color}"><i class="ti ti-flame"></i></div>
+          <div class="nut-macro-val" style="color:${plan.caloric.color};font-size:.9rem">${plan.caloric.label}</div>
+          <div class="nut-macro-unit">${plan.caloric.detail}</div>
+          <div class="nut-macro-label">Calorías</div>
+          <button class="nut-fund-link" onclick="nutGoFund('carbohidratos')">¿Por qué? →</button>
+        </div>
+        <div class="nut-macro-card">
+          <div class="nut-macro-icon" style="color:var(--cyan)"><i class="ti ti-droplets"></i></div>
+          <div class="nut-macro-val">${h.liters}</div>
+          <div class="nut-macro-unit">litros / día</div>
+          <div class="nut-macro-label">Agua total</div>
+          <button class="nut-fund-link" onclick="nutGoFund('hidratacion')">¿Por qué? →</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function _renderRestDay(restMeals) {
+  return `
+    <div class="nut-day-block nut-day-block--rest">
+      <div class="nut-day-header nut-day-header--rest">
+        <i class="ti ti-moon"></i> Día de Descanso
+        <span class="nut-rest-note-badge">siempre aplica</span>
+      </div>
+      <p class="nut-rest-note">${restMeals.note}</p>
+      <div class="nut-rest-grid">
+        ${restMeals.examples.map(e => `<div class="nut-rest-item"><i class="ti ti-check"></i> ${e}</div>`).join('')}
+      </div>
+    </div>
+  `;
 }
 
 // ── RENDER: MI PLAN ───────────────────────────────────────────────────────────
 
 function _renderPlan(plan) {
-  const tm = plan.trainingMeals;
-  const rm = plan.restMeals;
-  const h  = plan.hydration;
-
   const noMetaNote = plan.hasMeta ? '' : `
     <div class="nut-no-meta">
       <i class="ti ti-info-circle"></i>
-      Plan genérico activo. Completa el onboarding o inicia un <strong>Nuevo Ciclo</strong> para personalizar tu plan nutricional.
+      Plan genérico activo. Completa el onboarding o inicia un <strong>Nuevo Ciclo</strong> para personalizar los macros y recomendaciones.
     </div>`;
 
   return `
     ${noMetaNote}
-    <div class="nut-hero">
-      <div class="nut-hero-meta">
-        <span class="nut-hero-obj">${OBJETIVO_LABELS[plan.objetivo] || plan.objetivo}</span>
-        <span class="nut-hero-lvl">${NIVEL_LABELS[plan.nivel] || plan.nivel}</span>
-      </div>
-      <p class="nut-hero-desc">Guía nutricional adaptada a tu objetivo y nivel. Úsala como base y ajusta según tu respuesta y contexto personal.</p>
-    </div>
-
-    <div class="nut-macros-row">
-      <div class="nut-macro-card">
-        <div class="nut-macro-icon" style="color:var(--accent)"><i class="ti ti-meat"></i></div>
-        <div class="nut-macro-val">${plan.protein}</div>
-        <div class="nut-macro-unit">g / kg / día</div>
-        <div class="nut-macro-label">Proteína</div>
-        <button class="nut-fund-link" onclick="nutGoFund('proteinas')">¿Por qué? →</button>
-      </div>
-      <div class="nut-macro-card">
-        <div class="nut-macro-icon" style="color:${plan.caloric.color}"><i class="ti ti-flame"></i></div>
-        <div class="nut-macro-val" style="color:${plan.caloric.color};font-size:.95rem">${plan.caloric.label}</div>
-        <div class="nut-macro-unit">${plan.caloric.detail}</div>
-        <div class="nut-macro-label">Calorías</div>
-        <button class="nut-fund-link" onclick="nutGoFund('carbohidratos')">¿Por qué? →</button>
-      </div>
-      <div class="nut-macro-card">
-        <div class="nut-macro-icon" style="color:var(--cyan)"><i class="ti ti-droplets"></i></div>
-        <div class="nut-macro-val">${h.liters}</div>
-        <div class="nut-macro-unit">litros / día</div>
-        <div class="nut-macro-label">Hidratación</div>
-        <button class="nut-fund-link" onclick="nutGoFund('hidratacion')">¿Por qué? →</button>
-      </div>
-    </div>
-
-    <div class="nut-day-block">
-      <div class="nut-day-header"><i class="ti ti-dumbbell"></i> Día de Entrenamiento</div>
-
-      <div class="nut-meal">
-        <div class="nut-meal-header">
-          <span class="nut-meal-badge">Desayuno</span>
-          <span class="nut-meal-macro">${tm.breakfast.macro}</span>
-        </div>
-        <ul class="nut-meal-items">${tm.breakfast.items.map(i => `<li>${i}</li>`).join('')}</ul>
-      </div>
-
-      <div class="nut-meal nut-meal--pre">
-        <div class="nut-meal-header">
-          <span class="nut-meal-badge nut-meal-badge--pre">Pre-entreno · ${tm.pre.timing}</span>
-          <span class="nut-meal-macro">${tm.pre.macro}</span>
-        </div>
-        <ul class="nut-meal-items">${tm.pre.items.map(i => `<li>${i}</li>`).join('')}</ul>
-        <button class="nut-fund-link nut-fund-link--block" onclick="nutGoFund('timing')">Ver timing nutricional →</button>
-      </div>
-
-      <div class="nut-meal nut-meal--post">
-        <div class="nut-meal-header">
-          <span class="nut-meal-badge nut-meal-badge--post">Post-entreno · ${tm.post.timing}</span>
-          <span class="nut-meal-macro">${tm.post.macro}</span>
-        </div>
-        <ul class="nut-meal-items">${tm.post.items.map(i => `<li>${i}</li>`).join('')}</ul>
-      </div>
-
-      <div class="nut-meal">
-        <div class="nut-meal-header">
-          <span class="nut-meal-badge">Cena</span>
-          <span class="nut-meal-macro">${tm.dinner.macro}</span>
-        </div>
-        <ul class="nut-meal-items">${tm.dinner.items.map(i => `<li>${i}</li>`).join('')}</ul>
-      </div>
-
-      <div class="nut-hydration-tip">
-        <i class="ti ti-droplets"></i>
-        <span><strong>${h.during}</strong> &nbsp;·&nbsp; <strong>${h.before}</strong></span>
-      </div>
-    </div>
-
-    <div class="nut-day-block nut-day-block--rest">
-      <div class="nut-day-header nut-day-header--rest"><i class="ti ti-moon"></i> Día de Descanso</div>
-      <p class="nut-rest-note">${rm.note}</p>
-      <div class="nut-rest-grid">
-        ${rm.examples.map(e => `<div class="nut-rest-item"><i class="ti ti-check"></i> ${e}</div>`).join('')}
-      </div>
-    </div>
-
+    ${plan.allDone ? _renderAllDone() : _renderNextSession(plan)}
+    ${_renderMacrosBase(plan)}
+    ${_renderRestDay(plan.restMeals)}
     <div class="nut-cta-supl">
       <i class="ti ti-pill"></i>
       <span>¿Qué suplementos valen la pena?</span>
@@ -407,7 +572,7 @@ function _renderFundamentos(objetivo) {
   }).join('');
 }
 
-// ── BUILD (full page render) ──────────────────────────────────────────────────
+// ── BUILD ─────────────────────────────────────────────────────────────────────
 
 function _build() {
   const meta = getPlanMeta();

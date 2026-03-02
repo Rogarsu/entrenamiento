@@ -391,6 +391,252 @@
 .nut-cta-supl > i { color: var(--text3); font-size: 17px; flex-shrink: 0; }
 .nut-cta-supl > span { flex: 1; }
 
+/* ── NEXT SESSION CARD ────────────────────────────────────────────────────── */
+
+.nut-next-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+
+.nut-next-card-header {
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.nut-next-label {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 4px;
+}
+
+.nut-next-session-name {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.nut-next-num {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.nut-next-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.nut-next-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.nut-type-badge {
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid;
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-family: var(--font-mono);
+}
+
+/* ── SESSION SECTIONS (pre / post) ───────────────────────────────────────── */
+
+.nut-section {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.nut-section:last-of-type { border-bottom: none; }
+
+.nut-section--pre  { background: rgba(245, 158, 11, 0.04); }
+.nut-section--post { background: rgba(34, 197, 94, 0.04); }
+
+.nut-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.nut-section-title {
+  font-size: 12px;
+  font-weight: 800;
+  font-family: var(--font-mono);
+  letter-spacing: .06em;
+  border-radius: 6px;
+  padding: 3px 9px;
+}
+
+.nut-section-title--pre {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--amber);
+}
+
+.nut-section-title--post {
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--green);
+}
+
+.nut-section-timing {
+  font-size: 11px;
+  color: var(--text3);
+  font-family: var(--font-mono);
+}
+
+.nut-section-focus {
+  font-size: 12px;
+  color: var(--text2);
+  font-style: italic;
+  line-height: 1.5;
+  margin: 0 0 10px;
+}
+
+.nut-carb-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--amber);
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 6px;
+  padding: 3px 9px;
+  margin: 6px 0;
+}
+
+.nut-protein-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--green);
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  border-radius: 6px;
+  padding: 3px 9px;
+  margin: 0 0 10px;
+}
+
+/* ── SECTION HYDRATION ────────────────────────────────────────────────────── */
+
+.nut-section-hydration {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  background: rgba(6, 182, 212, 0.03);
+}
+
+.nut-hydration-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.nut-hydration-row > i { margin-top: 2px; font-size: 18px; }
+
+.nut-hydration-level {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cyan);
+  display: block;
+  margin-bottom: 2px;
+}
+
+.nut-hydration-amounts {
+  font-size: 12px;
+  color: var(--text2);
+  font-family: var(--font-mono);
+}
+
+.nut-hydration-note-text {
+  font-size: 12px;
+  color: var(--text3);
+  font-style: italic;
+  margin: 6px 0 0 28px;
+  line-height: 1.5;
+}
+
+/* ── SUPPLEMENT ROW ───────────────────────────────────────────────────────── */
+
+.nut-supl-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 12px;
+  color: var(--text2);
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.nut-supl-row > i { flex-shrink: 0; }
+
+/* ── MACROS BASE (secondary row) ─────────────────────────────────────────── */
+
+.nut-macros-base {
+  margin-bottom: 14px;
+}
+
+.nut-macros-base-title {
+  font-size: 11px;
+  color: var(--text3);
+  font-family: var(--font-mono);
+  margin-bottom: 8px;
+  padding: 0 2px;
+}
+
+/* ── REST DAY BADGE ───────────────────────────────────────────────────────── */
+
+.nut-rest-note-badge {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text3);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2px 8px;
+  margin-left: auto;
+}
+
+/* ── ALL DONE ─────────────────────────────────────────────────────────────── */
+
+.nut-all-done-card {
+  text-align: center;
+  padding: 32px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 14px;
+}
+
+.nut-all-done-icon {
+  font-size: 36px;
+  color: var(--amber);
+  margin-bottom: 10px;
+}
+
+.nut-all-done-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.nut-all-done-sub {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.6;
+}
+
 /* ── FUNDAMENTOS ──────────────────────────────────────────────────────────── */
 
 .nut-fund-card {
