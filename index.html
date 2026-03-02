@@ -81,7 +81,7 @@
   <div class="nav-modules">
     <button class="nav-mod active" onclick="navGoFisico()"><i class="ti ti-barbell"></i> Físico</button>
     <button class="nav-mod locked" title="Próximamente"><i class="ti ti-brain"></i> Mental</button>
-    <button class="nav-mod locked" title="Próximamente"><i class="ti ti-leaf"></i> Nutrición</button>
+    <button class="nav-mod" onclick="navGoNutricion()"><i class="ti ti-leaf"></i> Nutrición</button>
     <button class="nav-mod locked" title="Próximamente"><i class="ti ti-trending-up"></i> Progreso</button>
     <button class="nav-mod hist-btn" onclick="showHistPage()"><i class="ti ti-clipboard-list"></i> Historial</button>
     <button class="nav-mod" onclick="navGoReportes()"><i class="ti ti-file-description"></i> Reportes</button>
@@ -96,7 +96,7 @@
     <div id="navDropdownPanel">
       <button class="nav-dd-item active-fisico" id="navItemFisico" onclick="navGoFisico()"><i class="ti ti-barbell"></i> Físico</button>
       <button class="nav-dd-item locked" disabled title="Próximamente"><i class="ti ti-brain"></i> Mental <span class="nav-dd-tag">pronto</span></button>
-      <button class="nav-dd-item locked" disabled title="Próximamente"><i class="ti ti-leaf"></i> Nutrición <span class="nav-dd-tag">pronto</span></button>
+      <button class="nav-dd-item" id="navItemNutricion" onclick="navGoNutricion()"><i class="ti ti-leaf"></i> Nutrición</button>
       <button class="nav-dd-item locked" disabled title="Próximamente"><i class="ti ti-trending-up"></i> Progreso <span class="nav-dd-tag">pronto</span></button>
       <div class="nav-dd-divider"></div>
       <button class="nav-dd-item active-hist" id="navItemHistorial" onclick="navGoHistorial()"><i class="ti ti-clipboard-list"></i> Historial</button>
@@ -189,6 +189,15 @@
   <div id="histEmpty" style="display:none;text-align:center;padding:48px;color:var(--text3);font-family:var(--font-mono);font-size:14px;">
     Sin registros aún. Guarda el peso y reps de tus ejercicios para verlos aquí.
   </div>
+</div>
+
+<!-- NUTRITION PAGE -->
+<div id="nutritionPage" class="nut-page">
+  <div class="nut-header">
+    <div class="nut-title"><i class="ti ti-leaf"></i> Nutrición</div>
+    <button class="nut-back" onclick="navGoFisico()"><i class="ti ti-arrow-left"></i> Volver</button>
+  </div>
+  <div id="nutritionContent"></div>
 </div>
 
 <!-- WELLNESS FAB -->
