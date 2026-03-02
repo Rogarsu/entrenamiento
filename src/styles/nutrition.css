@@ -718,6 +718,331 @@
 
 .nut-fund-body p:last-child { margin-bottom: 0; }
 
+/* ── TRAINING TIME SELECTOR ──────────────────────────────────────────────── */
+
+.nut-train-selector {
+  margin-bottom: 16px;
+}
+
+.nut-train-selector-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text2);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nut-train-selector-label i { color: var(--accent); }
+
+.nut-train-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.nut-train-chip {
+  padding: 6px 13px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text2);
+  font-size: 13px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+
+.nut-train-chip:hover { border-color: var(--accent); color: var(--text); }
+
+.nut-train-chip--active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ── SESSION HEADER ──────────────────────────────────────────────────────── */
+
+.nut-ses-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+
+.nut-ses-header-label {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  white-space: nowrap;
+}
+
+.nut-ses-header-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  flex: 1;
+  min-width: 0;
+}
+
+.nut-ses-type-chip {
+  font-size: 11px;
+  font-weight: 700;
+  border: 1px solid;
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+/* ── TIMELINE TITLE ──────────────────────────────────────────────────────── */
+
+.nut-tl-day-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text3);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+/* ── TIMELINE ─────────────────────────────────────────────────────────────── */
+
+.nut-timeline {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.nut-tl-item {
+  display: grid;
+  grid-template-columns: 52px 20px 1fr;
+  grid-template-rows: auto 1fr;
+  gap: 0 10px;
+  margin-bottom: 0;
+  position: relative;
+}
+
+/* Time column */
+.nut-tl-time {
+  grid-column: 1;
+  grid-row: 1;
+  font-size: 13px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text2);
+  text-align: right;
+  padding-top: 2px;
+  line-height: 1;
+}
+
+/* Vertical line column */
+.nut-tl-line {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  width: 2px;
+  background: var(--border);
+  margin: 0 auto;
+  position: relative;
+  min-height: 100%;
+}
+
+/* Dot */
+.nut-tl-dot {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border);
+  border: 2px solid var(--bg);
+  z-index: 1;
+}
+
+.nut-tl-dot--training {
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+  border-color: var(--bg);
+  top: 2px;
+}
+
+.nut-tl-dot--last {
+  background: var(--text3);
+}
+
+/* Content area */
+.nut-tl-card {
+  grid-column: 3;
+  grid-row: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+
+.nut-tl-card--pre {
+  background: rgba(245, 158, 11, 0.04);
+  border-color: rgba(245, 158, 11, 0.2);
+}
+
+.nut-tl-card--post {
+  background: rgba(34, 197, 94, 0.04);
+  border-color: rgba(34, 197, 94, 0.2);
+}
+
+.nut-tl-card--last {
+  background: rgba(99, 102, 241, 0.04);
+  border-color: rgba(99, 102, 241, 0.2);
+}
+
+.nut-tl-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.nut-tl-card-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.nut-tl-badge {
+  font-size: 10px;
+  font-weight: 700;
+  border: 1px solid;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.nut-tl-badge--pre {
+  color: var(--amber);
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.nut-tl-badge--post {
+  color: var(--green);
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+.nut-tl-sublabel {
+  font-size: 10px;
+  color: var(--text3);
+  font-style: italic;
+  margin-left: auto;
+}
+
+.nut-tl-focus {
+  font-size: 12px;
+  color: var(--text2);
+  font-style: italic;
+  line-height: 1.5;
+  margin: 0 0 8px;
+}
+
+.nut-tl-footer {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nut-tl-macro {
+  font-size: 11px;
+  color: var(--text3);
+  font-family: var(--font-mono);
+}
+
+.nut-tl-water {
+  font-size: 11px;
+  color: var(--cyan);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.nut-tl-water-note {
+  font-size: 11px;
+  color: var(--text3);
+  font-style: italic;
+  display: block;
+  margin-top: 2px;
+}
+
+/* Training block */
+.nut-tl-training {
+  grid-column: 3;
+  grid-row: 1;
+  background: rgba(99, 102, 241, 0.06);
+  border: 2px solid rgba(99, 102, 241, 0.25);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+
+.nut-tl-training-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.nut-tl-training-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.nut-tl-training-meta {
+  font-size: 12px;
+  color: var(--text3);
+  font-family: var(--font-mono);
+  margin-bottom: 8px;
+}
+
+.nut-tl-training-water {
+  font-size: 12px;
+  color: var(--cyan);
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.nut-tl-training-water i { flex-shrink: 0; margin-top: 1px; }
+
 /* ── RESPONSIVE ───────────────────────────────────────────────────────────── */
 
 @media (max-width: 400px) {
