@@ -7,6 +7,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script type="module" src="/src/main.js"></script>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+  }
+</script>
 </head>
 <body>
 
@@ -82,7 +91,7 @@
     <button class="nav-mod active" onclick="navGoFisico()"><i class="ti ti-barbell"></i> Físico</button>
     <button class="nav-mod locked" title="Próximamente"><i class="ti ti-brain"></i> Mental</button>
     <button class="nav-mod" onclick="navGoNutricion()"><i class="ti ti-leaf"></i> Nutrición</button>
-    <button class="nav-mod locked" title="Próximamente"><i class="ti ti-trending-up"></i> Progreso</button>
+    <button class="nav-mod" onclick="navGoProgreso()"><i class="ti ti-trending-up"></i> Progreso</button>
     <button class="nav-mod hist-btn" onclick="showHistPage()"><i class="ti ti-clipboard-list"></i> Historial</button>
     <button class="nav-mod" onclick="navGoReportes()"><i class="ti ti-file-description"></i> Reportes</button>
   </div>
@@ -97,7 +106,7 @@
       <button class="nav-dd-item active-fisico" id="navItemFisico" onclick="navGoFisico()"><i class="ti ti-barbell"></i> Físico</button>
       <button class="nav-dd-item locked" disabled title="Próximamente"><i class="ti ti-brain"></i> Mental <span class="nav-dd-tag">pronto</span></button>
       <button class="nav-dd-item" id="navItemNutricion" onclick="navGoNutricion()"><i class="ti ti-leaf"></i> Nutrición</button>
-      <button class="nav-dd-item locked" disabled title="Próximamente"><i class="ti ti-trending-up"></i> Progreso <span class="nav-dd-tag">pronto</span></button>
+      <button class="nav-dd-item" id="navItemProgreso" onclick="navGoProgreso()"><i class="ti ti-trending-up"></i> Progreso</button>
       <div class="nav-dd-divider"></div>
       <button class="nav-dd-item active-hist" id="navItemHistorial" onclick="navGoHistorial()"><i class="ti ti-clipboard-list"></i> Historial</button>
       <button class="nav-dd-item" id="navItemReportes" onclick="navGoReportes()"><i class="ti ti-file-description"></i> Reportes</button>
@@ -198,6 +207,15 @@
     <button class="nut-back" onclick="navGoFisico()"><i class="ti ti-arrow-left"></i> Volver</button>
   </div>
   <div id="nutritionContent"></div>
+</div>
+
+<!-- PROGRESS PAGE -->
+<div id="progressPage" class="prog-page">
+  <div class="prog-header">
+    <div class="prog-title"><i class="ti ti-trending-up"></i> Progreso</div>
+    <button class="prog-back" onclick="navGoFisico()"><i class="ti ti-arrow-left"></i> Volver</button>
+  </div>
+  <div id="progressContent"></div>
 </div>
 
 <!-- WELLNESS FAB -->

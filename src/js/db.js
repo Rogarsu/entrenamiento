@@ -93,3 +93,24 @@ export async function upsertNutritionLog(userId, date, sessionId, completedSlots
   }, { onConflict: 'user_id,log_date' });
   if (error) console.error('upsert nutrition_log:', error);
 }
+
+// ── BODY METRICS ─────────────────────────────────────────────────────────────
+
+export async function fetchBodyMetrics(userId) {
+  const { data, error } = await supabase
+    .from('body_metrics')
+    .select('metric_date, weight_kg')
+    .eq('user_id', userId)
+    .order('metric_date', { ascending: true });
+  if (error) { console.error('fetchBodyMetrics:', error); return []; }
+  return data || [];
+}
+
+export async function upsertBodyMetric(userId, date, weightKg) {
+  const { error } = await supabase.from('body_metrics').upsert({
+    user_id: userId,
+    metric_date: date,
+    weight_kg: weightKg,
+  }, { onConflict: 'user_id,metric_date' });
+  if (error) console.error('upsertBodyMetric:', error);
+}
