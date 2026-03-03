@@ -25,7 +25,7 @@ export async function upsertSessionLog(userId, log) {
     pain: log.pain,
     notes: log.notes,
   }, { onConflict: 'user_id,session_id' });
-  if (error) console.error('upsert session_log:', error);
+  if (error) console.error('[DB] upsert session_log falló — verifica RLS en Supabase:', error.message, error);
 }
 
 export async function upsertExLog(userId, exId, sessionId, data) {
@@ -40,7 +40,7 @@ export async function upsertExLog(userId, exId, sessionId, data) {
     logged_time: data.time,
     logged_at: data.timestamp,
   }, { onConflict: 'user_id,exercise_id,session_id' });
-  if (error) console.error('upsert exercise_log:', error);
+  if (error) console.error('[DB] upsert exercise_log falló — verifica RLS en Supabase:', error.message, error);
 }
 
 // ── TRAINING PLANS ──────────────────────────────────────────────────────────
@@ -65,7 +65,7 @@ export async function upsertUserPlan(userId, sessions) {
     user_id: userId,
     sessions,
   }, { onConflict: 'user_id' });
-  if (error) console.error('upsert training_plan:', error);
+  if (error) console.error('[DB] upsert training_plan falló — verifica RLS en Supabase:', error.message, error);
 }
 
 export async function deleteUserLogs(userId) {
@@ -96,7 +96,7 @@ export async function upsertNutritionLog(userId, date, sessionId, completedSlots
     completed_slots: completedSlots,
     updated_at: new Date().toISOString(),
   }, { onConflict: 'user_id,log_date' });
-  if (error) console.error('upsert nutrition_log:', error);
+  if (error) console.error('[DB] upsert nutrition_log falló — verifica RLS en Supabase:', error.message, error);
 }
 
 // ── USER PREFERENCES ─────────────────────────────────────────────────────────
@@ -117,7 +117,7 @@ export async function upsertUserPrefs(userId, prefs) {
     ...prefs,
     updated_at: new Date().toISOString(),
   }, { onConflict: 'user_id' });
-  if (error) console.error('upsert user_preferences:', error);
+  if (error) console.error('[DB] upsert user_preferences falló — verifica RLS en Supabase:', error.message, error);
 }
 
 // ── BODY METRICS ─────────────────────────────────────────────────────────────
@@ -138,5 +138,5 @@ export async function upsertBodyMetric(userId, date, weightKg) {
     metric_date: date,
     weight_kg: weightKg,
   }, { onConflict: 'user_id,metric_date' });
-  if (error) console.error('upsertBodyMetric:', error);
+  if (error) console.error('[DB] upsert body_metrics falló — verifica RLS en Supabase:', error.message, error);
 }
