@@ -13,6 +13,7 @@ import './styles/onboarding.css';
 import './styles/reports.css';
 import './styles/nutrition.css';
 import './styles/progress.css';
+import './styles/timer.css';
 
 // ===== MÓDULOS JS =====
 import { buildSidebar, togglePhase, toggleSidebar } from './js/sidebar.js';

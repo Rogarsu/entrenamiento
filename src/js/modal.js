@@ -3,6 +3,7 @@ import { getExImage } from '../data/images.js';
 import { getExLog, getLastExLog, saveExLog } from './storage.js';
 import { calcNextRecommendation, calcCrossExRecommendation, getRelatedExLogs, getExRecommendation } from './progression.js';
 import { escStr } from './helpers.js';
+import { startRestTimer } from './timer.js';
 
 let _exCtx = null; // contexto del modal abierto
 
@@ -115,6 +116,8 @@ export function saveCurrentExLog() {
       });
     });
   }
+
+  startRestTimer(id);
 
   const fb = document.getElementById('exLogSaved');
   if (fb) { fb.style.display = 'block'; setTimeout(() => { fb.style.display = 'none'; }, 2000); }
