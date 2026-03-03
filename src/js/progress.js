@@ -77,23 +77,47 @@ function _toISO(dateStr) {
   return dateStr.slice(0, 10);
 }
 
+function _isoWeek(isoDate) {
+  // Returns "YYYY-Www" string for the ISO week containing the date
+  const d = new Date(isoDate);
+  d.setUTCHours(0, 0, 0, 0);
+  // Thursday of the same week (ISO 8601 defines week by its Thursday)
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+  const year = d.getUTCFullYear();
+  const week = Math.ceil(((d - new Date(Date.UTC(year, 0, 1))) / 86400000 + 1) / 7);
+  return `${year}-W${String(week).padStart(2, '0')}`;
+}
+
 function _computeStreak() {
   const dates = [...new Set(state.logs.map(l => _toISO(l.date)).filter(Boolean))].sort();
   if (!dates.length) return { current: 0, best: 0 };
+
+  // Collect unique weeks that have at least one session
+  const weeks = [...new Set(dates.map(_isoWeek))].sort();
+  if (!weeks.length) return { current: 0, best: 0 };
+
+  // Best streak: longest run of consecutive ISO weeks
   let best = 1, temp = 1;
-  for (let i = 1; i < dates.length; i++) {
-    const diff = (new Date(dates[i]) - new Date(dates[i - 1])) / 86400000;
+  for (let i = 1; i < weeks.length; i++) {
+    const [y1, w1] = weeks[i - 1].split('-W').map(Number);
+    const [y2, w2] = weeks[i].split('-W').map(Number);
+    const diff = (y2 - y1) * 52 + (w2 - w1);
     if (diff === 1) { temp++; if (temp > best) best = temp; }
     else temp = 1;
   }
-  const today = new Date().toISOString().slice(0, 10);
-  const yday  = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-  const last  = dates[dates.length - 1];
+
+  // Current streak: count backwards from this week or last week
+  const thisWeek = _isoWeek(new Date().toISOString().slice(0, 10));
+  const lastWeek = _isoWeek(new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10));
+  const lastLogged = weeks[weeks.length - 1];
   let current = 0;
-  if (last === today || last === yday) {
+  if (lastLogged === thisWeek || lastLogged === lastWeek) {
     current = 1;
-    for (let i = dates.length - 2; i >= 0; i--) {
-      if ((new Date(dates[i + 1]) - new Date(dates[i])) / 86400000 === 1) current++;
+    for (let i = weeks.length - 2; i >= 0; i--) {
+      const [y1, w1] = weeks[i].split('-W').map(Number);
+      const [y2, w2] = weeks[i + 1].split('-W').map(Number);
+      const diff = (y2 - y1) * 52 + (w2 - w1);
+      if (diff === 1) current++;
       else break;
     }
   }
@@ -197,12 +221,12 @@ function _render() {
       <div class="prog-stat prog-stat--fire">
         <div class="prog-stat-ico"><i class="ti ti-flame"></i></div>
         <div class="prog-stat-val">${streak.current}</div>
-        <div class="prog-stat-lbl">Racha actual</div>
+        <div class="prog-stat-lbl">Semanas seguidas</div>
       </div>
       <div class="prog-stat">
         <div class="prog-stat-ico"><i class="ti ti-trophy"></i></div>
         <div class="prog-stat-val">${streak.best}</div>
-        <div class="prog-stat-lbl">Mejor racha</div>
+        <div class="prog-stat-lbl">Mejor racha (sem.)</div>
       </div>
       <div class="prog-stat">
         <div class="prog-stat-ico"><i class="ti ti-calendar-week"></i></div>
