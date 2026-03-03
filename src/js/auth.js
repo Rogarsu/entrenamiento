@@ -80,6 +80,12 @@ function _showApp(user) {
 }
 
 function _showLogin() {
+  // Close any open overlay pages before showing login
+  window.hideHistPage?.();
+  window.hideReportsPage?.();
+  window.hideNutritionPage?.();
+  window.hideProgressPage?.();
+  window.closeNavDropdown?.();
   document.getElementById('authOverlay').style.display = 'flex';
   document.getElementById('appContent').style.display = 'none';
   document.getElementById('onboardingOverlay').style.display = 'none';
@@ -187,5 +193,12 @@ export async function authSignInGoogle() {
 }
 
 export async function authSignOut() {
-  await supabase.auth.signOut();
+  const { error } = await supabase.auth.signOut();
+  if (error) {
+    // If Supabase signOut fails, force UI to login anyway
+    console.error('signOut error:', error.message);
+    initState([], null);
+    initExLogs([]);
+    _showLogin();
+  }
 }
