@@ -7,19 +7,35 @@ let _exLogs = {};
 // If exLogs is null, falls back to localStorage (offline).
 export function initExLogs(exLogs) {
   if (Array.isArray(exLogs) && getUserId()) {
-    _exLogs = {};
-    for (const row of exLogs) {
-      const key = `${row.exercise_id}_${row.session_id}`;
-      _exLogs[key] = {
-        date: row.logged_date || '',
-        time: row.logged_time || '',
-        timestamp: row.logged_at || '',
-        sets: row.sets || [],
-        targetReps: row.target_reps || 0,
-        muscle: row.muscle || '',
-      };
+    if (exLogs.length > 0) {
+      // Supabase tiene datos → usarlos como fuente de verdad
+      _exLogs = {};
+      for (const row of exLogs) {
+        const key = `${row.exercise_id}_${row.session_id}`;
+        _exLogs[key] = {
+          date: row.logged_date || '',
+          time: row.logged_time || '',
+          timestamp: row.logged_at || '',
+          sets: row.sets || [],
+          targetReps: row.target_reps || 0,
+          muscle: row.muscle || '',
+        };
+      }
+      localStorage.setItem('sv_ex_logs', JSON.stringify(_exLogs));
+    } else {
+      // Supabase vacío → confiar en localStorage, NO sobrescribir con vacío
+      _exLogs = JSON.parse(localStorage.getItem('sv_ex_logs') || '{}');
+      // Sincronizar a Supabase en background
+      const uid = getUserId();
+      if (uid && Object.keys(_exLogs).length > 0) {
+        Object.entries(_exLogs).forEach(([key, data]) => {
+          const lastUs = key.lastIndexOf('_');
+          const exId = key.substring(0, lastUs);
+          const sessionId = parseInt(key.substring(lastUs + 1));
+          if (!isNaN(sessionId)) upsertExLog(uid, exId, sessionId, data).catch(console.error);
+        });
+      }
     }
-    localStorage.setItem('sv_ex_logs', JSON.stringify(_exLogs));
   } else {
     // Offline fallback
     _exLogs = JSON.parse(localStorage.getItem('sv_ex_logs') || '{}');

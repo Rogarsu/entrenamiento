@@ -25,16 +25,27 @@ export function getPlan() {
 export function initState(sessionLogs, userId) {
   _userId = userId;
   if (Array.isArray(sessionLogs) && userId) {
-    state.logs = sessionLogs.map(r => ({
-      sessionId: r.session_id,
-      date: r.completed_date || '',
-      duration: r.duration || 0,
-      energy: r.energy || 0,
-      fatigue: r.fatigue || 0,
-      pain: r.pain || '',
-      notes: r.notes || '',
-    }));
-    localStorage.setItem('sv_logs', JSON.stringify(state.logs));
+    if (sessionLogs.length > 0) {
+      // Supabase tiene datos → usarlos como fuente de verdad
+      state.logs = sessionLogs.map(r => ({
+        sessionId: r.session_id,
+        date: r.completed_date || '',
+        duration: r.duration || 0,
+        energy: r.energy || 0,
+        fatigue: r.fatigue || 0,
+        pain: r.pain || '',
+        notes: r.notes || '',
+      }));
+      localStorage.setItem('sv_logs', JSON.stringify(state.logs));
+    } else {
+      // Supabase vacío → confiar en localStorage (el RLS pudo estar roto antes)
+      // NO sobrescribir localStorage con vacío
+      state.logs = JSON.parse(localStorage.getItem('sv_logs') || '[]');
+      // Sincronizar datos locales a Supabase en background
+      if (state.logs.length > 0) {
+        state.logs.forEach(log => upsertSessionLog(userId, log).catch(console.error));
+      }
+    }
   } else {
     state.logs = JSON.parse(localStorage.getItem('sv_logs') || '[]');
   }
@@ -45,8 +56,8 @@ export function getUserId() { return _userId; }
 export function saveState() {
   localStorage.setItem('sv_logs', JSON.stringify(state.logs));
   if (_userId) {
-    const latest = state.logs[state.logs.length - 1];
-    if (latest) upsertSessionLog(_userId, latest).catch(console.error);
+    // Sincronizar todos los logs para garantizar que ninguno quede sin guardar
+    state.logs.forEach(log => upsertSessionLog(_userId, log).catch(console.error));
   }
 }
 
