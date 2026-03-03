@@ -13,6 +13,7 @@ export function loadSession(id) {
   window.hideNutritionPage?.();
   window.hideHistPage?.();
   window.hideReportsPage?.();
+  window.hideProgressPage?.();
 
   document.querySelectorAll('.session-item').forEach(el => el.classList.remove('active'));
   const si = document.getElementById(`si-${id}`);

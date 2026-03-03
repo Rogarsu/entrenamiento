@@ -29,8 +29,7 @@ function _buildRows(all) {
     const exName = getExNameFromSessions(exId);
     const muscle = log.muscle || '—';
 
-    if (_state.muscle && _state.muscle !== '__all__' && muscle.toLowerCase().indexOf(_state.muscle.toLowerCase()) === -1) continue;
-    if (_state.ex && !exName.toLowerCase().includes(_state.ex.toLowerCase())) continue;
+    if (_state.ex && !exName.toLowerCase().includes(_state.ex.toLowerCase()) && !muscle.toLowerCase().includes(_state.ex.toLowerCase())) continue;
 
     const sessionName = getSessionName(sid);
     const date = log.date || '—';
@@ -78,18 +77,11 @@ function _renderTable(rows) {
   if (sortTh) sortTh.innerHTML = `Fecha & Hora <span class="hist-sort-icon"><i class="ti ti-arrow-${_state.sortDir === 'desc' ? 'down' : 'up'}"></i></span>`;
 }
 
-function _renderFilters(all) {
-  const muscles = [...new Set(Object.values(all).map(l => l.muscle || '').filter(Boolean))].sort();
+function _renderFilters() {
   const filtersDiv = document.getElementById('histFilters');
   filtersDiv.innerHTML = `
     <div class="hist-filter-row">
-      ${[
-        `<button class="hist-filter-btn${_state.muscle === '__all__' ? ' active' : ''}" onclick="buildHistoryPage({muscle:'__all__'})">Todos</button>`,
-        ...muscles.map(m => `<button class="hist-filter-btn${_state.muscle === m ? ' active' : ''}" onclick="buildHistoryPage({muscle:'${m.replace(/'/g, "\\'")}'})}">${m}</button>`)
-      ].join('')}
-    </div>
-    <div class="hist-filter-row">
-      <input class="hist-search" type="text" placeholder="Buscar ejercicio..." value="${_state.ex}" oninput="histSetEx(this.value)">
+      <input class="hist-search" type="text" placeholder="Buscar ejercicio o músculo..." value="${_state.ex}" oninput="histSetEx(this.value)">
     </div>`;
 }
 
@@ -100,7 +92,7 @@ export function buildHistoryPage(opts) {
     _state.muscle = opts;
   }
   const all = loadExLogs();
-  _renderFilters(all);
+  _renderFilters();
   _renderTable(_buildRows(all));
 }
 

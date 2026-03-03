@@ -553,6 +553,9 @@ function _renderTimeline(plan) {
   const { objetivo, sesNut, carbLevel, nextSes, hydration, duracion } = plan;
   const schedule = _buildSchedule(_trainingHour, duracion, objetivo, sesNut);
 
+  // Only show meal check buttons for today's actual plan, not for the future session view
+  const showChecks = !(plan.doneToday && _nutView === 'next');
+
   const items = schedule.map(slot => {
     // TRAINING BLOCK
     if (slot.id === 'training') {
@@ -594,7 +597,7 @@ function _renderTimeline(plan) {
             <div class="nut-tl-card-header">
               <button class="nut-tl-card-label nut-tl-card-label--btn" onclick="nutOpenRecipeModal('pre')">Pre-Entreno <i class="ti ti-chef-hat"></i></button>
               <span class="nut-tl-badge nut-tl-badge--pre">${sesNut.pre.timing}</span>
-              <button class="nut-meal-check${preChecked ? ' nut-meal-check--done' : ''}" onclick="nutToggleMeal('pre')" title="Marcar como hecho"><i class="ti ti-check"></i></button>
+              ${showChecks ? `<button class="nut-meal-check${preChecked ? ' nut-meal-check--done' : ''}" onclick="nutToggleMeal('pre')" title="Marcar como hecho"><i class="ti ti-check"></i></button>` : ''}
             </div>
             <p class="nut-tl-focus">${sesNut.pre.focus}</p>
             <ul class="nut-meal-items">${sesNut.pre.foods.map(f => `<li>${f}</li>`).join('')}</ul>
@@ -616,7 +619,7 @@ function _renderTimeline(plan) {
             <div class="nut-tl-card-header">
               <button class="nut-tl-card-label nut-tl-card-label--btn" onclick="nutOpenRecipeModal('post')">Post-Entreno <i class="ti ti-chef-hat"></i></button>
               <span class="nut-tl-badge nut-tl-badge--post">${sesNut.post.timing}</span>
-              <button class="nut-meal-check${postChecked ? ' nut-meal-check--done' : ''}" onclick="nutToggleMeal('post')" title="Marcar como hecho"><i class="ti ti-check"></i></button>
+              ${showChecks ? `<button class="nut-meal-check${postChecked ? ' nut-meal-check--done' : ''}" onclick="nutToggleMeal('post')" title="Marcar como hecho"><i class="ti ti-check"></i></button>` : ''}
             </div>
             <p class="nut-tl-focus">${sesNut.post.focus}</p>
             <div class="nut-protein-chip"><i class="ti ti-meat"></i> <strong>${sesNut.post.protein}</strong></div>
@@ -643,7 +646,7 @@ function _renderTimeline(plan) {
           <div class="nut-tl-card-header">
             <button class="nut-tl-card-label nut-tl-card-label--btn" onclick="nutOpenRecipeModal('${contentId}')">${c.label} <i class="ti ti-chef-hat"></i></button>
             ${c.sublabel ? `<span class="nut-tl-sublabel">${c.sublabel}</span>` : ''}
-            <button class="nut-meal-check${slotChecked ? ' nut-meal-check--done' : ''}" onclick="nutToggleMeal('${slot.id}')" title="Marcar como hecho"><i class="ti ti-check"></i></button>
+            ${showChecks ? `<button class="nut-meal-check${slotChecked ? ' nut-meal-check--done' : ''}" onclick="nutToggleMeal('${slot.id}')" title="Marcar como hecho"><i class="ti ti-check"></i></button>` : ''}
           </div>
           <p class="nut-tl-focus">${c.note}</p>
           <ul class="nut-meal-items">${c.foods.map(f => `<li>${f}</li>`).join('')}</ul>
