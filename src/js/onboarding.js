@@ -3,8 +3,8 @@
 // On completion, generates a plan via planner.js and saves it to Supabase.
 
 import { generatePlan, generatePhasesMeta } from './planner.js';
-import { setPlan, getUserId, savePlanMeta, getPlanMeta, clearSessionLogs } from './state.js';
-import { upsertUserPlan, deleteUserLogs } from './db.js';
+import { setPlan, getUserId, savePlanMeta, getPlanMeta, clearSessionLogs, cachePlan } from './state.js';
+import { upsertUserPlan, deleteUserLogs, upsertUserPrefs } from './db.js';
 import { clearExLogs } from './storage.js';
 import { buildStats } from './stats.js';
 import { buildSidebar } from './sidebar.js';
@@ -178,7 +178,10 @@ async function _finishOnboarding() {
     const userId = getUserId();
     if (userId) {
       await upsertUserPlan(userId, sessions);
+      // Persist onboarding answers so "Nuevo Ciclo" pre-fills correctly even on other devices
+      upsertUserPrefs(userId, { plan_meta: _ob.answers }).catch(console.error);
     }
+    cachePlan(sessions); // local cache so plan survives Supabase errors
     setPlan(sessions);
     buildStats();
     buildSidebar();
@@ -249,7 +252,12 @@ export async function resetProgress() {
 
 export function showNewCycle(keepLogs) {
   closePlanModal();
-  if (!keepLogs) clearSessionLogs();
+  if (!keepLogs) {
+    clearSessionLogs();
+    clearExLogs();
+    const userId = getUserId();
+    if (userId) deleteUserLogs(userId).catch(console.error);
+  }
   const prev = getPlanMeta();
   _ob.step = 0;
   _ob.answers = prev ? { ...prev } : {};

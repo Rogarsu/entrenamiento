@@ -51,7 +51,12 @@ export async function fetchUserPlan(userId) {
     .select('sessions')
     .eq('user_id', userId)
     .single();
-  if (error) return null;
+  if (error) {
+    // PGRST116 = "no rows" → user has no plan yet (normal for new users)
+    if (error.code === 'PGRST116') return null;
+    // Any other error (network, RLS, etc.) → throw so caller uses cached plan
+    throw error;
+  }
   return data?.sessions || null;
 }
 
@@ -92,6 +97,27 @@ export async function upsertNutritionLog(userId, date, sessionId, completedSlots
     updated_at: new Date().toISOString(),
   }, { onConflict: 'user_id,log_date' });
   if (error) console.error('upsert nutrition_log:', error);
+}
+
+// ── USER PREFERENCES ─────────────────────────────────────────────────────────
+
+export async function fetchUserPrefs(userId) {
+  const { data, error } = await supabase
+    .from('user_preferences')
+    .select('food_profile, plan_meta')
+    .eq('user_id', userId)
+    .single();
+  if (error) return null; // table missing or no row yet → use localStorage
+  return data || null;
+}
+
+export async function upsertUserPrefs(userId, prefs) {
+  const { error } = await supabase.from('user_preferences').upsert({
+    user_id: userId,
+    ...prefs,
+    updated_at: new Date().toISOString(),
+  }, { onConflict: 'user_id' });
+  if (error) console.error('upsert user_preferences:', error);
 }
 
 // ── BODY METRICS ─────────────────────────────────────────────────────────────

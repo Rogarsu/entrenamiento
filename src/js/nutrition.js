@@ -5,7 +5,7 @@
 // Tab "Fundamentos": tarjetas acordeón educativas.
 
 import { getPlanMeta, getPlan, isDone, getLastCompletedToday, getMealChecks, initMealLog, toggleMealSlot, getUserId } from './state.js';
-import { fetchNutritionLog } from './db.js';
+import { fetchNutritionLog, upsertUserPrefs } from './db.js';
 
 // ── TRAINING TIME OPTIONS ─────────────────────────────────────────────────────
 
@@ -969,6 +969,8 @@ export function nutSetView(v) { _nutView = v; _build(); }
 export function nutSetFoodFlag(id, available) {
   _foodProfile[id] = available;
   try { localStorage.setItem('sv_food_profile', JSON.stringify(_foodProfile)); } catch (e) {}
+  const uid = getUserId();
+  if (uid) upsertUserPrefs(uid, { food_profile: _foodProfile }).catch(console.error);
   _build();
 }
 

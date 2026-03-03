@@ -1,6 +1,6 @@
 import { supabase } from './supabase.js';
-import { fetchUserData, fetchUserPlan, upsertUserPlan } from './db.js';
-import { initState, setPlan } from './state.js';
+import { fetchUserData, fetchUserPlan, upsertUserPlan, fetchUserPrefs } from './db.js';
+import { initState, setPlan, cachePlan, getCachedPlan } from './state.js';
 import { initExLogs } from './storage.js';
 import { buildStats } from './stats.js';
 import { buildSidebar } from './sidebar.js';
@@ -15,17 +15,39 @@ async function _loadAndRender(user) {
   initState(sessionLogs, user.id);
   initExLogs(exLogs);
 
-  // Load user's training plan from Supabase
-  const planSessions = await fetchUserPlan(user.id);
+  // Load training plan — safe against Supabase errors (network, RLS, etc.)
+  let planSessions;
+  try {
+    planSessions = await fetchUserPlan(user.id);
+    if (planSessions) cachePlan(planSessions); // keep local copy up to date
+  } catch (err) {
+    // fetchUserPlan threw a real error (not "not found") — use cached plan
+    console.warn('fetchUserPlan error, using local cache:', err.message);
+    planSessions = getCachedPlan();
+  }
+
+  // Load user preferences (food_profile → sv_food_profile, plan_meta → sv_plan_meta)
+  // Written to localStorage so nutrition.js and onboarding.js pick them up automatically
+  try {
+    const prefs = await fetchUserPrefs(user.id);
+    if (prefs?.food_profile && Object.keys(prefs.food_profile).length > 0) {
+      localStorage.setItem('sv_food_profile', JSON.stringify(prefs.food_profile));
+    }
+    if (prefs?.plan_meta) {
+      localStorage.setItem('sv_plan_meta', JSON.stringify(prefs.plan_meta));
+    }
+  } catch (err) {
+    console.warn('fetchUserPrefs error:', err.message);
+  }
 
   if (planSessions) {
-    // User has a saved plan
+    // User has a saved plan (from Supabase or local cache)
     setPlan(planSessions);
     buildStats();
     buildSidebar();
     if (hasPendingLocalData(sessionLogs, exLogs)) showMigrationBanner();
   } else {
-    // No plan yet — use account age to distinguish new vs existing users.
+    // No plan anywhere — use account age to distinguish new vs existing users.
     // New users (registered < 20 min ago) → onboarding.
     // Existing users (old account, no plan yet) → auto-assign DEFAULT_SESSIONS.
     const accountAgeMs = Date.now() - new Date(user.created_at).getTime();
@@ -36,8 +58,9 @@ async function _loadAndRender(user) {
       showOnboarding();
       return false; // signal: onboarding is showing, app not shown yet
     } else {
-      // Existing user without a plan → assign DEFAULT_SESSIONS and save it
+      // Existing user with no plan found anywhere → assign DEFAULT_SESSIONS
       await upsertUserPlan(user.id, DEFAULT_SESSIONS);
+      cachePlan(DEFAULT_SESSIONS);
       setPlan(DEFAULT_SESSIONS);
       buildStats();
       buildSidebar();

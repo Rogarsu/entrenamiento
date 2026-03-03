@@ -58,6 +58,16 @@ export function getLog(id) {
   return state.logs.find(l => l.sessionId === id);
 }
 
+// ── Plan cache (localStorage backup for offline / Supabase error fallback) ────
+
+export function cachePlan(sessions) {
+  try { localStorage.setItem('sv_plan_cache', JSON.stringify(sessions)); } catch(e) {}
+}
+
+export function getCachedPlan() {
+  try { return JSON.parse(localStorage.getItem('sv_plan_cache') || 'null'); } catch(e) { return null; }
+}
+
 // ── Plan meta (onboarding answers) ────────────────────────────────────────────
 
 export function savePlanMeta(answers) {
