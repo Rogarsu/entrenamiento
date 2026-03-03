@@ -3,17 +3,19 @@ import { state, isDone, getLog, getPlan } from './state.js';
 import { getExLog } from './storage.js';
 import { getExRecommendation } from './progression.js';
 import { escStr } from './helpers.js';
+import { setNavPage } from './nav.js';
 
 export function loadSession(id) {
   state.currentId = id;
   const s = getPlan().find(x => x.id === id);
   if (!s) return;
 
-  // Close any overlay page so the main view is visible
+  // Close any overlay page so the main view is visible and update nav label
   window.hideNutritionPage?.();
   window.hideHistPage?.();
   window.hideReportsPage?.();
   window.hideProgressPage?.();
+  setNavPage('fisico');
 
   document.querySelectorAll('.session-item').forEach(el => el.classList.remove('active'));
   const si = document.getElementById(`si-${id}`);
