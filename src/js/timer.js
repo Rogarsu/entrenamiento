@@ -1,8 +1,37 @@
 import { state, getPlan } from './state.js';
 
-let _timer   = null;
+let _timer    = null;
 let _remaining = 0;
 let _total     = 0;
+let _audioCtx  = null; // created on user gesture so iOS/Android allow it
+
+// Must be called from a user-gesture context (button click)
+function _initAudio() {
+  try {
+    _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (_audioCtx.state === 'suspended') _audioCtx.resume();
+  } catch (e) { _audioCtx = null; }
+}
+
+function _beep() {
+  if (!_audioCtx) return;
+  try {
+    const t = _audioCtx.currentTime;
+    // Two short tones: ding-ding
+    [0, 0.25].forEach(offset => {
+      const osc  = _audioCtx.createOscillator();
+      const gain = _audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(_audioCtx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = 880;
+      gain.gain.setValueAtTime(0.5, t + offset);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + offset + 0.35);
+      osc.start(t + offset);
+      osc.stop(t + offset + 0.35);
+    });
+  } catch (e) {}
+}
 
 function _parseRestStr(restStr) {
   if (!restStr) return 90;
@@ -39,7 +68,8 @@ function _updateDisplay() {
 }
 
 function _onFinish() {
-  if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+  _beep();
+  try { if (navigator.vibrate) navigator.vibrate([150, 80, 150, 80, 300]); } catch (e) {}
   const timeEl = document.getElementById('rtTime');
   if (timeEl) timeEl.textContent = '¡Ya!';
   const el = _el();
@@ -49,6 +79,7 @@ function _onFinish() {
 
 export function startRestTimer(exId) {
   clearInterval(_timer);
+  _initAudio(); // called here = inside button-click handler = valid user gesture
 
   // Look up the exercise rest time from the current session plan
   let restStr = '90 seg';
