@@ -2,17 +2,17 @@ import { state, getPlan } from './state.js';
 
 // ─── Muscle group definitions ─────────────────────────────────────────────────
 const MUSCLE_GROUPS = {
-  quads:      { label: 'Cuádriceps',       icon: '🦵', keywords: ['cuádricep', 'cuadricep'] },
-  glutes:     { label: 'Glúteo',           icon: '🍑', keywords: ['glúteo', 'gluteo'] },
-  hamstrings: { label: 'Isquiotibiales',   icon: '🦵', keywords: ['isquiotibial'] },
-  calves:     { label: 'Pantorrillas',     icon: '🦶', keywords: ['pantorrill'] },
-  core:       { label: 'Core / Abdomen',   icon: '🧱', keywords: ['core', 'abdomin', 'oblicu', 'erector'] },
-  chest:      { label: 'Pecho',            icon: '💪', keywords: ['pecho'] },
-  back:       { label: 'Espalda / Dorsal', icon: '🔙', keywords: ['dorsal', 'espalda', 'romboid', 'trapecio'] },
-  shoulder:   { label: 'Hombros',          icon: '🏋️', keywords: ['hombro', 'deltoid'] },
-  biceps:     { label: 'Bíceps',           icon: '💪', keywords: ['bíceps', 'biceps'] },
-  triceps:    { label: 'Tríceps',          icon: '💪', keywords: ['tríceps', 'triceps'] },
-  forearms:   { label: 'Antebrazos',       icon: '🦾', keywords: ['antebrazo', 'muñeca', 'muneca'] },
+  quads:      { label: 'Cuádriceps',       icon: '<i class="ti ti-run"></i>',          keywords: ['cuádricep', 'cuadricep'] },
+  glutes:     { label: 'Glúteo',           icon: '<i class="ti ti-chevrons-up"></i>',  keywords: ['glúteo', 'gluteo'] },
+  hamstrings: { label: 'Isquiotibiales',   icon: '<i class="ti ti-walk"></i>',         keywords: ['isquiotibial'] },
+  calves:     { label: 'Pantorrillas',     icon: '<i class="ti ti-shoe-sport"></i>',   keywords: ['pantorrill'] },
+  core:       { label: 'Core / Abdomen',   icon: '<i class="ti ti-target"></i>',       keywords: ['core', 'abdomin', 'oblicu', 'erector'] },
+  chest:      { label: 'Pecho',            icon: '<i class="ti ti-heart"></i>',        keywords: ['pecho'] },
+  back:       { label: 'Espalda / Dorsal', icon: '<i class="ti ti-arrows-sort"></i>',  keywords: ['dorsal', 'espalda', 'romboid', 'trapecio'] },
+  shoulder:   { label: 'Hombros',          icon: '<i class="ti ti-dumbbell"></i>',     keywords: ['hombro', 'deltoid'] },
+  biceps:     { label: 'Bíceps',           icon: '<i class="ti ti-barbell"></i>',      keywords: ['bíceps', 'biceps'] },
+  triceps:    { label: 'Tríceps',          icon: '<i class="ti ti-weight"></i>',       keywords: ['tríceps', 'triceps'] },
+  forearms:   { label: 'Antebrazos',       icon: '<i class="ti ti-bolt"></i>',         keywords: ['antebrazo', 'muñeca', 'muneca'] },
 };
 
 // ─── Recommendations per muscle group ────────────────────────────────────────
@@ -153,7 +153,7 @@ function _renderStep1() {
 
   if (sessions.length === 0) {
     el.innerHTML = `
-      <div class="wellness-step-title">🩺 ¿Cómo me siento?</div>
+      <div class="wellness-step-title"><i class="ti ti-stethoscope wellness-title-icon"></i> ¿Cómo me siento?</div>
       <div class="wellness-empty">Completa al menos una sesión de entrenamiento para activar esta función.</div>`;
     return;
   }
@@ -174,7 +174,7 @@ function _renderStep1() {
   }).join('');
 
   el.innerHTML = `
-    <div class="wellness-step-title">🩺 ¿Cómo me siento?</div>
+    <div class="wellness-step-title"><i class="ti ti-stethoscope wellness-title-icon"></i> ¿Cómo me siento?</div>
     <div class="wellness-step-sub">Basado en tus últimas ${sessions.length} sesión${sessions.length > 1 ? 'es' : ''} completada${sessions.length > 1 ? 's' : ''}:</div>
     <div class="wellness-session-list">${sessionList}</div>
     <div class="wellness-question">¿Tienes tensión o dolor en alguna de estas zonas?</div>
@@ -189,7 +189,7 @@ function _renderStep2() {
 
   if (_w.sore.length === 0) {
     el.innerHTML = `
-      <div class="wellness-step-title">✅ ¡Sin molestias!</div>
+      <div class="wellness-step-title"><i class="ti ti-circle-check wellness-title-icon wellness-title-icon--green"></i> ¡Sin molestias!</div>
       <div class="wellness-empty">No seleccionaste ninguna zona con dolor.<br>Eso es una buena señal de recuperación.</div>
       <div class="wellness-actions">
         <button class="wellness-btn-secondary" onclick="_wBack()">← Volver</button>
@@ -219,7 +219,7 @@ function _renderStep2() {
   }).join('');
 
   el.innerHTML = `
-    <div class="wellness-step-title">Intensidad del dolor</div>
+    <div class="wellness-step-title"><i class="ti ti-activity wellness-title-icon wellness-title-icon--amber"></i> Intensidad del dolor</div>
     <div class="wellness-step-sub">Indica qué tan intenso es en cada zona:</div>
     ${rows}
     <div class="wellness-actions">
@@ -246,23 +246,23 @@ function _renderStep3() {
 
     const stretches = rec.stretches.map(s => `
       <div class="wellness-stretch-item">
-        ${s.img ? `<img src="${s.img}" class="wellness-stretch-img" alt="${s.name}">` : '<div class="wellness-stretch-img wellness-stretch-img-placeholder">🤸</div>'}
+        ${s.img ? `<img src="${s.img}" class="wellness-stretch-img" alt="${s.name}">` : '<div class="wellness-stretch-img wellness-stretch-img-placeholder"><i class="ti ti-yoga"></i></div>'}
         <div class="wellness-stretch-info">
           <div class="wellness-stretch-name">${s.name}</div>
-          <div class="wellness-stretch-dur">⏱ ${s.dur}</div>
+          <div class="wellness-stretch-dur"><i class="ti ti-clock"></i> ${s.dur}</div>
         </div>
       </div>`).join('');
 
     const medHtml = sev >= 2 ? `
       <div class="wellness-med">
-        <div class="wellness-med-title">💊 Analgésico sugerido</div>
+        <div class="wellness-med-title"><i class="ti ti-pill"></i> Analgésico sugerido</div>
         <div class="wellness-med-text">${sev === 2 ? rec.med2 : rec.med3}</div>
       </div>` : '';
 
     return `
       <div class="wellness-rec-card">
         <div class="wellness-rec-header">${g.icon} ${g.label} ${sevBadge}</div>
-        <div class="wellness-tip">💡 ${rec.tip}</div>
+        <div class="wellness-tip"><i class="ti ti-bulb"></i> ${rec.tip}</div>
         <div class="wellness-stretches-title">Estiramientos recomendados</div>
         <div class="wellness-stretches">${stretches}</div>
         ${medHtml}
@@ -271,13 +271,13 @@ function _renderStep3() {
 
   const disclaimer = hasHigh ? `
     <div class="wellness-disclaimer">
-      ⚕️ <strong>Aviso:</strong> Las sugerencias de medicamentos son orientativas para el dolor muscular típico post-entrenamiento.
+      <i class="ti ti-shield-check"></i> <strong>Aviso:</strong> Las sugerencias de medicamentos son orientativas para el dolor muscular típico post-entrenamiento.
       Consulta siempre con un médico o farmacéutico antes de automedicarte, especialmente si tienes condiciones preexistentes,
       tomas otros medicamentos, o si el dolor no mejora en 3–5 días.
     </div>` : '';
 
   el.innerHTML = `
-    <div class="wellness-step-title">📋 Plan de recuperación</div>
+    <div class="wellness-step-title"><i class="ti ti-clipboard-list wellness-title-icon"></i> Plan de recuperación</div>
     ${cards}
     ${disclaimer}
     <div class="wellness-actions">

@@ -5,18 +5,20 @@
 import { EXERCISES } from '../data/exercises.js';
 
 // ─── QUESTIONNAIRE KEYS ────────────────────────────────────────────────────────
-// objetivo: 'strength' | 'hypertrophy' | 'endurance' | 'weight_loss' | 'general'
+// objetivo: string or string[] — 'strength' | 'hypertrophy' | 'endurance' | 'weight_loss' | 'general'
 // nivel:    'beginner' | 'intermediate' | 'advanced'
-// dias:     2 | 3 | 4 | 5
+// dias:     1 | 2 | 3 | 4 | 5 | 6
 // duracion: 45 | 60 | 75 | 90   (minutes per session)
 // entorno:  'no_equipment' | 'home' | 'gym'
-// enfoque:  'full_body' | 'upper_lower' | 'push_pull_legs'
+// enfoque:  'full_body' | 'upper_only' | 'lower_only' | 'upper_lower' | 'push_pull_legs'
 // semanas:  4 | 8 | 12
 
 // ─── SESSION TEMPLATES ───────────────────────────────────────────────────────
 const SPLIT_TEMPLATES = {
-  full_body: ['Full Body A', 'Full Body B', 'Full Body C'],
-  upper_lower: ['Tren Superior A', 'Tren Inferior A', 'Tren Superior B', 'Tren Inferior B'],
+  full_body:      ['Full Body A', 'Full Body B', 'Full Body C'],
+  upper_only:     ['Tren Superior A', 'Tren Superior B'],
+  lower_only:     ['Tren Inferior A', 'Tren Inferior B'],
+  upper_lower:    ['Tren Superior A', 'Tren Inferior A', 'Tren Superior B', 'Tren Inferior B'],
   push_pull_legs: ['Empuje', 'Jalón / Espalda', 'Piernas', 'Empuje B', 'Jalón B', 'Piernas B'],
 };
 
@@ -178,7 +180,10 @@ function _postSection() {
 // ─── MAIN GENERATOR ──────────────────────────────────────────────────────────
 
 export function generatePlan(answers) {
-  const { objetivo, nivel, dias, duracion, entorno, enfoque, semanas } = answers;
+  // Normalize objetivo: multi-select returns an array — use primary (first) for parameters
+  const objetivoRaw = answers.objetivo;
+  const objetivo = Array.isArray(objetivoRaw) ? (objetivoRaw[0] || 'general') : (objetivoRaw || 'general');
+  const { nivel, dias, duracion, entorno, enfoque, semanas } = answers;
 
   const totalPhases = semanas >= 12 ? 4 : semanas >= 8 ? 3 : 2;
   const weeksPerPhase = Math.floor(semanas / totalPhases);

@@ -14,8 +14,9 @@ import { buildSidebar } from './sidebar.js';
 const QUESTIONS = [
   {
     key: 'objetivo',
+    multiSelect: true,
     title: '¿Cuál es tu objetivo principal?',
-    subtitle: 'Esto determinará la estructura y enfoque de tu plan.',
+    subtitle: 'Puedes elegir más de uno — el plan combinará las estrategias.',
     options: [
       { value: 'strength',    label: 'Ganar fuerza',        icon: '<i class="ti ti-barbell"></i>',      desc: 'Cargas altas, pocas reps' },
       { value: 'hypertrophy', label: 'Ganar músculo',       icon: '<i class="ti ti-dumbbell"></i>',     desc: 'Volumen e hipertrofia' },
@@ -39,10 +40,12 @@ const QUESTIONS = [
     title: '¿Cuántos días a la semana puedes entrenar?',
     subtitle: 'Considera tus compromisos reales, no los ideales.',
     options: [
-      { value: 2, label: '2 días', icon: '<i class="ti ti-calendar"></i>', desc: 'Mínimo, pero efectivo' },
-      { value: 3, label: '3 días', icon: '<i class="ti ti-calendar"></i>', desc: 'Recomendado para la mayoría' },
-      { value: 4, label: '4 días', icon: '<i class="ti ti-calendar"></i>', desc: 'Alta frecuencia' },
-      { value: 5, label: '5 días', icon: '<i class="ti ti-calendar"></i>', desc: 'Alto volumen semanal' },
+      { value: 1, label: '1 día',  icon: '<i class="ti ti-calendar-minus"></i>', desc: 'Sesión única semanal' },
+      { value: 2, label: '2 días', icon: '<i class="ti ti-calendar"></i>',       desc: 'Mínimo, pero efectivo' },
+      { value: 3, label: '3 días', icon: '<i class="ti ti-calendar-event"></i>', desc: 'Recomendado para la mayoría' },
+      { value: 4, label: '4 días', icon: '<i class="ti ti-calendar-check"></i>', desc: 'Alta frecuencia semanal' },
+      { value: 5, label: '5 días', icon: '<i class="ti ti-calendar-week"></i>',  desc: 'Alto volumen semanal' },
+      { value: 6, label: '6 días', icon: '<i class="ti ti-calendar-plus"></i>',  desc: 'Máxima frecuencia' },
     ],
   },
   {
@@ -62,7 +65,7 @@ const QUESTIONS = [
     subtitle: 'Esto define los ejercicios disponibles en tu plan.',
     options: [
       { value: 'no_equipment', label: 'Sin equipamiento', icon: '<i class="ti ti-home"></i>',     desc: 'Solo con el peso corporal' },
-      { value: 'home',         label: 'Casa con equipo',  icon: '<i class="ti ti-barbell"></i>', desc: 'Mancuernas, bandas, banco' },
+      { value: 'home',         label: 'Casa con equipo',  icon: '<i class="ti ti-barbell"></i>',  desc: 'Mancuernas, bandas, banco' },
       { value: 'gym',          label: 'Gimnasio',         icon: '<i class="ti ti-building"></i>', desc: 'Acceso a máquinas y barras' },
     ],
   },
@@ -71,9 +74,11 @@ const QUESTIONS = [
     title: '¿Qué tipo de división de entrenamiento prefieres?',
     subtitle: 'Si no estás seguro, elige Full Body — es el más versátil.',
     options: [
-      { value: 'full_body',      label: 'Full Body',           icon: '<i class="ti ti-refresh"></i>',          desc: 'Todo el cuerpo por sesión' },
-      { value: 'upper_lower',    label: 'Superior / Inferior', icon: '<i class="ti ti-arrows-sort"></i>',      desc: 'Tren superior vs inferior' },
-      { value: 'push_pull_legs', label: 'Push / Pull / Legs',  icon: '<i class="ti ti-repeat"></i>',          desc: 'Empuje, jalón y piernas' },
+      { value: 'full_body',      label: 'Full Body',          icon: '<i class="ti ti-refresh"></i>',      desc: 'Todo el cuerpo en cada sesión' },
+      { value: 'upper_only',     label: 'Solo Tren Superior',  icon: '<i class="ti ti-arrow-up"></i>',    desc: 'Pecho, espalda, hombros y brazos' },
+      { value: 'lower_only',     label: 'Solo Tren Inferior',  icon: '<i class="ti ti-arrow-down"></i>',  desc: 'Piernas, glúteo y core' },
+      { value: 'upper_lower',    label: 'Superior + Inferior', icon: '<i class="ti ti-arrows-sort"></i>', desc: 'Alternancia tren superior/inferior' },
+      { value: 'push_pull_legs', label: 'Push / Pull / Legs',  icon: '<i class="ti ti-repeat"></i>',      desc: 'Empuje, jalón y piernas' },
     ],
   },
   {
@@ -104,18 +109,29 @@ function _render() {
   const total = QUESTIONS.length;
 
   const optionsHtml = q.options.map(opt => {
-    const selected = _ob.answers[q.key] === opt.value ? ' selected' : '';
+    const ans = _ob.answers[q.key];
+    const isSelected = q.multiSelect
+      ? (Array.isArray(ans) ? ans.includes(opt.value) : ans === opt.value)
+      : ans === opt.value;
+    const selected = isSelected ? ' selected' : '';
     // Use single quotes for string values to avoid breaking the double-quoted onclick attribute
     const valArg = typeof opt.value === 'string' ? `'${opt.value}'` : opt.value;
+    const checkDot = q.multiSelect
+      ? `<span class="ob-check-dot${isSelected ? ' ob-check-dot--on' : ''}"><i class="ti ti-check"></i></span>`
+      : '';
     return `
       <button class="ob-option${selected}" onclick="_obSelect('${q.key}', ${valArg})">
         <span class="ob-option-icon">${opt.icon}</span>
         <span class="ob-option-label">${opt.label}</span>
         <span class="ob-option-desc">${opt.desc}</span>
+        ${checkDot}
       </button>`;
   }).join('');
 
-  const canNext = _ob.answers[q.key] !== undefined;
+  const ans = _ob.answers[q.key];
+  const canNext = q.multiSelect
+    ? (Array.isArray(ans) && ans.length > 0)
+    : (ans !== undefined);
 
   el.innerHTML = `
     <div class="ob-progress-bar">
@@ -147,13 +163,24 @@ function _renderGenerating() {
 // ─── INTERNAL HANDLERS (exposed to window for dynamic onclick) ────────────────
 
 window._obSelect = function(key, value) {
-  _ob.answers[key] = value;
+  const q = QUESTIONS.find(q => q.key === key);
+  if (q && q.multiSelect) {
+    const current = Array.isArray(_ob.answers[key]) ? [..._ob.answers[key]] : [];
+    const idx = current.indexOf(value);
+    if (idx >= 0) current.splice(idx, 1);
+    else current.push(value);
+    _ob.answers[key] = current;
+  } else {
+    _ob.answers[key] = value;
+  }
   _render();
 };
 
 window._obNext = async function() {
   const q = QUESTIONS[_ob.step];
-  if (_ob.answers[q.key] === undefined) return;
+  const ans = _ob.answers[q.key];
+  const valid = q.multiSelect ? (Array.isArray(ans) && ans.length > 0) : (ans !== undefined);
+  if (!valid) return;
 
   if (_ob.step < QUESTIONS.length - 1) {
     _ob.step++;

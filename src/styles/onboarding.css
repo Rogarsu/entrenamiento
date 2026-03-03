@@ -113,6 +113,19 @@
   white-space: nowrap;
 }
 
+/* Multi-select checkmark dot */
+.ob-check-dot {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: all .15s;
+  font-size: 11px; color: transparent;
+  margin-left: auto;
+}
+.ob-check-dot--on {
+  background: var(--accent); border-color: var(--accent); color: #fff;
+}
+
 /* Navigation */
 .ob-nav {
   display: flex;
