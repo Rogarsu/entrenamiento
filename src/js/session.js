@@ -173,6 +173,7 @@ export function loadSession(id) {
           <div class="log-field"><label class="log-label">Fatiga (1-10)</label><input class="log-input" type="number" id="logFatigue" value="6" min="1" max="10"></div>
           <div class="log-field log-input-full"><label class="log-label">Dolor / molestia</label><input class="log-input" type="text" id="logPain" value="ninguna"></div>
           <div class="log-field log-input-full"><label class="log-label">Notas y pesos usados</label><textarea class="log-input" id="logNotes" placeholder="Ejercicios, sensaciones, pesos utilizados..."></textarea></div>
+          <div class="log-field"><label class="log-label"><i class="ti ti-scale"></i> Peso corporal (kg)</label><input class="log-input" type="number" id="logWeight" placeholder="opcional" min="30" max="300" step="0.1"></div>
         </div>
         <div class="log-actions">
           <button class="btn-save" onclick="saveLog()"><i class="ti ti-device-floppy"></i> Guardar</button>
