@@ -448,6 +448,107 @@ const RECIPES = {
   ],
 };
 
+// ── INGREDIENT AVAILABILITY SYSTEM ────────────────────────────────────────────
+// Users can mark unavailable ingredients; recipes auto-adapt with local alternatives.
+
+const INGREDIENT_FLAGS = [
+  {
+    id: 'yogur_griego',
+    label: 'Yogurt griego',
+    icon: 'ti-cup',
+    keywords: ['yogur griego', 'yogurt griego', 'yogur'],
+    alts: ['Queso blanco costeño + miel', 'Leche entera con plátano maduro', 'Suero costeño + fruta'],
+  },
+  {
+    id: 'avena',
+    label: 'Avena',
+    icon: 'ti-grain',
+    keywords: ['avena'],
+    alts: ['Arepa de maíz + plátano maduro', 'Bollo de yuca + queso costeño', 'Plátano asado con mantequilla de maní'],
+  },
+  {
+    id: 'proteina_polvo',
+    label: 'Proteína en polvo',
+    icon: 'ti-bottle',
+    keywords: ['proteína en polvo', 'proteina en polvo', 'caseína en polvo', 'caseina en polvo', 'whey'],
+    alts: ['2–3 huevos extra + atún en lata', 'Pechuga de pollo 150g adicional', 'Atún en lata (120g) con arroz'],
+  },
+  {
+    id: 'requesón',
+    label: 'Requesón / Cottage',
+    icon: 'ti-cheese',
+    keywords: ['requesón', 'requeson', 'cottage'],
+    alts: ['Queso blanco costeño (200g)', 'Huevos revueltos (3) + leche', 'Leche entera (300ml) + mantequilla de maní'],
+  },
+  {
+    id: 'batata',
+    label: 'Batata / Camote',
+    icon: 'ti-plant',
+    keywords: ['batata', 'camote'],
+    alts: ['Ñame sancochado', 'Yuca cocida', 'Plátano verde hervido'],
+  },
+  {
+    id: 'pan_integral',
+    label: 'Pan integral',
+    icon: 'ti-bread',
+    keywords: ['pan integral', 'tostadas integrales'],
+    alts: ['Arepa de maíz', 'Casabe con mantequilla de maní', 'Bollo de yuca'],
+  },
+  {
+    id: 'salmon',
+    label: 'Salmón',
+    icon: 'ti-fish',
+    keywords: ['salmón', 'salmon'],
+    alts: ['Atún en lata (120g)', 'Mojarra o pargo a la plancha', 'Cazón guisado'],
+  },
+  {
+    id: 'quinua',
+    label: 'Quinua',
+    icon: 'ti-grain',
+    keywords: ['quinua', 'quinoa'],
+    alts: ['Ñame sancochado', 'Yuca cocida', 'Plátano verde'],
+  },
+  {
+    id: 'brocoli',
+    label: 'Brócoli',
+    icon: 'ti-leaf',
+    keywords: ['brócoli', 'brocoli'],
+    alts: ['Ahuyama/zapallo cocida', 'Zanahoria + pepino cohombro', 'Berenjena asada'],
+  },
+];
+
+let _foodProfile = {}; // { id: false } means ingredient NOT available
+
+function _loadFoodProfile() {
+  try { _foodProfile = JSON.parse(localStorage.getItem('sv_food_profile') || '{}'); } catch (e) { _foodProfile = {}; }
+}
+
+function _isFlagAvail(id) { return _foodProfile[id] !== false; }
+
+function _filterFoods(foods) {
+  if (!foods?.length) return foods;
+  const unavail = INGREDIENT_FLAGS.filter(f => !_isFlagAvail(f.id));
+  if (!unavail.length) return foods;
+
+  const result = [];
+  const addedAlts = new Set();
+
+  for (const food of foods) {
+    const fl = food.toLowerCase();
+    const missing = unavail.find(f => f.keywords.some(kw => fl.includes(kw)));
+    if (!missing) {
+      result.push(food);
+    } else {
+      for (const alt of missing.alts) {
+        if (!addedAlts.has(alt)) { result.push(alt); addedAlts.add(alt); }
+      }
+    }
+  }
+  return result.length > 0 ? result : foods;
+}
+
+let _ingPanelOpen = false;
+
 // ── STATE ─────────────────────────────────────────────────────────────────────
 
 let _activeTab    = 'plan';
@@ -600,7 +701,7 @@ function _renderTimeline(plan) {
               ${showChecks ? `<button class="nut-meal-check${preChecked ? ' nut-meal-check--done' : ''}" onclick="nutToggleMeal('pre')" title="Marcar como hecho"><i class="ti ti-check"></i></button>` : ''}
             </div>
             <p class="nut-tl-focus">${sesNut.pre.focus}</p>
-            <ul class="nut-meal-items">${sesNut.pre.foods.map(f => `<li>${f}</li>`).join('')}</ul>
+            <ul class="nut-meal-items">${_filterFoods(sesNut.pre.foods).map(f => `<li>${f}</li>`).join('')}</ul>
             ${carbLevel ? `<div class="nut-carb-chip"><i class="ti ti-wheat"></i> Carbohidratos hoy: <strong>${carbLevel}</strong></div>` : ''}
           </div>
         </div>`;
@@ -623,7 +724,7 @@ function _renderTimeline(plan) {
             </div>
             <p class="nut-tl-focus">${sesNut.post.focus}</p>
             <div class="nut-protein-chip"><i class="ti ti-meat"></i> <strong>${sesNut.post.protein}</strong></div>
-            <ul class="nut-meal-items">${sesNut.post.foods.map(f => `<li>${f}</li>`).join('')}</ul>
+            <ul class="nut-meal-items">${_filterFoods(sesNut.post.foods).map(f => `<li>${f}</li>`).join('')}</ul>
           </div>
         </div>`;
     }
@@ -649,7 +750,7 @@ function _renderTimeline(plan) {
             ${showChecks ? `<button class="nut-meal-check${slotChecked ? ' nut-meal-check--done' : ''}" onclick="nutToggleMeal('${slot.id}')" title="Marcar como hecho"><i class="ti ti-check"></i></button>` : ''}
           </div>
           <p class="nut-tl-focus">${c.note}</p>
-          <ul class="nut-meal-items">${c.foods.map(f => `<li>${f}</li>`).join('')}</ul>
+          <ul class="nut-meal-items">${_filterFoods(c.foods).map(f => `<li>${f}</li>`).join('')}</ul>
           <div class="nut-tl-footer">
             <div class="nut-tl-macro">${c.macro}</div>
             ${c.water ? `<div class="nut-tl-water"><i class="ti ti-droplets"></i> ${c.water}</div>` : ''}
@@ -659,6 +760,41 @@ function _renderTimeline(plan) {
   }).join('');
 
   return `<div class="nut-timeline">${items}</div>`;
+}
+
+// ── RENDER: INGREDIENT PANEL ──────────────────────────────────────────────────
+
+function _renderIngredientPanel() {
+  const unavailCount = INGREDIENT_FLAGS.filter(f => !_isFlagAvail(f.id)).length;
+  const badgeHtml = unavailCount > 0
+    ? `<span class="nut-ing-badge">${unavailCount} excluido${unavailCount > 1 ? 's' : ''}</span>`
+    : '';
+
+  const itemsHtml = INGREDIENT_FLAGS.map(f => {
+    const avail = _isFlagAvail(f.id);
+    return `
+      <div class="nut-ing-item">
+        <span class="nut-ing-name"><i class="ti ${f.icon}"></i> ${f.label}</span>
+        <button class="nut-ing-toggle ${avail ? 'nut-ing-toggle--on' : 'nut-ing-toggle--off'}"
+                onclick="nutSetFoodFlag('${f.id}', ${!avail})">
+          ${avail ? '<i class="ti ti-check"></i> Disponible' : '<i class="ti ti-x"></i> No tengo'}
+        </button>
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="nut-ing-panel">
+      <button class="nut-ing-toggle-hdr" onclick="nutToggleIngredients()">
+        <i class="ti ti-adjustments-horizontal"></i>
+        Mis ingredientes disponibles ${badgeHtml}
+        <i class="ti ${_ingPanelOpen ? 'ti-chevron-up' : 'ti-chevron-down'} nut-ing-chevron"></i>
+      </button>
+      ${_ingPanelOpen ? `
+        <div class="nut-ing-body">
+          <p class="nut-ing-desc">Desactiva lo que no consigues. Las recetas se adaptan con alternativas locales de la costa caribe.</p>
+          <div class="nut-ing-list">${itemsHtml}</div>
+        </div>` : ''}
+    </div>`;
 }
 
 // ── RENDER: MI PLAN ───────────────────────────────────────────────────────────
@@ -763,7 +899,7 @@ function _renderPlan(plan) {
       ${macros}${restDay}`;
   }
 
-  return `${noMeta}${selector}${viewToggle}${sesHeader}${tlTitle}${_renderTimeline(plan)}${macros}${restDay}`;
+  return `${noMeta}${selector}${_renderIngredientPanel()}${viewToggle}${sesHeader}${tlTitle}${_renderTimeline(plan)}${macros}${restDay}`;
 }
 
 // ── RENDER: FUNDAMENTOS ───────────────────────────────────────────────────────
@@ -810,6 +946,7 @@ function _build() {
 
 export function showNutritionPage() {
   _activeTab = 'plan'; _openFundId = null; _nutView = 'today';
+  _loadFoodProfile();
   // Load meal log from localStorage immediately, then sync from Supabase
   const today = new Date().toISOString().slice(0, 10);
   try { initMealLog(JSON.parse(localStorage.getItem(`sv_meal_${today}`) || '[]')); } catch(e) { initMealLog([]); }
@@ -828,6 +965,17 @@ export function showNutritionPage() {
 }
 
 export function nutSetView(v) { _nutView = v; _build(); }
+
+export function nutSetFoodFlag(id, available) {
+  _foodProfile[id] = available;
+  try { localStorage.setItem('sv_food_profile', JSON.stringify(_foodProfile)); } catch (e) {}
+  _build();
+}
+
+export function nutToggleIngredients() {
+  _ingPanelOpen = !_ingPanelOpen;
+  _build();
+}
 
 export function nutToggleMeal(slotId) {
   const plan = _generatePlan(getPlanMeta());
