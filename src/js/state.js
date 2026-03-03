@@ -4,6 +4,23 @@ import { SESSIONS as DEFAULT_SESSIONS } from '../data/sessions.js';
 let _userId = null;
 let _activeSessions = null; // null = fallback to DEFAULT_SESSIONS
 
+const _USER_DATA_KEYS = [
+  'sv_logs', 'sv_ex_logs', 'sv_plan_cache', 'sv_plan_meta',
+  'sv_food_profile', 'sv_body_metrics',
+];
+
+export function clearAllUserData() {
+  _USER_DATA_KEYS.forEach(k => { try { localStorage.removeItem(k); } catch(e) {} });
+  try {
+    Object.keys(localStorage)
+      .filter(k => k.startsWith('sv_meal_'))
+      .forEach(k => localStorage.removeItem(k));
+  } catch(e) {}
+  try { localStorage.removeItem('sv_user_id'); } catch(e) {}
+  state.logs = [];
+  _activeSessions = null;
+}
+
 export const state = {
   logs: [],
   currentId: null,
@@ -23,6 +40,14 @@ export function getPlan() {
 // ── Auth init ──────────────────────────────────────────────────────────────────
 
 export function initState(sessionLogs, userId) {
+  // Detect user switch: clear previous user's data before loading the new one
+  if (userId) {
+    const storedUid = localStorage.getItem('sv_user_id');
+    if (storedUid && storedUid !== userId) {
+      clearAllUserData();
+    }
+    localStorage.setItem('sv_user_id', userId);
+  }
   _userId = userId;
   if (Array.isArray(sessionLogs) && userId) {
     if (sessionLogs.length > 0) {

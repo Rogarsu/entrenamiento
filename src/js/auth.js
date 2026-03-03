@@ -1,6 +1,6 @@
 import { supabase } from './supabase.js';
 import { fetchUserData, fetchUserPlan, upsertUserPlan, fetchUserPrefs } from './db.js';
-import { initState, setPlan, cachePlan, getCachedPlan } from './state.js';
+import { initState, setPlan, cachePlan, getCachedPlan, clearAllUserData } from './state.js';
 import { initExLogs } from './storage.js';
 import { buildStats } from './stats.js';
 import { buildSidebar } from './sidebar.js';
@@ -139,6 +139,7 @@ export async function initAuth() {
         if (el) el.textContent = session.user.email;
       }
     } else if (event === 'SIGNED_OUT') {
+      clearAllUserData();
       initState([], null);
       initExLogs([]);
       _showLogin();
@@ -197,6 +198,7 @@ export async function authSignOut() {
   if (error) {
     // If Supabase signOut fails, force UI to login anyway
     console.error('signOut error:', error.message);
+    clearAllUserData();
     initState([], null);
     initExLogs([]);
     _showLogin();
