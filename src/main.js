@@ -29,6 +29,7 @@ import { initAuth, authToggleTab, authSignIn, authSignUp, authSignInGoogle, auth
 import { dismissMigration, migrateLocalData as _migrate } from './js/migrate.js';
 import { getUserId } from './js/state.js';
 import { openPlanModal, closePlanModal, showNewCycle, openResetModal, closeResetModal, resetProgress } from './js/onboarding.js';
+import { initOffline } from './js/offline.js';
 
 // ===== EXPONER A WINDOW (para onclick en HTML) =====
 window.toggleSidebar = toggleSidebar;
@@ -95,3 +96,4 @@ window.resetProgress   = resetProgress;
 // buildStats() and buildSidebar() are called inside initAuth()
 // after user data is loaded from Supabase.
 initAuth();
+initOffline();

@@ -67,6 +67,17 @@ export function clearExLogs() {
   try { localStorage.removeItem('sv_ex_logs'); } catch(e) {}
 }
 
+export function syncAllExLogs() {
+  const uid = getUserId();
+  if (!uid || Object.keys(_exLogs).length === 0) return;
+  Object.entries(_exLogs).forEach(([key, data]) => {
+    const lastUs = key.lastIndexOf('_');
+    const exId = key.substring(0, lastUs);
+    const sessionId = parseInt(key.substring(lastUs + 1));
+    if (!isNaN(sessionId)) upsertExLog(uid, exId, sessionId, data).catch(console.error);
+  });
+}
+
 export function saveExLog(exId, sessionId, sets, targetReps, muscle) {
   const now = new Date();
   const data = {
