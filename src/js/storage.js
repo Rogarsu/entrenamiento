@@ -78,6 +78,29 @@ export function syncAllExLogs() {
   });
 }
 
+// ── Exercise swaps ──────────────────────────────────────────────
+let _exSwaps = {};
+
+export function initExSwaps() {
+  try { _exSwaps = JSON.parse(localStorage.getItem('sv_ex_swaps') || '{}'); } catch(e) { _exSwaps = {}; }
+}
+
+export function getExSwap(exId, sessionId) {
+  return _exSwaps[`${exId}|${sessionId}`] || null;
+}
+
+export function setExSwap(exId, sessionId, newExId) {
+  const key = `${exId}|${sessionId}`;
+  if (newExId) _exSwaps[key] = newExId;
+  else delete _exSwaps[key];
+  localStorage.setItem('sv_ex_swaps', JSON.stringify(_exSwaps));
+}
+
+export function clearExSwaps() {
+  _exSwaps = {};
+  try { localStorage.removeItem('sv_ex_swaps'); } catch(e) {}
+}
+
 export function saveExLog(exId, sessionId, sets, targetReps, muscle) {
   const now = new Date();
   const data = {

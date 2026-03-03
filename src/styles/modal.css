@@ -50,6 +50,32 @@
 /* BADGE en tabla */
 .ex-rec-badge { font-size: 11px; color: var(--amber); font-family: var(--font-mono); margin-top: 4px; letter-spacing: 0.02em; }
 
+/* SWAP BUTTONS */
+.ex-swap-actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 12px; }
+.ex-swap-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
+  border: 1px solid var(--border2); background: var(--bg4); color: var(--text2);
+  cursor: pointer; transition: border-color .2s, color .2s;
+}
+.ex-swap-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+.ex-swap-btn.ex-swap-reset { border-color: rgba(248,113,113,0.35); color: #f87171; }
+.ex-swap-btn.ex-swap-reset:hover { border-color: #f87171; }
+
+/* EXERCISE PICKER */
+.ex-picker { border: 1px solid var(--border2); border-radius: 10px; background: var(--bg4); overflow: hidden; margin-bottom: 12px; }
+.ex-picker-title { font-family: var(--font-mono); font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; padding: 10px 14px; border-bottom: 1px solid var(--border2); }
+.ex-picker-list { max-height: 220px; overflow-y: auto; }
+.ex-picker-item {
+  padding: 10px 14px; border-bottom: 1px solid var(--border2); cursor: pointer;
+  transition: background .15s;
+}
+.ex-picker-item:last-child { border-bottom: none; }
+.ex-picker-item:hover { background: var(--bg2); }
+.ex-picker-name { font-size: 13px; color: var(--text); margin-bottom: 2px; }
+.ex-picker-meta { font-family: var(--font-mono); font-size: 11px; color: var(--text3); }
+.ex-picker-empty { padding: 14px; font-family: var(--font-mono); font-size: 11px; color: var(--text3); }
+
 /* PLAN MODAL — Nuevo Ciclo */
 .plan-modal-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,.65);

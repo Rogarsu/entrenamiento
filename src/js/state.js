@@ -5,7 +5,7 @@ let _userId = null;
 let _activeSessions = null; // null = fallback to DEFAULT_SESSIONS
 
 const _USER_DATA_KEYS = [
-  'sv_logs', 'sv_ex_logs', 'sv_plan_cache', 'sv_plan_meta',
+  'sv_logs', 'sv_ex_logs', 'sv_ex_swaps', 'sv_plan_cache', 'sv_plan_meta',
   'sv_food_profile', 'sv_body_metrics',
 ];
 

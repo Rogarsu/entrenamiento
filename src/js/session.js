@@ -1,6 +1,7 @@
 import { PHASES } from '../data/phases.js';
+import { EXERCISES } from '../data/exercises.js';
 import { state, isDone, getLog, getPlan } from './state.js';
-import { getExLog } from './storage.js';
+import { getExLog, getExSwap } from './storage.js';
 import { getExRecommendation } from './progression.js';
 import { escStr } from './helpers.js';
 import { setNavPage } from './nav.js';
@@ -97,8 +98,19 @@ export function loadSession(id) {
             </tr></thead>
             <tbody>
               ${bl.exercises.map(e => {
-                const exRec = getExRecommendation(e.id, s.id, e.reps || '', e.muscle || '', e.weight_guide || '');
-                const exLog = getExLog(e.id, s.id);
+                // Check for a user-requested swap
+                const swapId = getExSwap(e.id, s.id);
+                const swapEx = swapId ? EXERCISES.find(x => x.id === swapId) : null;
+                const displayId   = swapEx ? swapEx.id   : e.id;
+                const displayName = swapEx ? swapEx.name : e.name;
+                const displayMuscle = swapEx ? swapEx.muscle_primary : e.muscle;
+                const displayEquip  = swapEx ? swapEx.equip          : e.equip;
+                const displayReps   = swapEx ? swapEx.reps_default   : e.reps;
+                const displayRest   = swapEx ? `${swapEx.rest_seconds} seg` : e.rest;
+                const displayWg     = swapEx ? (swapEx.weight_guide || '—') : (e.weight_guide || '—');
+
+                const exRec = getExRecommendation(displayId, s.id, displayReps || '', displayMuscle || '', displayWg);
+                const exLog = getExLog(displayId, s.id);
                 const hasLog = !!(exLog && exLog.sets && exLog.sets.length);
                 const logSummary = hasLog
                   ? exLog.sets.map(st => `${st.weight > 0 ? st.weight + 'kg' : '—'}×${st.reps}`).join(' · ')
@@ -108,29 +120,32 @@ export function loadSession(id) {
                   if (exRec.type === 'same') {
                     const r = exRec.rec;
                     const arr = r.dir === 'up' ? '↑' : r.dir === 'down' ? '↓' : '→';
-                    badgeHtml = `<div class="ex-rec-badge" id="rec_badge_${e.id}"><i class="ti ti-trending-up"></i> ${r.nextWeight} kg × ${r.targetReps} reps ${arr}</div>`;
+                    badgeHtml = `<div class="ex-rec-badge" id="rec_badge_${displayId}"><i class="ti ti-trending-up"></i> ${r.nextWeight} kg × ${r.targetReps} reps ${arr}</div>`;
                   } else if (exRec.type === 'related' && exRec.crossRec.suggestedWeight) {
                     const icon = exRec.crossRec.level === 'high' ? '↑' : exRec.crossRec.level === 'low' ? '↓' : '→';
-                    badgeHtml = `<div class="ex-rec-badge" id="rec_badge_${e.id}" style="color:var(--cyan)"><i class="ti ti-chart-bar"></i> ~${exRec.crossRec.suggestedWeight} kg ${icon}</div>`;
+                    badgeHtml = `<div class="ex-rec-badge" id="rec_badge_${displayId}" style="color:var(--cyan)"><i class="ti ti-chart-bar"></i> ~${exRec.crossRec.suggestedWeight} kg ${icon}</div>`;
                   } else {
-                    badgeHtml = `<div class="ex-rec-badge" id="rec_badge_${e.id}" style="display:none"></div>`;
+                    badgeHtml = `<div class="ex-rec-badge" id="rec_badge_${displayId}" style="display:none"></div>`;
                   }
                 } else {
-                  badgeHtml = `<div class="ex-rec-badge" id="rec_badge_${e.id}" style="display:none"></div>`;
+                  badgeHtml = `<div class="ex-rec-badge" id="rec_badge_${displayId}" style="display:none"></div>`;
                 }
+                const swapBadge = swapEx
+                  ? `<span class="ex-swap-badge"><i class="ti ti-refresh"></i> Alternativa</span>`
+                  : '';
                 return `
                 <tr>
                   <td>
-                    <div class="ex-name${hasLog ? ' ex-logged' : ''}" onclick="openExModal('${e.id}','${escStr(e.name)}','${escStr(e.muscle)}','${escStr(e.equip)}','${e.sets}','${escStr(e.reps)}','${escStr(e.weight_guide || '')}')">
-                      <span class="img-icon" id="ex_icon_${e.id}">${hasLog ? '<i class="ti ti-pencil"></i>' : '<i class="ti ti-photo"></i>'}</span> ${e.name}
+                    <div class="ex-name${hasLog ? ' ex-logged' : ''}" onclick="openExModal('${displayId}','${escStr(displayName)}','${escStr(displayMuscle)}','${escStr(displayEquip)}','${e.sets}','${escStr(displayReps)}','${escStr(displayWg)}','${e.id}')">
+                      <span class="img-icon" id="ex_icon_${displayId}">${hasLog ? '<i class="ti ti-pencil"></i>' : '<i class="ti ti-photo"></i>'}</span> ${displayName}${swapBadge}
                     </div>
-                    <div class="ex-muscle">${e.muscle}</div>
-                    <div class="ex-log-row" id="ex_log_sum_${e.id}"${hasLog ? '' : ' style="display:none"'}><i class="ti ti-check"></i> ${logSummary}<span class="ex-edit-hint"> — toca para editar</span></div>
+                    <div class="ex-muscle">${displayMuscle}</div>
+                    <div class="ex-log-row" id="ex_log_sum_${displayId}"${hasLog ? '' : ' style="display:none"'}><i class="ti ti-check"></i> ${logSummary}<span class="ex-edit-hint"> — toca para editar</span></div>
                   </td>
                   <td><span class="ex-sets">${e.sets}</span></td>
-                  <td><span class="ex-reps">${e.reps}</span></td>
-                  <td><span class="ex-rest">${e.rest}</span></td>
-                  <td><span class="ex-weight">${e.weight_guide || '—'}</span>${badgeHtml}</td>
+                  <td><span class="ex-reps">${displayReps}</span></td>
+                  <td><span class="ex-rest">${displayRest}</span></td>
+                  <td><span class="ex-weight">${displayWg}</span>${badgeHtml}</td>
                   <td><span class="ex-notes">${e.notes || '—'}</span></td>
                 </tr>`;
               }).join('')}

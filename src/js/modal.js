@@ -1,13 +1,15 @@
 import { state, getPlan } from './state.js';
 import { getExImage } from '../data/images.js';
-import { getExLog, getLastExLog, saveExLog } from './storage.js';
+import { EXERCISES } from '../data/exercises.js';
+import { getExLog, getLastExLog, saveExLog, setExSwap } from './storage.js';
 import { calcNextRecommendation, calcCrossExRecommendation, getRelatedExLogs, getExRecommendation } from './progression.js';
 import { escStr } from './helpers.js';
 import { startRestTimer } from './timer.js';
+import { loadSession } from './session.js';
 
 let _exCtx = null; // contexto del modal abierto
 
-export function openExModal(id, name, muscle, equip, targetSets, targetReps, weightGuide) {
+export function openExModal(id, name, muscle, equip, targetSets, targetReps, weightGuide, originalId) {
   const modal = document.getElementById('exModalContent');
   const imgSrc = getExImage(id, name);
   const imgSection = imgSrc
@@ -26,9 +28,11 @@ export function openExModal(id, name, muscle, equip, targetSets, targetReps, wei
       </div>`;
 
   const numSets = parseInt(targetSets) || 0;
+  // originalId is the plan's exercise id (may differ from id when swapped)
+  const origId = originalId || id;
   let logSection = '';
   if (numSets > 0 && id !== 'pre' && id !== 'post') {
-    _exCtx = { id, numSets, targetReps: targetReps || '', muscle: muscle || '', weightGuide: weightGuide || '' };
+    _exCtx = { id, origId, numSets, targetReps: targetReps || '', muscle: muscle || '', weightGuide: weightGuide || '' };
     const existing = getExLog(id, state.currentId);
     const rows = Array.from({ length: numSets }, (_, i) => {
       const saved = existing && existing.sets && existing.sets[i];
@@ -43,6 +47,13 @@ export function openExModal(id, name, muscle, equip, targetSets, targetReps, wei
         <span class="ex-log-unit">reps</span>
       </div>`;
     }).join('');
+    const isSwapped = origId !== id;
+    const swapBtnHtml = `
+      <div class="ex-swap-actions">
+        <button class="ex-swap-btn" onclick="window._exShowPicker()"><i class="ti ti-refresh"></i> Cambiar ejercicio</button>
+        ${isSwapped ? `<button class="ex-swap-btn ex-swap-reset" onclick="window._exResetSwap()"><i class="ti ti-arrow-back-up"></i> Volver al original</button>` : ''}
+      </div>
+      <div id="exPickerWrap" style="display:none"></div>`;
     logSection = `
       <div class="ex-modal-log">
         <div class="ex-log-title">📝 Tu registro — sesión actual</div>
@@ -50,6 +61,7 @@ export function openExModal(id, name, muscle, equip, targetSets, targetReps, wei
         <button class="ex-log-save" onclick="saveCurrentExLog()">💾 Guardar registro</button>
         <div class="ex-log-saved" id="exLogSaved">✓ Guardado</div>
       </div>
+      ${swapBtnHtml}
       <div class="ex-modal-rec" id="exModalRec">
         ${buildRecSection(id, state.currentId, targetReps || '', muscle || '', weightGuide || '')}
       </div>`;
@@ -181,3 +193,50 @@ export function buildRecSection(exId, sessionId, targetRepsStr, muscle, weightGu
   return `<div class="ex-log-title">📈 Recomendación próxima sesión</div>
     <div class="ex-rec-first">Primera vez registrando este ejercicio y grupo muscular.<br>Usa la guía de peso como referencia inicial y anota lo que uses hoy.</div>`;
 }
+
+// ── Exercise swap helpers ──────────────────────────────────────────────────
+window._exShowPicker = () => {
+  if (!_exCtx) return;
+  const wrap = document.getElementById('exPickerWrap');
+  if (!wrap) return;
+  if (wrap.style.display !== 'none') { wrap.style.display = 'none'; return; }
+
+  // Alternatives: same muscle_primary, exclude current displayed exercise
+  const currentMuscle = _exCtx.muscle;
+  const alts = EXERCISES.filter(ex => ex.muscle_primary === currentMuscle && ex.id !== _exCtx.id);
+
+  if (!alts.length) {
+    wrap.innerHTML = `<div class="ex-picker-empty">No hay alternativas para este grupo muscular.</div>`;
+    wrap.style.display = 'block';
+    return;
+  }
+
+  const items = alts.map(ex => {
+    const diffLabel = { beginner: 'Básico', intermediate: 'Intermedio', advanced: 'Avanzado' }[ex.difficulty] || ex.difficulty;
+    return `<div class="ex-picker-item" onclick="window._exSelectAlt('${ex.id}')">
+      <div class="ex-picker-name">${ex.name}</div>
+      <div class="ex-picker-meta">${ex.equip} · ${diffLabel}</div>
+    </div>`;
+  }).join('');
+
+  wrap.innerHTML = `
+    <div class="ex-picker">
+      <div class="ex-picker-title"><i class="ti ti-refresh"></i> Elegir alternativa — ${currentMuscle}</div>
+      <div class="ex-picker-list">${items}</div>
+    </div>`;
+  wrap.style.display = 'block';
+};
+
+window._exSelectAlt = (newExId) => {
+  if (!_exCtx) return;
+  setExSwap(_exCtx.origId, state.currentId, newExId);
+  closeExModal();
+  loadSession(state.currentId);
+};
+
+window._exResetSwap = () => {
+  if (!_exCtx) return;
+  setExSwap(_exCtx.origId, state.currentId, null);
+  closeExModal();
+  loadSession(state.currentId);
+};

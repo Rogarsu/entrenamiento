@@ -1,7 +1,7 @@
 import { supabase } from './supabase.js';
 import { fetchUserData, fetchUserPlan, upsertUserPlan, fetchUserPrefs } from './db.js';
 import { initState, setPlan, cachePlan, getCachedPlan, clearAllUserData } from './state.js';
-import { initExLogs } from './storage.js';
+import { initExLogs, initExSwaps } from './storage.js';
 import { buildStats } from './stats.js';
 import { buildSidebar } from './sidebar.js';
 import { hasPendingLocalData, showMigrationBanner } from './migrate.js';
@@ -14,6 +14,7 @@ async function _loadAndRender(user) {
   const { sessionLogs, exLogs } = await fetchUserData(user.id);
   initState(sessionLogs, user.id);
   initExLogs(exLogs);
+  initExSwaps();
 
   // Load training plan — safe against Supabase errors (network, RLS, etc.)
   let planSessions;
