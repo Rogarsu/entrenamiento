@@ -82,7 +82,7 @@ export function loadSession(id) {
   const _durRowHtml = _startTs
     ? `<div class="log-dur-row">
         <span class="log-label"><i class="ti ti-clock"></i> Duración</span>
-        <div class="log-dur-display"><span class="log-dur-val">${Math.round((Date.now() - parseInt(_startTs)) / 60000)} min</span><span class="log-dur-auto"> · calculado automáticamente</span></div>
+        <div class="log-dur-display" id="logDurDisplay"><span class="log-dur-val">${Math.round((Date.now() - parseInt(_startTs)) / 60000)} min</span><span class="log-dur-auto"> · calculado automáticamente</span></div>
       </div>`
     : '';
 
@@ -298,8 +298,16 @@ window.startSessionTimer = () => {
 window.finishSessionTimer = () => {
   const id = state.currentId;
   if (!id) return;
-  if (localStorage.getItem(`sv_session_start_${id}`)) {
-    localStorage.setItem(`sv_session_end_${id}`, Date.now().toString());
+  const startTs = localStorage.getItem(`sv_session_start_${id}`);
+  if (startTs) {
+    const endTs = Date.now();
+    localStorage.setItem(`sv_session_end_${id}`, endTs.toString());
+    // Update the duration display with the real elapsed time at this moment
+    const durEl = document.getElementById('logDurDisplay');
+    if (durEl) {
+      const dur = Math.max(1, Math.round((endTs - parseInt(startTs)) / 60000));
+      durEl.innerHTML = `<span class="log-dur-val">${dur} min</span><span class="log-dur-auto"> · calculado automáticamente</span>`;
+    }
   }
   window.openLogForm?.();
 };
