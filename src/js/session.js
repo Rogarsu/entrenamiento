@@ -79,9 +79,12 @@ export function loadSession(id) {
     </span>
     ${_pendingNames.length ? `<div class="lex-pending">Sin registrar: ${_pendingNames.join(', ')}</div>` : ''}
   </div>`;
-  const _durDisp = _startTs
-    ? `<span class="log-dur-val">${Math.round((Date.now() - parseInt(_startTs)) / 60000)} min</span><span class="log-dur-auto"> · calculado automáticamente</span>`
-    : `<span class="log-dur-none">Presiona "Iniciar sesión" al comenzar para medir la duración</span>`;
+  const _durRowHtml = _startTs
+    ? `<div class="log-dur-row">
+        <span class="log-label"><i class="ti ti-clock"></i> Duración</span>
+        <div class="log-dur-display"><span class="log-dur-val">${Math.round((Date.now() - parseInt(_startTs)) / 60000)} min</span><span class="log-dur-auto"> · calculado automáticamente</span></div>
+      </div>`
+    : '';
 
   document.getElementById('sessionDetail').innerHTML = `
     <div class="session-header">
@@ -99,7 +102,7 @@ export function loadSession(id) {
     ${done && log ? `<div class="section-card" style="border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.05)">
       <div class="sc-label" style="color:var(--green)">Registro guardado</div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;font-family:var(--font-mono);font-size:12px">
-        <div><span style="color:var(--text3)">DURACIÓN</span><br><span style="color:var(--text)">${log.duration} min</span></div>
+        <div><span style="color:var(--text3)">DURACIÓN</span><br><span style="color:var(--text)">${log.duration > 0 ? log.duration + ' min' : '—'}</span></div>
         <div><span style="color:var(--text3)">ENERGÍA</span><br><span style="color:var(--amber)">${log.energy}/10</span></div>
         <div><span style="color:var(--text3)">FATIGA</span><br><span style="color:var(--cyan)">${log.fatigue}/10</span></div>
         <div><span style="color:var(--text3)">FECHA</span><br><span style="color:var(--text)">${log.date}</span></div>
@@ -237,10 +240,7 @@ export function loadSession(id) {
       }
       <div class="log-form" id="logForm">
         ${exCheckHtml}
-        <div class="log-dur-row">
-          <span class="log-label"><i class="ti ti-clock"></i> Duración</span>
-          <div class="log-dur-display">${_durDisp}</div>
-        </div>
+        ${_durRowHtml}
         <div class="log-grid">
           <div class="log-field"><label class="log-label">Energía (1-10)</label><input class="log-input" type="number" id="logEnergy" value="7" min="1" max="10"></div>
           <div class="log-field"><label class="log-label">Fatiga (1-10)</label><input class="log-input" type="number" id="logFatigue" value="6" min="1" max="10"></div>
