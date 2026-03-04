@@ -73,7 +73,7 @@ export function loadSession(id) {
         return swId ? (EXERCISES.find(x => x.id === swId)?.name || e.name) : e.name;
       })
   );
-  const exCheckHtml = `<div class="log-ex-check">
+  const exCheckHtml = `<div class="log-ex-check" id="logExCheck">
     <span class="${_doneEx === _totalEx ? 'lex-complete' : 'lex-partial'}">
       <i class="ti ti-dumbbell"></i> ${_doneEx}/${_totalEx} ejercicios registrados
     </span>
@@ -298,16 +298,50 @@ window.startSessionTimer = () => {
 window.finishSessionTimer = () => {
   const id = state.currentId;
   if (!id) return;
+
+  // Update duration display with real elapsed time
   const startTs = localStorage.getItem(`sv_session_start_${id}`);
   if (startTs) {
     const endTs = Date.now();
     localStorage.setItem(`sv_session_end_${id}`, endTs.toString());
-    // Update the duration display with the real elapsed time at this moment
     const durEl = document.getElementById('logDurDisplay');
     if (durEl) {
       const dur = Math.max(1, Math.round((endTs - parseInt(startTs)) / 60000));
       durEl.innerHTML = `<span class="log-dur-val">${dur} min</span><span class="log-dur-auto"> · calculado automáticamente</span>`;
     }
   }
+
+  // Update exercise completion check with current logged state
+  const exCheckEl = document.getElementById('logExCheck');
+  if (exCheckEl) {
+    const s = getPlan().find(x => x.id === id);
+    if (s) {
+      const totalEx = s.workout.blocks.reduce((a, bl) => a + bl.exercises.length, 0);
+      const doneEx = s.workout.blocks.reduce((a, bl) => a + bl.exercises.filter(e => {
+        const swId = getExSwap(e.id, id);
+        const exLog = getExLog(swId || e.id, id);
+        return !!(exLog && exLog.sets && exLog.sets.length);
+      }).length, 0);
+      const pendingNames = s.workout.blocks.flatMap(bl =>
+        bl.exercises
+          .filter(e => {
+            const swId = getExSwap(e.id, id);
+            const exLog = getExLog(swId || e.id, id);
+            return !(exLog && exLog.sets && exLog.sets.length);
+          })
+          .map(e => {
+            const swId = getExSwap(e.id, id);
+            return swId ? (EXERCISES.find(x => x.id === swId)?.name || e.name) : e.name;
+          })
+      );
+      exCheckEl.innerHTML = `
+        <span class="${doneEx === totalEx ? 'lex-complete' : 'lex-partial'}">
+          <i class="ti ti-dumbbell"></i> ${doneEx}/${totalEx} ejercicios registrados
+        </span>
+        ${pendingNames.length ? `<div class="lex-pending">Sin registrar: ${pendingNames.join(', ')}</div>` : ''}
+      `;
+    }
+  }
+
   window.openLogForm?.();
 };
