@@ -13,18 +13,31 @@ export function closeLogForm() {
 }
 
 export function saveLog() {
+  const _sid = state.currentId;
+  const _startTs = localStorage.getItem(`sv_session_start_${_sid}`);
+  const _endTs   = localStorage.getItem(`sv_session_end_${_sid}`);
+  const duration = _startTs
+    ? Math.round(((_endTs ? parseInt(_endTs) : Date.now()) - parseInt(_startTs)) / 60000)
+    : 0;
+
   const log = {
-    sessionId: state.currentId,
+    sessionId: _sid,
     date: new Date().toLocaleDateString('es-CO'),
-    duration: parseInt(document.getElementById('logDur').value) || 70,
+    duration,
     energy: parseInt(document.getElementById('logEnergy').value) || 7,
     fatigue: parseInt(document.getElementById('logFatigue').value) || 6,
     pain: document.getElementById('logPain').value || 'ninguna',
     notes: document.getElementById('logNotes').value || '',
   };
-  state.logs = state.logs.filter(l => l.sessionId !== state.currentId);
+  state.logs = state.logs.filter(l => l.sessionId !== _sid);
   state.logs.push(log);
   saveState();
+
+  // Clean up session timer entries
+  try {
+    localStorage.removeItem(`sv_session_start_${_sid}`);
+    localStorage.removeItem(`sv_session_end_${_sid}`);
+  } catch(e) {}
 
   // Save body weight if provided
   const wt = parseFloat(document.getElementById('logWeight')?.value);
@@ -42,5 +55,5 @@ export function saveLog() {
 
   buildStats();
   buildSidebar();
-  loadSession(state.currentId);
+  loadSession(_sid);
 }

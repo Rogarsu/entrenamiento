@@ -31,6 +31,58 @@ export function loadSession(id) {
   const done = isDone(id);
   const log = getLog(id);
 
+  // ── Stopwatch ──────────────────────────────────────────────────────────
+  const _startTs = localStorage.getItem(`sv_session_start_${id}`);
+  let swHtml = '';
+  if (!done) {
+    if (_startTs) {
+      const _sd = new Date(parseInt(_startTs));
+      const _hm = _sd.toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
+      const _el = Math.round((Date.now() - parseInt(_startTs)) / 60000);
+      swHtml = `<div class="session-sw sw-active">
+        <i class="ti ti-player-play-filled"></i>
+        <div class="sw-info">
+          <span class="sw-on">En curso · iniciada a las ${_hm}</span>
+          <span class="sw-elapsed">${_el} min transcurridos</span>
+        </div>
+      </div>`;
+    } else {
+      swHtml = `<div class="session-sw">
+        <button class="sw-start-btn" onclick="startSessionTimer()"><i class="ti ti-player-play"></i> Iniciar sesión</button>
+        <span class="sw-hint">Captura la hora de inicio para medir la duración</span>
+      </div>`;
+    }
+  }
+
+  // ── Exercise completion summary ─────────────────────────────────────────
+  const _totalEx = s.workout.blocks.reduce((a, bl) => a + bl.exercises.length, 0);
+  const _doneEx = s.workout.blocks.reduce((a, bl) => a + bl.exercises.filter(e => {
+    const swId = getExSwap(e.id, id);
+    const exLog = getExLog(swId || e.id, id);
+    return !!(exLog && exLog.sets && exLog.sets.length);
+  }).length, 0);
+  const _pendingNames = done ? [] : s.workout.blocks.flatMap(bl =>
+    bl.exercises
+      .filter(e => {
+        const swId = getExSwap(e.id, id);
+        const exLog = getExLog(swId || e.id, id);
+        return !(exLog && exLog.sets && exLog.sets.length);
+      })
+      .map(e => {
+        const swId = getExSwap(e.id, id);
+        return swId ? (EXERCISES.find(x => x.id === swId)?.name || e.name) : e.name;
+      })
+  );
+  const exCheckHtml = `<div class="log-ex-check">
+    <span class="${_doneEx === _totalEx ? 'lex-complete' : 'lex-partial'}">
+      <i class="ti ti-dumbbell"></i> ${_doneEx}/${_totalEx} ejercicios registrados
+    </span>
+    ${_pendingNames.length ? `<div class="lex-pending">Sin registrar: ${_pendingNames.join(', ')}</div>` : ''}
+  </div>`;
+  const _durDisp = _startTs
+    ? `<span class="log-dur-val">${Math.round((Date.now() - parseInt(_startTs)) / 60000)} min</span><span class="log-dur-auto"> · calculado automáticamente</span>`
+    : `<span class="log-dur-none">Presiona "Iniciar sesión" al comenzar para medir la duración</span>`;
+
   document.getElementById('sessionDetail').innerHTML = `
     <div class="session-header">
       <div class="session-num">Sesión ${String(id).padStart(2, '0')} · Fase ${s.phase}</div>
@@ -54,6 +106,8 @@ export function loadSession(id) {
       </div>
       ${log.notes ? `<div style="margin-top:10px;font-size:12px;color:var(--text2);font-style:italic;padding-top:10px;border-top:1px solid var(--border)">${log.notes}</div>` : ''}
     </div>` : ''}
+
+    ${swHtml}
 
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab(this,'pre')"><i class="ti ti-flame"></i> Pre-Entreno</button>
@@ -179,11 +233,15 @@ export function loadSession(id) {
     <div class="mark-section">
       ${done
         ? `<button class="mark-btn already-done" disabled><i class="ti ti-check"></i> Sesión ya registrada</button>`
-        : `<button class="mark-btn" onclick="openLogForm()"><i class="ti ti-check"></i> Marcar como completada</button>`
+        : `<button class="mark-btn" onclick="finishSessionTimer()"><i class="ti ti-flag"></i> Sesión finalizada</button>`
       }
       <div class="log-form" id="logForm">
+        ${exCheckHtml}
+        <div class="log-dur-row">
+          <span class="log-label"><i class="ti ti-clock"></i> Duración</span>
+          <div class="log-dur-display">${_durDisp}</div>
+        </div>
         <div class="log-grid">
-          <div class="log-field"><label class="log-label">Duración (min)</label><input class="log-input" type="number" id="logDur" value="70" min="1" max="180"></div>
           <div class="log-field"><label class="log-label">Energía (1-10)</label><input class="log-input" type="number" id="logEnergy" value="7" min="1" max="10"></div>
           <div class="log-field"><label class="log-label">Fatiga (1-10)</label><input class="log-input" type="number" id="logFatigue" value="6" min="1" max="10"></div>
           <div class="log-field log-input-full"><label class="log-label">Dolor / molestia</label><input class="log-input" type="text" id="logPain" value="ninguna"></div>
@@ -228,3 +286,20 @@ export function switchTab(btn, tabId) {
   const tab = document.getElementById('tab-' + tabId);
   if (tab) tab.classList.add('active');
 }
+
+// ── Session timer (window globals called from HTML) ────────────────────────
+window.startSessionTimer = () => {
+  const id = state.currentId;
+  if (!id || localStorage.getItem(`sv_session_start_${id}`)) return;
+  localStorage.setItem(`sv_session_start_${id}`, Date.now().toString());
+  loadSession(id);
+};
+
+window.finishSessionTimer = () => {
+  const id = state.currentId;
+  if (!id) return;
+  if (localStorage.getItem(`sv_session_start_${id}`)) {
+    localStorage.setItem(`sv_session_end_${id}`, Date.now().toString());
+  }
+  window.openLogForm?.();
+};
