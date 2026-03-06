@@ -9,7 +9,7 @@ import { loadSession } from './session.js';
 
 let _exCtx = null; // contexto del modal abierto
 
-export function openExModal(id, name, muscle, equip, targetSets, targetReps, weightGuide, originalId) {
+export function openExModal(id, name, muscle, equip, targetSets, targetReps, weightGuide, originalId, position = 1) {
   const modal = document.getElementById('exModalContent');
   const imgSrc = getExImage(id, name);
   const imgSection = imgSrc
@@ -32,7 +32,7 @@ export function openExModal(id, name, muscle, equip, targetSets, targetReps, wei
   const origId = originalId || id;
   let logSection = '';
   if (numSets > 0 && id !== 'pre' && id !== 'post') {
-    _exCtx = { id, origId, numSets, targetReps: targetReps || '', muscle: muscle || '', weightGuide: weightGuide || '' };
+    _exCtx = { id, origId, numSets, targetReps: targetReps || '', muscle: muscle || '', weightGuide: weightGuide || '', position: parseInt(position) || 1 };
     const existing = getExLog(id, state.currentId);
     const rows = Array.from({ length: numSets }, (_, i) => {
       const saved = existing && existing.sets && existing.sets[i];
@@ -63,7 +63,7 @@ export function openExModal(id, name, muscle, equip, targetSets, targetReps, wei
       </div>
       ${swapBtnHtml}
       <div class="ex-modal-rec" id="exModalRec">
-        ${buildRecSection(id, state.currentId, targetReps || '', muscle || '', weightGuide || '')}
+        ${buildRecSection(id, state.currentId, targetReps || '', muscle || '', weightGuide || '', parseInt(position) || 1)}
       </div>`;
   }
 
@@ -97,7 +97,7 @@ export function saveCurrentExLog() {
 
   const badge = document.getElementById(`rec_badge_${id}`);
   if (badge) {
-    const rec = calcNextRecommendation(targetReps, sets);
+    const rec = calcNextRecommendation(targetReps, sets, _exCtx.position || 1);
     const arrow = rec.dir === 'up' ? '↑' : rec.dir === 'down' ? '↓' : '→';
     badge.textContent = `📈 ${rec.nextWeight} kg × ${rec.targetReps} reps ${arrow}`;
     badge.style.color = '';
@@ -134,7 +134,7 @@ export function saveCurrentExLog() {
   const fb = document.getElementById('exLogSaved');
   if (fb) { fb.style.display = 'block'; setTimeout(() => { fb.style.display = 'none'; }, 2000); }
   const recDiv = document.getElementById('exModalRec');
-  if (recDiv) recDiv.innerHTML = buildRecSection(id, state.currentId, targetReps, muscle, _exCtx.weightGuide);
+  if (recDiv) recDiv.innerHTML = buildRecSection(id, state.currentId, targetReps, muscle, _exCtx.weightGuide, _exCtx.position || 1);
 
   // Update the logged-values summary row in the exercise table (live, no full re-render)
   const sumEl = document.getElementById(`ex_log_sum_${id}`);
@@ -147,28 +147,30 @@ export function saveCurrentExLog() {
   if (iconEl) iconEl.textContent = '✏️';
 }
 
-export function buildRecSection(exId, sessionId, targetRepsStr, muscle, weightGuide) {
+export function buildRecSection(exId, sessionId, targetRepsStr, muscle, weightGuide, position = 1) {
   const curLog = getExLog(exId, sessionId);
   const sameLog = getLastExLog(exId, sessionId);
 
   if (sameLog && sameLog.sets && sameLog.sets.length) {
-    const rec = calcNextRecommendation(targetRepsStr, sameLog.sets);
+    const rec = calcNextRecommendation(targetRepsStr, sameLog.sets, position);
     const arrow = rec.dir === 'up' ? '↑' : rec.dir === 'down' ? '↓' : '→';
     const cls = rec.dir === 'down' ? 'down' : '';
     const hist = sameLog.sets.map((s, i) => `S${i + 1}: ${s.weight}kg×${s.reps}`).join(' · ');
     return `<div class="ex-log-title">📈 Recomendación próxima sesión — mismo ejercicio</div>
       <div class="ex-rec-box"><span class="ex-rec-arrow ${cls}">${arrow}</span>${rec.nextWeight} kg × ${rec.targetReps} reps</div>
       <div class="ex-rec-reason">${rec.reason}</div>
+      ${rec.fatigueNote ? `<div class="ex-fatigue-note"><i class="ti ti-info-circle"></i> ${rec.fatigueNote}</div>` : ''}
       <div class="ex-rec-reason" style="margin-top:6px;opacity:0.65">Última sesión (${sameLog.date}): ${hist}</div>`;
   }
 
   if (curLog && curLog.sets && curLog.sets.length) {
-    const rec = calcNextRecommendation(targetRepsStr, curLog.sets);
+    const rec = calcNextRecommendation(targetRepsStr, curLog.sets, position);
     const arrow = rec.dir === 'up' ? '↑' : rec.dir === 'down' ? '↓' : '→';
     const cls = rec.dir === 'down' ? 'down' : '';
     return `<div class="ex-log-title">📈 Proyección para la próxima sesión</div>
       <div class="ex-rec-box"><span class="ex-rec-arrow ${cls}">${arrow}</span>${rec.nextWeight} kg × ${rec.targetReps} reps</div>
-      <div class="ex-rec-reason">${rec.reason}</div>`;
+      <div class="ex-rec-reason">${rec.reason}</div>
+      ${rec.fatigueNote ? `<div class="ex-fatigue-note"><i class="ti ti-info-circle"></i> ${rec.fatigueNote}</div>` : ''}`;
   }
 
   if (muscle) {

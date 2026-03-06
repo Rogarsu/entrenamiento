@@ -14,7 +14,7 @@ import { EXERCISES } from '../data/exercises.js';
 // semanas:  4 | 8 | 12
 
 // ─── SESSION TEMPLATES ───────────────────────────────────────────────────────
-const SPLIT_TEMPLATES = {
+export const SPLIT_TEMPLATES = {
   full_body:      ['Full Body A', 'Full Body B', 'Full Body C'],
   upper_only:     ['Tren Superior A', 'Tren Superior B'],
   lower_only:     ['Tren Inferior A', 'Tren Inferior B'],
@@ -110,8 +110,8 @@ function _pick(arr, n, difficulty, env, preferLengthened) {
   return sorted.slice(0, n);
 }
 
-function _exForMuscle(muscle, difficulty, env, n = 2, objetivo = 'general') {
-  const pool = EXERCISES.filter(e => e.muscle_primary === muscle);
+function _exForMuscle(muscle, difficulty, env, n = 2, objetivo = 'general', exclude = new Set()) {
+  const pool = EXERCISES.filter(e => e.muscle_primary === muscle && !exclude.has(e.id));
   // Prioritize lengthened-position exercises for hypertrophy and strength goals
   const preferLengthened = objetivo === 'hypertrophy' || objetivo === 'strength';
   return _pick(pool, n, difficulty, env, preferLengthened);
@@ -186,11 +186,28 @@ export function generatePlan(answers) {
   const { nivel, dias, duracion, entorno, enfoque, semanas } = answers;
 
   const totalPhases = semanas >= 12 ? 4 : semanas >= 8 ? 3 : 2;
-  const weeksPerPhase = Math.floor(semanas / totalPhases);
+
+  // ── Phase-week distribution ─────────────────────────────────────────────────
+  // Total sessions = dias × semanas exactly.
+  // Deload (last phase) takes 1 fixed week for plans ≥ 3 phases.
+  // Leftover weeks are distributed one-by-one to earlier phases so none are lost.
+  const hasDeload = totalPhases >= 3;
+  const deloadWeeks = hasDeload ? 1 : 0;
+  const workWeeks = semanas - deloadWeeks;
+  const nonDeloadPhases = totalPhases - (hasDeload ? 1 : 0);
+  const _baseWk = Math.floor(workWeeks / nonDeloadPhases);
+  let _wkRem = workWeeks - _baseWk * nonDeloadPhases;
+  const phaseWeeksArr = Array.from({ length: totalPhases }, (_, i) => {
+    if (hasDeload && i === totalPhases - 1) return 1;
+    const w = _baseWk + (_wkRem > 0 ? 1 : 0);
+    if (_wkRem > 0) _wkRem--;
+    return w;
+  });
 
   const splitDays = SPLIT_TEMPLATES[enfoque] || SPLIT_TEMPLATES['full_body'];
-  const sessionsPerWeek = Math.min(dias, splitDays.length);
-  const dayTemplates = splitDays.slice(0, sessionsPerWeek);
+  // Always honor the user's dias choice.
+  // If dias > available templates, cycle through them (Full Body A → B → C → A → B…).
+  const sessionsPerWeek = dias;
 
   const exCount = duracion <= 45 ? 4 : duracion <= 60 ? 5 : duracion <= 75 ? 6 : 7;
 
@@ -198,19 +215,23 @@ export function generatePlan(answers) {
   let sessionId = 1;
 
   for (let phase = 1; phase <= totalPhases; phase++) {
-    const isDeload = phase === totalPhases && totalPhases >= 3;
-    const phaseWeeks = isDeload ? 1 : weeksPerPhase;
+    const isDeload = hasDeload && phase === totalPhases;
+    const phaseWeeks = phaseWeeksArr[phase - 1];
 
     for (let week = 1; week <= phaseWeeks; week++) {
-      for (const templateName of dayTemplates) {
+      // Track exercises used this week so repeated-template days get different exercises
+      const usedExIds = new Set();
+      for (let d = 0; d < sessionsPerWeek; d++) {
+        const templateName = splitDays[d % splitDays.length];
         const muscles = MUSCLE_MAP[templateName] || ['quads', 'chest', 'core'];
         const blocks = [];
 
         if (!isDeload) {
           const exPerMuscle = Math.max(1, Math.floor(exCount / muscles.length));
           for (const muscle of muscles) {
-            const exs = _exForMuscle(muscle, nivel, entorno, exPerMuscle, objetivo);
+            const exs = _exForMuscle(muscle, nivel, entorno, exPerMuscle, objetivo, usedExIds);
             if (exs.length > 0) {
+              exs.forEach(e => usedExIds.add(e.id));
               blocks.push(_buildBlock(
                 _muscleBlockName(muscle),
                 exs.map(e => _toSessionExercise(e, objetivo, phase, false))
@@ -221,8 +242,9 @@ export function generatePlan(answers) {
           // Deload: full body, beginner exercises, 2 sets each
           const deloadMuscles = ['quads', 'chest', 'back', 'core'];
           for (const muscle of deloadMuscles) {
-            const exs = _exForMuscle(muscle, 'beginner', entorno, 1, 'general');
+            const exs = _exForMuscle(muscle, 'beginner', entorno, 1, 'general', usedExIds);
             if (exs.length > 0) {
+              exs.forEach(e => usedExIds.add(e.id));
               blocks.push(_buildBlock(
                 _muscleBlockName(muscle),
                 [_toSessionExercise(exs[0], 'general', 4, true)]
@@ -281,15 +303,25 @@ function _phaseIntensity(phase, total, isDeload) {
 // ─── PHASE METADATA BUILDER ──────────────────────────────────────────────────
 
 export function generatePhasesMeta(answers) {
-  const { semanas } = answers;
+  const { semanas, dias } = answers;
   const totalPhases = semanas >= 12 ? 4 : semanas >= 8 ? 3 : 2;
-  const weeksPerPhase = Math.floor(semanas / totalPhases);
+  const hasDeload = totalPhases >= 3;
+  const workWeeks = semanas - (hasDeload ? 1 : 0);
+  const nonDeloadPhases = totalPhases - (hasDeload ? 1 : 0);
+  const _baseWk = Math.floor(workWeeks / nonDeloadPhases);
+  let _wkRem = workWeeks - _baseWk * nonDeloadPhases;
   const phases = {};
   for (let i = 1; i <= totalPhases; i++) {
-    const isDeload = i === totalPhases && totalPhases >= 3;
-    const wks = isDeload ? 1 : weeksPerPhase;
+    const isDeload = hasDeload && i === totalPhases;
+    let wks;
+    if (isDeload) {
+      wks = 1;
+    } else {
+      wks = _baseWk + (_wkRem > 0 ? 1 : 0);
+      if (_wkRem > 0) _wkRem--;
+    }
     const meta = PHASE_NAMES[Math.min(i, 4)];
-    phases[i] = { ...meta, weeks: `${wks} semana${wks > 1 ? 's' : ''}`, sessions: `${wks * answers.dias} sesiones` };
+    phases[i] = { ...meta, weeks: `${wks} semana${wks > 1 ? 's' : ''}`, sessions: `${wks * dias} sesiones` };
   }
   return phases;
 }

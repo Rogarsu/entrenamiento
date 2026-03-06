@@ -140,7 +140,7 @@ export function loadSession(id) {
 
     <!-- WORKOUT TAB -->
     <div class="tab-content" id="tab-workout">
-      ${s.workout.blocks.map(bl => `
+      ${(() => { let _exPos = 0; return s.workout.blocks.map(bl => `
         <div class="block-title">${bl.name}</div>
         ${bl.note ? `<div class="block-note"><i class="ti ti-bolt"></i> ${bl.note}</div>` : ''}
         <div class="ex-table-container">
@@ -155,6 +155,8 @@ export function loadSession(id) {
             </tr></thead>
             <tbody>
               ${bl.exercises.map(e => {
+                _exPos++;
+                const _pos = _exPos;
                 // Check for a user-requested swap
                 const swapId = getExSwap(e.id, s.id);
                 const swapEx = swapId ? EXERCISES.find(x => x.id === swapId) : null;
@@ -166,7 +168,7 @@ export function loadSession(id) {
                 const displayRest   = swapEx ? `${swapEx.rest_seconds} seg` : e.rest;
                 const displayWg     = swapEx ? (swapEx.weight_guide || '—') : (e.weight_guide || '—');
 
-                const exRec = getExRecommendation(displayId, s.id, displayReps || '', displayMuscle || '', displayWg);
+                const exRec = getExRecommendation(displayId, s.id, displayReps || '', displayMuscle || '', displayWg, _pos);
                 const exLog = getExLog(displayId, s.id);
                 const hasLog = !!(exLog && exLog.sets && exLog.sets.length);
                 const logSummary = hasLog
@@ -193,7 +195,7 @@ export function loadSession(id) {
                 return `
                 <tr>
                   <td>
-                    <div class="ex-name${hasLog ? ' ex-logged' : ''}" onclick="openExModal('${displayId}','${escStr(displayName)}','${escStr(displayMuscle)}','${escStr(displayEquip)}','${e.sets}','${escStr(displayReps)}','${escStr(displayWg)}','${e.id}')">
+                    <div class="ex-name${hasLog ? ' ex-logged' : ''}" onclick="openExModal('${displayId}','${escStr(displayName)}','${escStr(displayMuscle)}','${escStr(displayEquip)}','${e.sets}','${escStr(displayReps)}','${escStr(displayWg)}','${e.id}',${_pos})">
                       <span class="img-icon" id="ex_icon_${displayId}">${hasLog ? '<i class="ti ti-pencil"></i>' : '<i class="ti ti-photo"></i>'}</span> ${displayName}${swapBadge}
                     </div>
                     <div class="ex-muscle">${displayMuscle}</div>
@@ -209,7 +211,7 @@ export function loadSession(id) {
             </tbody>
           </table>
         </div>
-      `).join('')}
+      `).join(''); })()}
     </div>
 
     <!-- POST TAB -->

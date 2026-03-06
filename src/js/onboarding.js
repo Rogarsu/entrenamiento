@@ -2,9 +2,9 @@
 // 7-step questionnaire shown to new users with no training plan.
 // On completion, generates a plan via planner.js and saves it to Supabase.
 
-import { generatePlan, generatePhasesMeta } from './planner.js';
-import { setPlan, getUserId, savePlanMeta, getPlanMeta, clearSessionLogs, cachePlan } from './state.js';
-import { upsertUserPlan, deleteUserLogs, upsertUserPrefs } from './db.js';
+import { generatePlan, generatePhasesMeta, SPLIT_TEMPLATES } from './planner.js';
+import { setPlan, getUserId, savePlanMeta, clearSessionLogs, cachePlan, clearAllUserData } from './state.js';
+import { upsertUserPlan, deleteUserLogs, deleteUserPlan, upsertUserPrefs } from './db.js';
 import { clearExLogs } from './storage.js';
 import { buildStats } from './stats.js';
 import { buildSidebar } from './sidebar.js';
@@ -133,6 +133,34 @@ function _render() {
     ? (Array.isArray(ans) && ans.length > 0)
     : (ans !== undefined);
 
+  // Summary note: shown on the last step (semanas) with dias × semanas = total
+  let summaryNote = '';
+  if (q.key === 'semanas' && _ob.answers.dias && _ob.answers.semanas) {
+    const totalSessions = _ob.answers.dias * _ob.answers.semanas;
+    summaryNote = `<div class="ob-cycle-note">
+      <i class="ti ti-info-circle"></i>
+      <div><strong>${_ob.answers.dias} días/semana × ${_ob.answers.semanas} semanas = <span style="color:var(--cyan)">${totalSessions} sesiones en total</span></strong></div>
+    </div>`;
+  }
+
+  // Cycle note: shown when the chosen split has fewer day-types than the user's dias
+  let cycleNote = '';
+  if (q.key === 'enfoque' && _ob.answers.enfoque && _ob.answers.dias) {
+    const templates = SPLIT_TEMPLATES[_ob.answers.enfoque];
+    if (templates && _ob.answers.dias > templates.length) {
+      const enfoqueLabels = {
+        full_body: 'Full Body', upper_only: 'Solo Tren Superior',
+        lower_only: 'Solo Tren Inferior', upper_lower: 'Superior + Inferior',
+        push_pull_legs: 'Push / Pull / Legs',
+      };
+      const label = enfoqueLabels[_ob.answers.enfoque] || _ob.answers.enfoque;
+      cycleNote = `<div class="ob-cycle-note">
+        <i class="ti ti-info-circle"></i>
+        <div><strong>${label}</strong> tiene ${templates.length} tipos de sesión distintos, pero elegiste <strong>${_ob.answers.dias} días/semana</strong>. El plan ciclará las sesiones usando <strong>ejercicios diferentes</strong> en cada vuelta para que no repitas exactamente el mismo entrenamiento.</div>
+      </div>`;
+    }
+  }
+
   el.innerHTML = `
     <div class="ob-progress-bar">
       <div class="ob-progress-fill" style="width:${(progress / total) * 100}%"></div>
@@ -141,6 +169,7 @@ function _render() {
     <div class="ob-title">${q.title}</div>
     <div class="ob-subtitle">${q.subtitle}</div>
     <div class="ob-options">${optionsHtml}</div>
+    ${summaryNote}${cycleNote}
     <div class="ob-nav">
       ${_ob.step > 0 ? '<button class="ob-btn-back" onclick="_obBack()">← Anterior</button>' : '<div></div>'}
       <button class="ob-btn-next" onclick="_obNext()" ${canNext ? '' : 'disabled'}>
@@ -202,6 +231,8 @@ async function _finishOnboarding() {
   try {
     savePlanMeta(_ob.answers);
     const sessions = generatePlan(_ob.answers);
+    console.log('[Plan] Respuestas:', JSON.stringify(_ob.answers));
+    console.log(`[Plan] Sesiones generadas: ${sessions.length} (${_ob.answers.dias} días × ${_ob.answers.semanas} semanas = ${_ob.answers.dias * _ob.answers.semanas} esperadas)`);
     const userId = getUserId();
     if (userId) {
       await upsertUserPlan(userId, sessions);
@@ -277,19 +308,21 @@ export async function resetProgress() {
   buildSidebar();
 }
 
-export function showNewCycle(keepLogs) {
+export function showNewCycle() {
   closePlanModal();
-  if (!keepLogs) {
-    clearSessionLogs();
-    clearExLogs();
-    const userId = getUserId();
-    if (userId) deleteUserLogs(userId).catch(console.error);
+  // Wipe everything: localStorage + Supabase. Start completely fresh.
+  clearAllUserData();
+  clearExLogs();
+  const userId = getUserId();
+  if (userId) {
+    deleteUserLogs(userId).catch(console.error);
+    deleteUserPlan(userId).catch(console.error);
+    upsertUserPrefs(userId, { plan_meta: null }).catch(console.error);
   }
-  const prev = getPlanMeta();
   _ob.step = 0;
-  _ob.answers = prev ? { ...prev } : {};
+  _ob.answers = {};
   document.getElementById('authOverlay').style.display = 'none';
   document.getElementById('appContent').style.display = 'none';
   document.getElementById('onboardingOverlay').style.display = 'flex';
-  _render(); // _render ya marca como 'selected' las opciones que coincidan con _ob.answers
+  _render();
 }

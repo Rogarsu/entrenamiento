@@ -75,6 +75,10 @@ export async function deleteUserLogs(userId) {
   ]);
 }
 
+export async function deleteUserPlan(userId) {
+  await supabase.from('training_plans').delete().eq('user_id', userId);
+}
+
 // ── NUTRITION LOGS ──────────────────────────────────────────────────────────
 
 export async function fetchNutritionLog(userId, date) {
