@@ -143,7 +143,7 @@ function _render() {
     </div>`;
   }
 
-  // Cycle note: shown when the chosen split has fewer day-types than the user's dias
+  // Cycle warning: shown when the chosen split has fewer day-types than the user's dias
   let cycleNote = '';
   if (q.key === 'enfoque' && _ob.answers.enfoque && _ob.answers.dias) {
     const templates = SPLIT_TEMPLATES[_ob.answers.enfoque];
@@ -154,9 +154,20 @@ function _render() {
         push_pull_legs: 'Push / Pull / Legs',
       };
       const label = enfoqueLabels[_ob.answers.enfoque] || _ob.answers.enfoque;
-      cycleNote = `<div class="ob-cycle-note">
-        <i class="ti ti-info-circle"></i>
-        <div><strong>${label}</strong> tiene ${templates.length} tipos de sesión distintos, pero elegiste <strong>${_ob.answers.dias} días/semana</strong>. El plan ciclará las sesiones usando <strong>ejercicios diferentes</strong> en cada vuelta para que no repitas exactamente el mismo entrenamiento.</div>
+      const extra = _ob.answers.dias - templates.length;
+      cycleNote = `<div class="ob-warn-note">
+        <i class="ti ti-alert-triangle"></i>
+        <div>
+          <strong>${label}</strong> tiene solo <strong>${templates.length} tipos de sesión</strong>, pero elegiste <strong>${_ob.answers.dias} días/semana</strong>.<br>
+          Esto significa que ${extra} día${extra > 1 ? 's' : ''} por semana ciclarán de vuelta al inicio.<br><br>
+          <strong>¿Eso es un problema?</strong> No, si sigues adelante el plan lo gestiona automáticamente:
+          <ul>
+            <li>Los tipos de sesión se repiten en orden (A → B → C → A…)</li>
+            <li>Cada vuelta usa <strong>ejercicios distintos</strong> para el mismo grupo muscular</li>
+            <li>No harás exactamente el mismo entrenamiento dos veces en la misma semana</li>
+          </ul>
+          Si prefieres que no haya repetición de tipos, elige una división con más variedad como <strong>Push / Pull / Legs</strong> (6 tipos).
+        </div>
       </div>`;
     }
   }
