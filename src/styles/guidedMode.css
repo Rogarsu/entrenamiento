@@ -1,0 +1,594 @@
+/* ============================================================
+   GUIDED MODE — Full-screen exercise overlay
+   ============================================================ */
+
+#guidedOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  background: var(--bg);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---- HEADER ---- */
+.gm-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border2);
+}
+
+.gm-back-btn,
+.gm-close-btn {
+  background: none;
+  border: none;
+  color: var(--text2);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  border-radius: 8px;
+  transition: color 0.2s, background 0.2s;
+  flex-shrink: 0;
+}
+
+.gm-back-btn:hover,
+.gm-close-btn:hover {
+  color: var(--text);
+  background: var(--bg4);
+}
+
+.gm-header-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.gm-ex-counter {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text3);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.gm-progress-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--bg4);
+  border-radius: 2px;
+}
+
+.gm-progress-fill {
+  height: 100%;
+  background: var(--cyan);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+/* ---- BLOCK SELECTOR ---- */
+.gm-block-selector {
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gm-section-title {
+  font-family: var(--font-head);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 4px;
+}
+
+.gm-section-sub {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text3);
+  margin: 0 0 16px;
+}
+
+.gm-block-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  text-align: left;
+  width: 100%;
+}
+
+.gm-block-card:hover {
+  border-color: var(--cyan);
+  background: rgba(6, 182, 212, 0.05);
+}
+
+.gm-block-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(6, 182, 212, 0.12);
+  color: var(--cyan);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.gm-block-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.gm-block-name {
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 2px;
+}
+
+.gm-block-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text3);
+}
+
+.gm-block-arrow {
+  color: var(--text3);
+  font-size: 16px;
+}
+
+/* ---- RESUME DIALOG ---- */
+.gm-resume-wrap {
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+.gm-resume-icon {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.gm-resume-title {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0;
+}
+
+.gm-resume-sub {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text3);
+  margin: 0;
+}
+
+.gm-resume-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.gm-btn-primary {
+  padding: 14px;
+  background: var(--cyan);
+  color: var(--bg);
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.gm-btn-primary:hover { opacity: 0.85; }
+
+.gm-btn-secondary {
+  padding: 14px;
+  background: var(--bg4);
+  color: var(--text2);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.gm-btn-secondary:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+/* ---- EXERCISE SCREEN ---- */
+.gm-img-wrap {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  background: var(--bg3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.gm-img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+}
+
+.gm-img-placeholder {
+  font-size: 56px;
+  opacity: 0.25;
+}
+
+.gm-ex-info {
+  padding: 16px 20px 8px;
+  border-bottom: 1px solid var(--border2);
+}
+
+.gm-block-badge {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--cyan);
+  background: rgba(6, 182, 212, 0.1);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  border-radius: 20px;
+  padding: 2px 8px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.gm-ex-name {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 6px;
+  line-height: 1.2;
+}
+
+.gm-ex-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--cyan);
+  margin: 0 0 4px;
+}
+
+.gm-ex-target {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text3);
+  margin: 0;
+}
+
+/* ---- LOG SECTION ---- */
+.gm-log-section {
+  padding: 16px 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gm-set-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 4px;
+}
+
+.gm-inputs-row {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.gm-input-group {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gm-input-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.gm-input {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  text-align: center;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.gm-input:focus {
+  outline: none;
+  border-color: var(--cyan);
+}
+
+.gm-complete-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--cyan);
+  color: var(--bg);
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity 0.2s;
+}
+
+.gm-complete-btn:hover { opacity: 0.85; }
+
+/* ---- INLINE TIMER (reuses eit-* pattern from modal) ---- */
+.gm-timer-wrap {
+  text-align: center;
+  padding: 8px 0 4px;
+}
+
+.gm-timer-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+.gm-timer-ring-wrap {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 12px;
+}
+
+.gm-timer-ring {
+  width: 80px;
+  height: 80px;
+  transform: rotate(-90deg);
+}
+
+.gm-timer-ring-bg {
+  fill: none;
+  stroke: var(--bg4);
+  stroke-width: 5;
+}
+
+.gm-timer-ring-fill {
+  fill: none;
+  stroke: var(--cyan);
+  stroke-width: 5;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear;
+}
+
+.gm-timer-count {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.gm-timer-controls {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.gm-timer-btn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--border2);
+  background: var(--bg4);
+  color: var(--text2);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.gm-timer-btn:hover {
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.gm-timer-skip {
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--border2);
+  background: var(--bg4);
+  color: var(--text3);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.gm-timer-skip:hover { color: var(--text); }
+
+/* ---- COMPLETED SETS CHIPS ---- */
+.gm-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.gm-set-chip {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: var(--bg4);
+  color: var(--text3);
+  border: 1px solid var(--border2);
+}
+
+.gm-set-chip.done {
+  background: rgba(6, 182, 212, 0.1);
+  color: var(--cyan);
+  border-color: rgba(6, 182, 212, 0.3);
+}
+
+/* ---- NEXT EXERCISE BUTTON ---- */
+.gm-next-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--cyan);
+  color: var(--bg);
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity 0.2s;
+  margin-top: 4px;
+}
+
+.gm-next-btn:hover { opacity: 0.85; }
+
+/* ---- SUMMARY SCREEN ---- */
+.gm-summary {
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.gm-summary-header {
+  text-align: center;
+}
+
+.gm-summary-emoji {
+  font-size: 48px;
+  line-height: 1;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.gm-summary-title {
+  font-family: var(--font-head);
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 4px;
+}
+
+.gm-summary-sub {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text3);
+  margin: 0;
+}
+
+.gm-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+.gm-summary-table th {
+  text-align: left;
+  color: var(--text3);
+  font-weight: 600;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border2);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.gm-summary-table td {
+  padding: 8px 8px;
+  color: var(--text2);
+  border-bottom: 1px solid var(--border2);
+  vertical-align: top;
+}
+
+.gm-summary-table td:first-child {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.gm-summary-skipped {
+  color: var(--text3);
+  font-style: italic;
+}
+
+/* ---- LAUNCH BUTTON (in session tab) ---- */
+.gm-launch-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  margin: 0 0 16px;
+  border-radius: 12px;
+  background: var(--cyan);
+  color: var(--bg);
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  font-family: var(--font-head);
+}
+
+.gm-launch-btn:hover { opacity: 0.85; }

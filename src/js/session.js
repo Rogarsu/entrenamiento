@@ -140,6 +140,9 @@ export function loadSession(id) {
 
     <!-- WORKOUT TAB -->
     <div class="tab-content" id="tab-workout">
+      <button class="gm-launch-btn" onclick="openGuidedMode()">
+        <i class="ti ti-player-play-filled"></i> Modo guiado
+      </button>
       ${(() => { let _exPos = 0; return s.workout.blocks.map(bl => `
         <div class="block-title">${bl.name}</div>
         ${bl.note ? `<div class="block-note"><i class="ti ti-bolt"></i> ${bl.note}</div>` : ''}

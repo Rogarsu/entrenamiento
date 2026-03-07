@@ -14,6 +14,7 @@ import './styles/reports.css';
 import './styles/nutrition.css';
 import './styles/progress.css';
 import './styles/timer.css';
+import './styles/guidedMode.css';
 
 // ===== MÓDULOS JS =====
 import { buildSidebar, togglePhase, toggleSidebar } from './js/sidebar.js';
@@ -31,6 +32,7 @@ import { dismissMigration, migrateLocalData as _migrate } from './js/migrate.js'
 import { getUserId } from './js/state.js';
 import { openPlanModal, closePlanModal, showNewCycle, openResetModal, closeResetModal, resetProgress } from './js/onboarding.js';
 import { initOffline } from './js/offline.js';
+import { openGuidedMode, closeGuidedMode } from './js/guidedMode.js';
 
 // ===== EXPONER A WINDOW (para onclick en HTML) =====
 window.toggleSidebar = toggleSidebar;
@@ -92,6 +94,8 @@ window.showNewCycle   = showNewCycle;
 window.openResetModal  = openResetModal;
 window.closeResetModal = closeResetModal;
 window.resetProgress   = resetProgress;
+window.openGuidedMode  = openGuidedMode;
+window.closeGuidedMode = closeGuidedMode;
 
 // ===== INIT =====
 // buildStats() and buildSidebar() are called inside initAuth()
