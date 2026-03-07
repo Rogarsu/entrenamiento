@@ -175,7 +175,18 @@ La vista de sesión tiene 3 pestañas:
 ### 3. Inicia el cronómetro
 Toca **"Iniciar sesión"** para comenzar a registrar el tiempo. La app guardará la hora de inicio automáticamente.
 
-### 4. Registra tus ejercicios
+### 4. Elige cómo registrar tus ejercicios
+
+**Opción A — Modo guiado (recomendado):**
+Toca el botón **"▶ Modo guiado"** en la parte superior del tab Entreno.
+- Elige el bloque desde el que quieres empezar
+- Si ya tienes datos de esta sesión, puedes **Retomar** o **Empezar de nuevo**
+- Pantalla completa: una imagen grande + inputs de kg/reps serie a serie
+- Timer de descanso inline entre series
+- Al completar todas las series → botón "→ Siguiente ejercicio"
+- Al final → pantalla de resumen con todos los sets registrados
+
+**Opción B — Modal individual:**
 Para cada ejercicio:
 1. Toca la fila del ejercicio → se abre el **Modal de ejercicio**
 2. El modal te guía **serie a serie**: ingresa kg y reps, toca "Completar serie", descansa con el timer, repite
