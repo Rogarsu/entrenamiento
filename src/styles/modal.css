@@ -98,3 +98,22 @@
 .plan-modal-btn--keep  { background: var(--accent); color: #fff; }
 .plan-modal-btn--clear { background: #e74c3c; color: #fff; }
 .plan-modal-btn--cancel { background: var(--bg2); color: var(--text1); }
+
+/* INLINE SET TIMER */
+#exLogSection { min-height: 60px; }
+.eit-wrap { text-align: center; padding: 4px 0 8px; }
+.eit-title { font-family: var(--font-mono); font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+.eit-ring-wrap { position: relative; width: 80px; height: 80px; margin: 0 auto 12px; }
+.eit-ring { width: 80px; height: 80px; transform: rotate(-90deg); }
+.eit-ring-bg  { fill: none; stroke: var(--bg2); stroke-width: 5; }
+.eit-ring-fill { fill: none; stroke: var(--cyan); stroke-width: 5; stroke-linecap: round; }
+.eit-count { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--text); }
+.eit-controls { display: flex; gap: 8px; justify-content: center; }
+.eit-btn { padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; border: 1px solid var(--border2); background: var(--bg4); color: var(--text2); cursor: pointer; transition: border-color .2s, color .2s; }
+.eit-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+.eit-btn-skip { padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; border: 1px solid var(--border2); background: var(--bg4); color: var(--text3); cursor: pointer; transition: color .2s; }
+.eit-btn-skip:hover { color: var(--text); }
+.eit-done-list { margin-bottom: 10px; }
+.eit-done-row { display: flex; align-items: center; justify-content: space-between; padding: 4px 0; font-size: 12px; color: var(--text3); font-family: var(--font-mono); border-bottom: 1px solid var(--border2); }
+.eit-done-row:last-child { border-bottom: none; }
+.eit-label { font-size: 11px; min-width: 56px; }

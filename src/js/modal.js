@@ -7,7 +7,234 @@ import { escStr } from './helpers.js';
 import { startRestTimer } from './timer.js';
 import { loadSession } from './session.js';
 
-let _exCtx = null; // contexto del modal abierto
+let _exCtx = null;
+
+// ── Inline set-timer helpers ──────────────────────────────────────────────────
+
+function _parseRestSecs(restStr) {
+  if (!restStr) return 90;
+  // "90-120 seg" → lower bound
+  const range = restStr.match(/(\d+)\s*[-–]\s*(\d+)\s*seg/i);
+  if (range) return parseInt(range[1]);
+  const seg = restStr.match(/(\d+)\s*seg/i);
+  if (seg) return parseInt(seg[1]);
+  const min = restStr.match(/(\d+)\s*min/i);
+  if (min) return parseInt(min[1]) * 60;
+  return 90;
+}
+
+function _fmtSecs(s) {
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return `${m}:${String(sec).padStart(2, '0')}`;
+}
+
+function _logSection() { return document.getElementById('exLogSection'); }
+
+function _stopInlineTimer() {
+  if (_exCtx && _exCtx._inlineTimer) {
+    clearInterval(_exCtx._inlineTimer);
+    _exCtx._inlineTimer = null;
+  }
+}
+
+function _doneSummaryHtml(completedSets) {
+  if (!completedSets.length) return '';
+  return `<div class="eit-done-list">` +
+    completedSets.map((s, i) => `<div class="eit-done-row">
+      <span class="eit-label">Serie ${i + 1}</span>
+      <span>${s.weight > 0 ? s.weight + ' kg' : '—'} × ${s.reps} reps</span>
+    </div>`).join('') +
+    `</div>`;
+}
+
+function _renderPerSetInput() {
+  _stopInlineTimer();
+  const el = _logSection();
+  if (!el || !_exCtx) return;
+  const { currentSet, numSets, completedSets, targetReps } = _exCtx;
+  const isLast = currentSet === numSets - 1;
+
+  // Pre-fill placeholder from last session
+  const lastLog = getLastExLog(_exCtx.id, state.currentId);
+  const lastSet = lastLog && lastLog.sets && lastLog.sets[currentSet];
+  const wPh = lastSet && lastSet.weight ? lastSet.weight : 'kg';
+  const rPh = lastSet && lastSet.reps ? lastSet.reps : 'reps';
+
+  el.innerHTML = `
+    ${_doneSummaryHtml(completedSets)}
+    <div class="ex-log-title">📝 Serie ${currentSet + 1} de ${numSets}${targetReps ? ' &nbsp;·&nbsp; ' + targetReps : ''}</div>
+    <div class="ex-log-set-row" style="margin-bottom:14px">
+      <input class="ex-log-input" type="number" id="exSetW" placeholder="${wPh}" min="0" step="0.5" style="width:80px">
+      <span class="ex-log-unit">kg</span>
+      <span class="ex-log-unit" style="margin:0 4px">×</span>
+      <input class="ex-log-input" type="number" id="exSetR" placeholder="${rPh}" min="0" style="width:80px">
+      <span class="ex-log-unit">reps</span>
+    </div>
+    <button class="ex-log-save" onclick="window._exCompleteSet()" style="width:100%">
+      ${isLast ? '✓ Completar y guardar' : '✓ Completar serie →'}
+    </button>
+  `;
+  setTimeout(() => { const w = document.getElementById('exSetW'); if (w) w.focus(); }, 50);
+}
+
+function _startInlineTimer(secs) {
+  _stopInlineTimer();
+  const el = _logSection();
+  if (!el || !_exCtx) return;
+
+  const circ = +(2 * Math.PI * 28).toFixed(2);
+  _exCtx._eitRemaining = secs;
+  _exCtx._eitTotal = secs;
+
+  const { currentSet, numSets, completedSets } = _exCtx;
+
+  el.innerHTML = `
+    ${_doneSummaryHtml(completedSets)}
+    <div class="eit-wrap">
+      <div class="eit-title">Descanso — siguiente: serie ${currentSet + 1} de ${numSets}</div>
+      <div class="eit-ring-wrap">
+        <svg class="eit-ring" viewBox="0 0 64 64">
+          <circle class="eit-ring-bg" cx="32" cy="32" r="28"/>
+          <circle class="eit-ring-fill" id="eitRingFill" cx="32" cy="32" r="28"
+            style="stroke-dasharray:${circ};stroke-dashoffset:0"/>
+        </svg>
+        <div class="eit-count" id="eitCount">${_fmtSecs(secs)}</div>
+      </div>
+      <div class="eit-controls">
+        <button class="eit-btn" onclick="window._eitAdjust(-30)">−30</button>
+        <button class="eit-btn" onclick="window._eitAdjust(30)">+30</button>
+        <button class="eit-btn-skip" onclick="window._eitSkip()">Saltar <i class="ti ti-player-skip-forward"></i></button>
+      </div>
+    </div>
+  `;
+
+  _exCtx._inlineTimer = setInterval(() => {
+    if (!_exCtx) return;
+    _exCtx._eitRemaining--;
+    if (_exCtx._eitRemaining <= 0) {
+      _exCtx._eitRemaining = 0;
+      clearInterval(_exCtx._inlineTimer);
+      _exCtx._inlineTimer = null;
+      try { if (navigator.vibrate) navigator.vibrate([150, 80, 150]); } catch(e) {}
+      _renderPerSetInput();
+    } else {
+      const countEl = document.getElementById('eitCount');
+      if (countEl) countEl.textContent = _fmtSecs(_exCtx._eitRemaining);
+      const fillEl = document.getElementById('eitRingFill');
+      if (fillEl) {
+        const progress = _exCtx._eitTotal > 0 ? _exCtx._eitRemaining / _exCtx._eitTotal : 0;
+        fillEl.style.strokeDashoffset = `${circ * (1 - progress)}`;
+      }
+    }
+  }, 1000);
+}
+
+function _updateCrossBadges(id) {
+  const curSession = getPlan().find(x => x.id === state.currentId);
+  if (!curSession) return;
+  curSession.workout.blocks.forEach(bl => {
+    bl.exercises.forEach(ex => {
+      if (ex.id === id) return;
+      const exBadge = document.getElementById(`rec_badge_${ex.id}`);
+      if (!exBadge) return;
+      const exRec = getExRecommendation(ex.id, state.currentId, ex.reps || '', ex.muscle || '', ex.weight_guide || '');
+      if (!exRec) return;
+      if (exRec.type === 'same') {
+        const r = exRec.rec;
+        const arr = r.dir === 'up' ? '↑' : r.dir === 'down' ? '↓' : '→';
+        exBadge.textContent = `📈 ${r.nextWeight} kg × ${r.targetReps} reps ${arr}`;
+        exBadge.style.color = '';
+        exBadge.style.display = 'block';
+      } else if (exRec.type === 'related' && exRec.crossRec && exRec.crossRec.suggestedWeight) {
+        const icon = exRec.crossRec.level === 'high' ? '↑' : exRec.crossRec.level === 'low' ? '↓' : '→';
+        exBadge.textContent = `📊 ~${exRec.crossRec.suggestedWeight} kg ${icon}`;
+        exBadge.style.color = 'var(--cyan)';
+        exBadge.style.display = 'block';
+      }
+    });
+  });
+}
+
+function _updateSessionRow(id, sets) {
+  const sumEl = document.getElementById(`ex_log_sum_${id}`);
+  if (sumEl) {
+    const summary = sets.map(st => `${st.weight > 0 ? st.weight + 'kg' : '—'}×${st.reps}`).join(' · ');
+    sumEl.innerHTML = `✓ ${summary}<span class="ex-edit-hint"> — toca para editar</span>`;
+    sumEl.style.display = 'block';
+  }
+  const iconEl = document.getElementById(`ex_icon_${id}`);
+  if (iconEl) iconEl.textContent = '✏️';
+}
+
+function _saveAllSets() {
+  if (!_exCtx) return;
+  _stopInlineTimer();
+  const { id, targetReps, muscle, completedSets } = _exCtx;
+
+  saveExLog(id, state.currentId, completedSets, targetReps, muscle);
+
+  const badge = document.getElementById(`rec_badge_${id}`);
+  if (badge) {
+    const rec = calcNextRecommendation(targetReps, completedSets, _exCtx.position || 1);
+    const arrow = rec.dir === 'up' ? '↑' : rec.dir === 'down' ? '↓' : '→';
+    badge.textContent = `📈 ${rec.nextWeight} kg × ${rec.targetReps} reps ${arrow}`;
+    badge.style.color = '';
+    badge.style.display = 'block';
+  }
+  _updateCrossBadges(id);
+  _updateSessionRow(id, completedSets);
+
+  // Show done state inside modal
+  const el = _logSection();
+  if (el) {
+    el.innerHTML = `
+      ${_doneSummaryHtml(completedSets)}
+      <div class="ex-log-saved" style="display:block;margin-top:8px">✓ Guardado</div>
+    `;
+  }
+
+  const recDiv = document.getElementById('exModalRec');
+  if (recDiv) recDiv.innerHTML = buildRecSection(id, state.currentId, targetReps, muscle, _exCtx.weightGuide, _exCtx.position || 1);
+
+  startRestTimer(id);
+}
+
+// ── Window handlers ───────────────────────────────────────────────────────────
+
+window._exCompleteSet = () => {
+  if (!_exCtx || _exCtx.currentSet < 0) return;
+  const weight = parseFloat(document.getElementById('exSetW')?.value) || 0;
+  const reps = parseInt(document.getElementById('exSetR')?.value) || 0;
+  _exCtx.completedSets.push({ weight, reps });
+  _exCtx.currentSet++;
+  if (_exCtx.currentSet >= _exCtx.numSets) {
+    _saveAllSets();
+  } else {
+    _startInlineTimer(_parseRestSecs(_exCtx.restStr));
+  }
+};
+
+window._eitSkip = () => {
+  _stopInlineTimer();
+  _renderPerSetInput();
+};
+
+window._eitAdjust = (delta) => {
+  if (!_exCtx) return;
+  _exCtx._eitRemaining = Math.max(5, (_exCtx._eitRemaining || 0) + delta);
+  if (_exCtx._eitRemaining > (_exCtx._eitTotal || 0)) _exCtx._eitTotal = _exCtx._eitRemaining;
+  const circ = +(2 * Math.PI * 28).toFixed(2);
+  const countEl = document.getElementById('eitCount');
+  if (countEl) countEl.textContent = _fmtSecs(_exCtx._eitRemaining);
+  const fillEl = document.getElementById('eitRingFill');
+  if (fillEl) {
+    const progress = _exCtx._eitTotal > 0 ? _exCtx._eitRemaining / _exCtx._eitTotal : 0;
+    fillEl.style.strokeDashoffset = `${circ * (1 - progress)}`;
+  }
+};
+
+// ── Main modal ────────────────────────────────────────────────────────────────
 
 export function openExModal(id, name, muscle, equip, targetSets, targetReps, weightGuide, originalId, position = 1) {
   const modal = document.getElementById('exModalContent');
@@ -28,25 +255,21 @@ export function openExModal(id, name, muscle, equip, targetSets, targetReps, wei
       </div>`;
 
   const numSets = parseInt(targetSets) || 0;
-  // originalId is the plan's exercise id (may differ from id when swapped)
   const origId = originalId || id;
   let logSection = '';
+
   if (numSets > 0 && id !== 'pre' && id !== 'post') {
-    _exCtx = { id, origId, numSets, targetReps: targetReps || '', muscle: muscle || '', weightGuide: weightGuide || '', position: parseInt(position) || 1 };
+    // Look up rest time from plan (using original exercise id)
+    let restStr = '90 seg';
+    const session = getPlan().find(s => s.id === state.currentId);
+    if (session) {
+      for (const bl of session.workout.blocks) {
+        const ex = bl.exercises.find(e => e.id === origId);
+        if (ex && ex.rest) { restStr = ex.rest; break; }
+      }
+    }
+
     const existing = getExLog(id, state.currentId);
-    const rows = Array.from({ length: numSets }, (_, i) => {
-      const saved = existing && existing.sets && existing.sets[i];
-      const w = saved ? saved.weight : '';
-      const r = saved ? saved.reps : '';
-      return `<div class="ex-log-set-row">
-        <span class="ex-log-set-label">Serie ${i + 1}</span>
-        <input class="ex-log-input" type="number" id="exw_${i}" placeholder="kg" value="${w}" min="0" step="0.5">
-        <span class="ex-log-unit">kg</span>
-        <span class="ex-log-unit" style="margin:0 2px">×</span>
-        <input class="ex-log-input" type="number" id="exr_${i}" placeholder="reps" value="${r}" min="0">
-        <span class="ex-log-unit">reps</span>
-      </div>`;
-    }).join('');
     const isSwapped = origId !== id;
     const swapBtnHtml = `
       <div class="ex-swap-actions">
@@ -54,17 +277,46 @@ export function openExModal(id, name, muscle, equip, targetSets, targetReps, wei
         ${isSwapped ? `<button class="ex-swap-btn ex-swap-reset" onclick="window._exResetSwap()"><i class="ti ti-arrow-back-up"></i> Volver al original</button>` : ''}
       </div>
       <div id="exPickerWrap" style="display:none"></div>`;
-    logSection = `
-      <div class="ex-modal-log">
-        <div class="ex-log-title">📝 Tu registro — sesión actual</div>
-        ${rows}
-        <button class="ex-log-save" onclick="saveCurrentExLog()">💾 Guardar registro</button>
-        <div class="ex-log-saved" id="exLogSaved">✓ Guardado</div>
-      </div>
-      ${swapBtnHtml}
-      <div class="ex-modal-rec" id="exModalRec">
-        ${buildRecSection(id, state.currentId, targetReps || '', muscle || '', weightGuide || '', parseInt(position) || 1)}
-      </div>`;
+
+    if (existing && existing.sets && existing.sets.length) {
+      // EDIT MODE — show all sets at once
+      _exCtx = { id, origId, numSets, targetReps: targetReps || '', muscle: muscle || '', weightGuide: weightGuide || '', position: parseInt(position) || 1, restStr, currentSet: -1, completedSets: [], _inlineTimer: null };
+      const rows = Array.from({ length: numSets }, (_, i) => {
+        const saved = existing.sets[i];
+        const w = saved ? saved.weight : '';
+        const r = saved ? saved.reps : '';
+        return `<div class="ex-log-set-row">
+          <span class="ex-log-set-label">Serie ${i + 1}</span>
+          <input class="ex-log-input" type="number" id="exw_${i}" placeholder="kg" value="${w}" min="0" step="0.5">
+          <span class="ex-log-unit">kg</span>
+          <span class="ex-log-unit" style="margin:0 2px">×</span>
+          <input class="ex-log-input" type="number" id="exr_${i}" placeholder="reps" value="${r}" min="0">
+          <span class="ex-log-unit">reps</span>
+        </div>`;
+      }).join('');
+      logSection = `
+        <div class="ex-modal-log">
+          <div class="ex-log-title">✏️ Editando registro — sesión actual</div>
+          ${rows}
+          <button class="ex-log-save" onclick="saveCurrentExLog()">💾 Guardar cambios</button>
+          <div class="ex-log-saved" id="exLogSaved">✓ Guardado</div>
+        </div>
+        ${swapBtnHtml}
+        <div class="ex-modal-rec" id="exModalRec">
+          ${buildRecSection(id, state.currentId, targetReps || '', muscle || '', weightGuide || '', parseInt(position) || 1)}
+        </div>`;
+    } else {
+      // PER-SET MODE — new entry (one set at a time)
+      _exCtx = { id, origId, numSets, targetReps: targetReps || '', muscle: muscle || '', weightGuide: weightGuide || '', position: parseInt(position) || 1, restStr, currentSet: 0, completedSets: [], _inlineTimer: null };
+      logSection = `
+        <div class="ex-modal-log">
+          <div id="exLogSection"></div>
+        </div>
+        ${swapBtnHtml}
+        <div class="ex-modal-rec" id="exModalRec">
+          ${buildRecSection(id, state.currentId, targetReps || '', muscle || '', weightGuide || '', parseInt(position) || 1)}
+        </div>`;
+    }
   }
 
   modal.innerHTML = `
@@ -77,14 +329,22 @@ export function openExModal(id, name, muscle, equip, targetSets, targetReps, wei
       ${logSection}
     </div>
   `;
+
   document.getElementById('exModal').classList.add('open');
+
+  // Populate first set input after DOM is ready
+  if (_exCtx && _exCtx.currentSet === 0) {
+    _renderPerSetInput();
+  }
 }
 
 export function closeExModal() {
+  _stopInlineTimer();
   document.getElementById('exModal').classList.remove('open');
 }
 
 export function saveCurrentExLog() {
+  // Used in EDIT MODE only (existing log with all sets visible)
   if (!_exCtx) return;
   const { id, numSets, targetReps, muscle } = _exCtx;
   const sets = [];
@@ -103,31 +363,7 @@ export function saveCurrentExLog() {
     badge.style.color = '';
     badge.style.display = 'block';
   }
-
-  const curSession = getPlan().find(x => x.id === state.currentId);
-  if (curSession) {
-    curSession.workout.blocks.forEach(bl => {
-      bl.exercises.forEach(ex => {
-        if (ex.id === id) return;
-        const exBadge = document.getElementById(`rec_badge_${ex.id}`);
-        if (!exBadge) return;
-        const exRec = getExRecommendation(ex.id, state.currentId, ex.reps || '', ex.muscle || '', ex.weight_guide || '');
-        if (!exRec) return;
-        if (exRec.type === 'same') {
-          const r = exRec.rec;
-          const arr = r.dir === 'up' ? '↑' : r.dir === 'down' ? '↓' : '→';
-          exBadge.textContent = `📈 ${r.nextWeight} kg × ${r.targetReps} reps ${arr}`;
-          exBadge.style.color = '';
-          exBadge.style.display = 'block';
-        } else if (exRec.type === 'related' && exRec.crossRec && exRec.crossRec.suggestedWeight) {
-          const icon = exRec.crossRec.level === 'high' ? '↑' : exRec.crossRec.level === 'low' ? '↓' : '→';
-          exBadge.textContent = `📊 ~${exRec.crossRec.suggestedWeight} kg ${icon}`;
-          exBadge.style.color = 'var(--cyan)';
-          exBadge.style.display = 'block';
-        }
-      });
-    });
-  }
+  _updateCrossBadges(id);
 
   startRestTimer(id);
 
@@ -136,15 +372,7 @@ export function saveCurrentExLog() {
   const recDiv = document.getElementById('exModalRec');
   if (recDiv) recDiv.innerHTML = buildRecSection(id, state.currentId, targetReps, muscle, _exCtx.weightGuide, _exCtx.position || 1);
 
-  // Update the logged-values summary row in the exercise table (live, no full re-render)
-  const sumEl = document.getElementById(`ex_log_sum_${id}`);
-  if (sumEl) {
-    const summary = sets.map(st => `${st.weight > 0 ? st.weight + 'kg' : '—'}×${st.reps}`).join(' · ');
-    sumEl.innerHTML = `✓ ${summary}<span class="ex-edit-hint"> — toca para editar</span>`;
-    sumEl.style.display = 'block';
-  }
-  const iconEl = document.getElementById(`ex_icon_${id}`);
-  if (iconEl) iconEl.textContent = '✏️';
+  _updateSessionRow(id, sets);
 }
 
 export function buildRecSection(exId, sessionId, targetRepsStr, muscle, weightGuide, position = 1) {
@@ -203,7 +431,6 @@ window._exShowPicker = () => {
   if (!wrap) return;
   if (wrap.style.display !== 'none') { wrap.style.display = 'none'; return; }
 
-  // Alternatives: same muscle_primary, exclude current displayed exercise
   const currentMuscle = _exCtx.muscle;
   const alts = EXERCISES.filter(ex => ex.muscle_primary === currentMuscle && ex.id !== _exCtx.id);
 
