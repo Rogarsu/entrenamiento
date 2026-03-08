@@ -10,7 +10,6 @@
   overflow-y: auto;
 }
 
-/* ---- SCREEN WRAPPER ---- */
 .gm-screen {
   display: flex;
   flex-direction: column;
@@ -33,9 +32,12 @@
 .gm-header-title {
   flex: 1;
   font-family: var(--font-head);
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .gm-nav-btn {
@@ -58,7 +60,6 @@
   background: var(--bg4);
 }
 
-/* Progress area inside header */
 .gm-progress {
   flex: 1;
   display: flex;
@@ -90,61 +91,42 @@
   transition: width 0.4s ease;
 }
 
-/* ---- BLOCK SELECTOR ---- */
-.gm-block-list {
-  padding: 24px 20px;
+/* ---- TABS ---- */
+.gm-tabs {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.gm-section-label {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text3);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 8px;
-}
-
-.gm-block-item {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding: 16px;
   background: var(--bg2);
-  border: 1px solid var(--border2);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
-  text-align: left;
-  width: 100%;
+  border-bottom: 1px solid var(--border2);
+  position: sticky;
+  top: 57px;
+  z-index: 9;
 }
 
-.gm-block-item:hover {
-  border-color: var(--cyan);
-  background: rgba(6, 182, 212, 0.05);
-}
-
-.gm-block-item--cyan {
-  border-color: rgba(6, 182, 212, 0.4);
-  background: rgba(6, 182, 212, 0.05);
-}
-
-.gm-block-name {
-  font-family: var(--font-head);
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.gm-block-meta {
-  font-family: var(--font-mono);
-  font-size: 11px;
+.gm-tab {
+  flex: 1;
+  padding: 10px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
   color: var(--text3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: color 0.2s, border-color 0.2s;
 }
 
-/* ---- EXERCISE IMAGE ---- */
+.gm-tab:hover { color: var(--text2); }
+
+.gm-tab--active {
+  color: var(--cyan);
+  border-bottom-color: var(--cyan);
+}
+
+/* ---- IMAGE PANEL ---- */
 .gm-img-wrap {
   width: 100%;
   height: 220px;
@@ -164,8 +146,146 @@
 }
 
 .gm-img-placeholder {
-  font-size: 64px;
-  opacity: 0.2;
+  font-size: 56px;
+  color: var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- DESCRIPTION PANEL ---- */
+.gm-desc-panel {
+  padding: 16px 20px;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.gm-desc-grid {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.gm-desc-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gm-desc-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+
+.gm-desc-divider {
+  height: 1px;
+  background: var(--border2);
+  margin: 12px 0;
+}
+
+/* Difficulty badge */
+.gm-diff-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.gm-diff--beginner    { background: rgba(34,197,94,.15);  color: #22c55e; }
+.gm-diff--intermediate{ background: rgba(245,158,11,.15); color: #f59e0b; }
+.gm-diff--advanced    { background: rgba(239,68,68,.15);  color: #ef4444; }
+
+/* Category badge */
+.gm-cat-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--bg4);
+  color: var(--text2);
+  border: 1px solid var(--border2);
+}
+
+/* Muscle card */
+.gm-muscle-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  margin-top: 6px;
+}
+
+.gm-muscle-label {
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* Secondary muscles chips */
+.gm-sec-muscles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.gm-sec-chip {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text2);
+  background: var(--bg4);
+  border: 1px solid var(--border2);
+}
+
+/* Equipment chip */
+.gm-equip-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text2);
+  margin-top: 6px;
+}
+
+.gm-equip-chip .ti { font-size: 16px; color: var(--cyan); }
+
+/* Notes */
+.gm-desc-note {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text3);
+  line-height: 1.6;
+  padding: 8px 12px;
+  background: var(--bg3);
+  border-radius: 8px;
+  border-left: 2px solid var(--cyan);
+  margin-top: 6px;
 }
 
 /* ---- EXERCISE INFO ---- */
@@ -179,15 +299,8 @@
   font-size: 22px;
   font-weight: 800;
   color: var(--text);
-  margin: 0 0 5px;
+  margin: 0 0 4px;
   line-height: 1.2;
-}
-
-.gm-ex-meta {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--cyan);
-  margin: 0 0 3px;
 }
 
 .gm-ex-guide {
@@ -195,17 +308,6 @@
   font-size: 12px;
   color: var(--text3);
   margin: 0;
-}
-
-.gm-ex-note {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text3);
-  margin-top: 6px;
-  padding: 6px 10px;
-  background: var(--bg3);
-  border-radius: 8px;
-  border-left: 2px solid var(--cyan);
 }
 
 /* ---- LOG SECTION ---- */
@@ -258,41 +360,152 @@
 
 .gm-next-btn:hover { opacity: 0.85; }
 
-/* ---- SUMMARY SCREEN ---- */
-.gm-summary {
+/* ---- BLOCK SELECTOR ---- */
+.gm-block-list {
   padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gm-section-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+
+.gm-block-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 16px;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  text-align: left;
+  width: 100%;
+}
+
+.gm-block-item:hover {
+  border-color: var(--cyan);
+  background: rgba(6, 182, 212, 0.05);
+}
+
+.gm-block-item--cyan {
+  border-color: rgba(6, 182, 212, 0.4);
+  background: rgba(6, 182, 212, 0.05);
+}
+
+.gm-block-name {
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.gm-block-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text3);
+}
+
+/* ---- SUMMARY SCREEN ---- */
+.gm-summary-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 28px 20px 20px;
+  border-bottom: 1px solid var(--border2);
+  gap: 6px;
+}
+
+.gm-trophy-icon {
+  font-size: 52px;
+  color: var(--cyan);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.gm-summary-stat {
+  font-family: var(--font-head);
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+}
+
+.gm-summary-stat-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.gm-summary {
+  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 0;
 }
 
-.gm-summary-row {
+.gm-sum-row {
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
   gap: 12px;
-  padding: 10px 0;
+  padding: 12px 0;
   border-bottom: 1px solid var(--border2);
 }
 
-.gm-summary-name {
+.gm-sum-row--done .gm-sum-name {
+  color: var(--text);
+}
+
+.gm-sum-status {
+  flex-shrink: 0;
+  padding-top: 1px;
+}
+
+.gm-sum-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.gm-sum-name {
   font-family: var(--font-head);
   font-size: 14px;
   font-weight: 600;
   color: var(--text3);
-  flex: 0 0 40%;
+  margin-bottom: 4px;
 }
 
-.gm-summary-name.gm-summary-done {
-  color: var(--text);
+.gm-sum-sets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
-.gm-summary-sets {
+.gm-sum-set {
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--text3);
-  text-align: right;
-  flex: 1;
+  background: var(--bg3);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.gm-sum-set strong { color: var(--cyan); }
+
+.gm-sum-skipped {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text3);
+  font-style: italic;
 }
 
 .gm-finish-btn {

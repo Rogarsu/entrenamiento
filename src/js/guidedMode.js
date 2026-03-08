@@ -64,8 +64,96 @@ function _updateGMChips() {
   if (!el) return;
   if (_gm.completedSets.length === 0) { el.innerHTML = ''; return; }
   el.innerHTML = _gm.completedSets.map((s, i) =>
-    `<span class="gm-set-chip done">S${i + 1}: ${s.weight > 0 ? s.weight + 'kg' : '—'} × ${s.reps}</span>`
+    `<span class="gm-set-chip done">S${i + 1}: ${s.weight > 0 ? s.weight + 'kg' : 'PC'} × ${s.reps}</span>`
   ).join('');
+}
+
+// ── Muscle SVG ────────────────────────────────────────────────────────────────
+function _muscleSvg(muscleName) {
+  const m = (muscleName || '').toLowerCase();
+  let zone = 'core';
+  if (m.includes('pecho') || m.includes('chest') || m.includes('pectoral'))        zone = 'chest';
+  else if (m.includes('espalda') || m.includes('back') || m.includes('dorsal') ||
+           m.includes('trapecio') || m.includes('lumbar') || m.includes('lat'))     zone = 'back';
+  else if (m.includes('hombro') || m.includes('shoulder') || m.includes('deltoid')) zone = 'shoulders';
+  else if (m.includes('bícep') || m.includes('bicep'))                              zone = 'biceps';
+  else if (m.includes('trícep') || m.includes('tricep'))                            zone = 'triceps';
+  else if (m.includes('pierna') || m.includes('leg') || m.includes('cuádr') ||
+           m.includes('quad') || m.includes('isquio') || m.includes('hamst') ||
+           m.includes('fémor') || m.includes('femore'))                             zone = 'legs';
+  else if (m.includes('glút') || m.includes('glute') || m.includes('pompi'))        zone = 'glutes';
+  else if (m.includes('gemel') || m.includes('calf') || m.includes('soleo') ||
+           m.includes('tibial'))                                                     zone = 'calves';
+  else if (m.includes('abdom') || m.includes('core') || m.includes('oblicu'))       zone = 'core';
+
+  const C = 'rgba(6,182,212,0.85)';
+  const P = 'rgba(139,92,246,0.8)';
+
+  const highlights = {
+    chest:     `<rect x="19" y="22" width="22" height="14" rx="2" fill="${C}"/>`,
+    core:      `<rect x="19" y="37" width="22" height="13" rx="2" fill="${C}"/>`,
+    shoulders: `<rect x="7" y="18" width="9" height="11" rx="3" fill="${C}"/><rect x="44" y="18" width="9" height="11" rx="3" fill="${C}"/>`,
+    biceps:    `<rect x="8" y="29" width="8" height="13" rx="3" fill="${C}"/><rect x="44" y="29" width="8" height="13" rx="3" fill="${C}"/>`,
+    triceps:   `<rect x="8" y="29" width="8" height="13" rx="3" fill="${C}"/><rect x="44" y="29" width="8" height="13" rx="3" fill="${C}"/>`,
+    legs:      `<rect x="18" y="53" width="10" height="20" rx="3" fill="${C}"/><rect x="32" y="53" width="10" height="20" rx="3" fill="${C}"/>`,
+    glutes:    `<rect x="18" y="50" width="24" height="9" rx="3" fill="${C}"/>`,
+    calves:    `<rect x="19" y="74" width="8" height="16" rx="3" fill="${C}"/><rect x="33" y="74" width="8" height="16" rx="3" fill="${C}"/>`,
+    back:      `<rect x="19" y="22" width="22" height="28" rx="2" fill="${P}"/>`,
+  };
+
+  return `<svg viewBox="0 0 60 96" width="48" height="77" style="flex-shrink:0">
+    <circle cx="30" cy="7" r="6" fill="none" stroke="var(--border2)" stroke-width="1.5"/>
+    <rect x="26" y="13" width="8" height="5" rx="2" fill="none" stroke="var(--border2)" stroke-width="1.2"/>
+    <rect x="17" y="18" width="26" height="32" rx="4" fill="none" stroke="var(--border2)" stroke-width="1.5"/>
+    <rect x="7" y="18" width="9" height="28" rx="4" fill="none" stroke="var(--border2)" stroke-width="1.5"/>
+    <rect x="44" y="18" width="9" height="28" rx="4" fill="none" stroke="var(--border2)" stroke-width="1.5"/>
+    <rect x="17" y="51" width="11" height="35" rx="4" fill="none" stroke="var(--border2)" stroke-width="1.5"/>
+    <rect x="32" y="51" width="11" height="35" rx="4" fill="none" stroke="var(--border2)" stroke-width="1.5"/>
+    ${highlights[zone] || highlights.core}
+  </svg>`;
+}
+
+// ── Equipment icon ────────────────────────────────────────────────────────────
+function _equipIcon(equip) {
+  const e = (equip || '').toLowerCase();
+  let icon = 'ti-dumbbell';
+  if      (e.includes('barra') || e.includes('barbell'))               icon = 'ti-barbell';
+  else if (e.includes('mancuerna') || e.includes('dumbbell'))          icon = 'ti-dumbbell';
+  else if (e.includes('polea') || e.includes('cable'))                 icon = 'ti-arrow-guide';
+  else if (e.includes('máquina') || e.includes('machine'))             icon = 'ti-settings-cog';
+  else if (e.includes('kettlebell'))                                    icon = 'ti-circle-filled';
+  else if (e.includes('sin') || e.includes('corporal') || e.includes('bodyweight') || e.includes('no equip')) icon = 'ti-user';
+  else if (e.includes('banco') || e.includes('silla') || e.includes('bench'))       icon = 'ti-armchair';
+  else if (e.includes('banda') || e.includes('elástico') || e.includes('band'))     icon = 'ti-wave-saw-tool';
+  else if (e.includes('trx') || e.includes('suspensión'))              icon = 'ti-rings';
+  return `<i class="ti ${icon}"></i>`;
+}
+
+// ── Labels ────────────────────────────────────────────────────────────────────
+function _diffLabel(diff) {
+  const labels = { beginner: 'Principiante', intermediate: 'Intermedio', advanced: 'Avanzado' };
+  const cls    = { beginner: 'gm-diff--beginner', intermediate: 'gm-diff--intermediate', advanced: 'gm-diff--advanced' };
+  const text   = labels[diff] || 'Intermedio';
+  const c      = cls[diff] || cls.intermediate;
+  return `<span class="gm-diff-badge ${c}">${text}</span>`;
+}
+
+function _catLabel(cat) {
+  const map = { compound: 'Compuesto', isolation: 'Aislado', cardio: 'Cardio', core: 'Core', mobility: 'Movilidad' };
+  return map[cat] || cat || '';
+}
+
+function _muscleName(muscle) {
+  const map = {
+    chest: 'Pecho', pecho: 'Pecho',
+    back: 'Espalda', espalda: 'Espalda', lats: 'Dorsales', traps: 'Trapecios',
+    shoulders: 'Hombros', hombros: 'Hombros',
+    biceps: 'Bíceps', triceps: 'Tríceps',
+    legs: 'Piernas', quads: 'Cuádriceps', hamstrings: 'Isquiotibiales',
+    glutes: 'Glúteos', calves: 'Gemelos',
+    core: 'Core', abs: 'Abdomen', forearms: 'Antebrazos',
+  };
+  return map[(muscle || '').toLowerCase()] || muscle || '—';
 }
 
 // ── Per-set input ─────────────────────────────────────────────────────────────
@@ -83,16 +171,16 @@ function _renderGMPerSetInput() {
   const rPh = lastSet && lastSet.reps  ? lastSet.reps  : 'reps';
 
   el.innerHTML = `
-    <div class="ex-log-title">📝 Serie ${_gm.currentSet + 1} de ${_gm.numSets}${ex.reps ? ' &nbsp;·&nbsp; ' + ex.reps : ''}</div>
+    <div class="ex-log-title">Serie ${_gm.currentSet + 1} de ${_gm.numSets}${ex.reps ? ' &nbsp;·&nbsp; ' + ex.reps : ''}</div>
     <div class="ex-log-set-row" style="margin-bottom:14px">
-      <input class="ex-log-input gm-set-input" type="number" id="gmSetW" placeholder="${wPh}" min="0" step="0.5">
+      <input class="ex-log-input" type="number" id="gmSetW" placeholder="${wPh}" min="0" step="0.5">
       <span class="ex-log-unit">kg</span>
       <span class="ex-log-unit" style="margin:0 4px">×</span>
-      <input class="ex-log-input gm-set-input" type="number" id="gmSetR" placeholder="${rPh}" min="0">
+      <input class="ex-log-input" type="number" id="gmSetR" placeholder="${rPh}" min="0">
       <span class="ex-log-unit">reps</span>
     </div>
     <button class="ex-log-save" onclick="window._gmCompleteSet()" style="width:100%">
-      ${isLast ? '✓ Completar y guardar' : '✓ Completar serie →'}
+      ${isLast ? '✓ Completar y guardar' : '✓ Completar serie'}
     </button>
   `;
   _updateGMChips();
@@ -156,7 +244,6 @@ function _saveCurrentExercise() {
 
   saveExLog(ex.id, state.currentId, _gm.completedSets, ex.reps, ex.muscle);
 
-  // Update rec badge in session table
   const badge = document.getElementById(`rec_badge_${ex.id}`);
   if (badge) {
     const rec = calcNextRecommendation(ex.reps, _gm.completedSets, ex.position || 1);
@@ -166,29 +253,28 @@ function _saveCurrentExercise() {
     badge.style.display = 'block';
   }
 
-  // Update log row in session table
   const sumEl = document.getElementById(`ex_log_sum_${ex.id}`);
   if (sumEl) {
-    const summary = _gm.completedSets.map(st => `${st.weight > 0 ? st.weight + 'kg' : '—'}×${st.reps}`).join(' · ');
+    const summary = _gm.completedSets.map(st => `${st.weight > 0 ? st.weight + 'kg' : 'PC'}×${st.reps}`).join(' · ');
     sumEl.innerHTML = `✓ ${summary}<span class="ex-edit-hint"> — toca para editar</span>`;
     sumEl.style.display = 'block';
   }
   const iconEl = document.getElementById(`ex_icon_${ex.id}`);
   if (iconEl) iconEl.textContent = '✏️';
 
-  // Show saved + next button
   const logEl = document.getElementById('gmLogSection');
   if (logEl) {
     logEl.innerHTML = `
-      <div class="ex-log-saved" style="display:block;margin-bottom:16px">✓ Guardado</div>
+      <div class="ex-log-saved" style="display:block;margin-bottom:16px">
+        <i class="ti ti-circle-check-filled" style="color:var(--cyan)"></i> Guardado
+      </div>
       <button class="gm-next-btn" onclick="window._gmNext()">
-        ${_isLastExercise() ? '✓ Ver resumen' : 'Siguiente ejercicio'} <i class="ti ti-arrow-right"></i>
+        ${_isLastExercise() ? 'Ver resumen' : 'Siguiente ejercicio'}
+        <i class="ti ti-arrow-right"></i>
       </button>
     `;
   }
   _updateGMChips();
-
-  // Floating inter-exercise rest timer
   startRestTimer(ex.id);
 }
 
@@ -241,12 +327,51 @@ function _renderExercise() {
   _gm.completedSets = [];
   _gm.restStr       = ex.rest || '90 seg';
 
-  const imgSrc  = getExImage(ex.id, ex.name);
-  const imgHtml = imgSrc
-    ? `<img src="${imgSrc}" class="gm-img" alt="${ex.name}">`
-    : `<div class="gm-img-placeholder">🏋️</div>`;
+  const imgSrc = getExImage(ex.id, ex.name);
+  const pct    = Math.round((_gm.currentExNum - 1) / _gm.totalExCount * 100);
 
-  const pct = Math.round((_gm.currentExNum - 1) / _gm.totalExCount * 100);
+  const secMuscles = (ex.muscles_secondary || [])
+    .map(m => `<span class="gm-sec-chip">${_muscleName(m)}</span>`)
+    .join('');
+
+  const imgPanel = imgSrc
+    ? `<img src="${imgSrc}" class="gm-img" alt="${ex.name}">`
+    : `<div class="gm-img-placeholder"><i class="ti ti-dumbbell"></i></div>`;
+
+  const descPanel = `
+    <div class="gm-desc-grid">
+      <div class="gm-desc-cell">
+        <div class="gm-desc-label">Nivel</div>
+        ${_diffLabel(ex.difficulty)}
+      </div>
+      <div class="gm-desc-cell">
+        <div class="gm-desc-label">Tipo</div>
+        <span class="gm-cat-badge">${_catLabel(ex.category)}</span>
+      </div>
+    </div>
+    <div class="gm-desc-divider"></div>
+    <div class="gm-desc-label">Músculo principal</div>
+    <div class="gm-muscle-card">
+      ${_muscleSvg(ex.muscle || '')}
+      <span class="gm-muscle-label">${ex.muscle || '—'}</span>
+    </div>
+    ${secMuscles ? `
+    <div class="gm-desc-divider"></div>
+    <div class="gm-desc-label">Músculos involucrados</div>
+    <div class="gm-sec-muscles">${secMuscles}</div>
+    ` : ''}
+    <div class="gm-desc-divider"></div>
+    <div class="gm-desc-label">Equipamiento</div>
+    <div class="gm-equip-chip">
+      ${_equipIcon(ex.equip)}
+      <span>${ex.equip || '—'}</span>
+    </div>
+    ${ex.notes ? `
+    <div class="gm-desc-divider"></div>
+    <div class="gm-desc-label">Nota técnica</div>
+    <div class="gm-desc-note">${ex.notes}</div>
+    ` : ''}
+  `;
 
   el.innerHTML = `
     <div class="gm-screen">
@@ -259,19 +384,41 @@ function _renderExercise() {
         <button class="gm-nav-btn" onclick="closeGuidedMode()"><i class="ti ti-x"></i></button>
       </div>
 
-      <div class="gm-img-wrap">${imgHtml}</div>
+      <div class="gm-tabs">
+        <button class="gm-tab gm-tab--active" id="gmTabImg" onclick="window._gmSwitchTab('img')">
+          <i class="ti ti-photo"></i> Imagen
+        </button>
+        <button class="gm-tab" id="gmTabDesc" onclick="window._gmSwitchTab('desc')">
+          <i class="ti ti-info-circle"></i> Descripción
+        </button>
+      </div>
+
+      <div id="gmPanelImg" class="gm-img-wrap">${imgPanel}</div>
+      <div id="gmPanelDesc" class="gm-desc-panel" style="display:none">${descPanel}</div>
 
       <div class="gm-ex-info">
         <div class="gm-ex-name">${ex.name}</div>
-        <div class="gm-ex-meta">💪 ${ex.muscle} &nbsp;·&nbsp; 🔧 ${ex.equip}</div>
-        <div class="gm-ex-guide">${ex.sets} series × ${ex.reps}${ex.weight_guide && ex.weight_guide !== '—' ? ' &nbsp;·&nbsp; ' + ex.weight_guide : ''}</div>
-        ${ex.notes ? `<div class="gm-ex-note"><i class="ti ti-info-circle"></i> ${ex.notes}</div>` : ''}
+        <div class="gm-ex-guide">
+          ${ex.sets} series × ${ex.reps}${ex.weight_guide && ex.weight_guide !== '—' ? ' &nbsp;·&nbsp; ' + ex.weight_guide : ''}
+        </div>
       </div>
 
       <div class="gm-log-section" id="gmLogSection"></div>
       <div class="gm-sets-chips" id="gmSetsChips"></div>
     </div>
   `;
+
+  window._gmSwitchTab = (tab) => {
+    const img  = document.getElementById('gmPanelImg');
+    const desc = document.getElementById('gmPanelDesc');
+    const tImg  = document.getElementById('gmTabImg');
+    const tDesc = document.getElementById('gmTabDesc');
+    if (!img || !desc) return;
+    img.style.display  = tab === 'img'  ? '' : 'none';
+    desc.style.display = tab === 'desc' ? '' : 'none';
+    tImg?.classList.toggle('gm-tab--active',  tab === 'img');
+    tDesc?.classList.toggle('gm-tab--active', tab === 'desc');
+  };
 
   _renderGMPerSetInput();
 }
@@ -364,7 +511,6 @@ function _startGuided(startBlockIdx, fromStart) {
   _gm.completedSets = [];
 
   if (!fromStart) {
-    // Skip exercises that already have logs
     while (_gm.blockIdx < _gm.blocks.length) {
       const ex = _gm.blocks[_gm.blockIdx].exercises[_gm.exIdx];
       const log = getExLog(ex.id, state.currentId);
@@ -391,27 +537,48 @@ function _renderSummary() {
   if (!el) return;
 
   const allExercises = _gm.blocks.slice(_gm.startBlockIdx).flatMap(bl => bl.exercises);
-  const rows = allExercises.map(ex => {
+  const completedCount = allExercises.filter(ex => {
     const log = getExLog(ex.id, state.currentId);
-    const setsHtml = log && log.sets && log.sets.length
-      ? log.sets.map((s, i) => `S${i + 1}: ${s.weight > 0 ? s.weight + 'kg' : '—'}×${s.reps}`).join(' · ')
-      : '<span style="color:var(--text3)">—</span>';
+    return log && log.sets && log.sets.length;
+  }).length;
+
+  const rows = allExercises.map(ex => {
+    const log    = getExLog(ex.id, state.currentId);
     const hasLog = !!(log && log.sets && log.sets.length);
+    const setsHtml = hasLog
+      ? log.sets.map((s, i) =>
+          `<span class="gm-sum-set">S${i + 1}: <strong>${s.weight > 0 ? s.weight + 'kg' : 'PC'} × ${s.reps}</strong></span>`
+        ).join('')
+      : `<span class="gm-sum-skipped">No registrado</span>`;
     return `
-      <div class="gm-summary-row">
-        <span class="gm-summary-name${hasLog ? ' gm-summary-done' : ''}">${ex.name}</span>
-        <span class="gm-summary-sets">${setsHtml}</span>
+      <div class="gm-sum-row${hasLog ? ' gm-sum-row--done' : ''}">
+        <div class="gm-sum-status">
+          ${hasLog
+            ? '<i class="ti ti-circle-check-filled" style="color:var(--cyan);font-size:18px"></i>'
+            : '<i class="ti ti-circle" style="color:var(--text3);font-size:18px"></i>'}
+        </div>
+        <div class="gm-sum-body">
+          <div class="gm-sum-name">${ex.name}</div>
+          <div class="gm-sum-sets">${setsHtml}</div>
+        </div>
       </div>`;
   }).join('');
 
   el.innerHTML = `
     <div class="gm-screen">
       <div class="gm-header">
-        <div class="gm-header-title">✓ Resumen del entrenamiento</div>
+        <div class="gm-header-title">
+          <i class="ti ti-trophy" style="color:var(--cyan)"></i> Entrenamiento completado
+        </div>
         <button class="gm-nav-btn" onclick="closeGuidedMode()"><i class="ti ti-x"></i></button>
       </div>
+      <div class="gm-summary-hero">
+        <i class="ti ti-trophy-filled gm-trophy-icon"></i>
+        <div class="gm-summary-stat">${completedCount} / ${allExercises.length}</div>
+        <div class="gm-summary-stat-label">ejercicios completados</div>
+      </div>
       <div class="gm-summary">
-        <div class="gm-section-label" style="margin-bottom:16px">Ejercicios completados</div>
+        <div class="gm-section-label" style="margin-bottom:12px">Resumen de series</div>
         ${rows}
         <button class="gm-finish-btn" onclick="closeGuidedMode()">
           <i class="ti ti-check"></i> Finalizar y volver
@@ -461,20 +628,24 @@ export function openGuidedMode() {
     note: bl.note || '',
     exercises: bl.exercises.map(ex => {
       globalPos++;
-      const swapId = getExSwap(ex.id, state.currentId);
-      const swapEx = swapId ? EXERCISES.find(x => x.id === swapId) : null;
+      const swapId   = getExSwap(ex.id, state.currentId);
+      const swapEx   = swapId ? EXERCISES.find(x => x.id === swapId) : null;
+      const catalog  = EXERCISES.find(x => x.id === (swapEx ? swapEx.id : ex.id));
       return {
-        origId:       ex.id,
-        id:           swapEx ? swapEx.id              : ex.id,
-        name:         swapEx ? swapEx.name            : ex.name,
-        muscle:       swapEx ? swapEx.muscle_primary  : (ex.muscle       || ''),
-        equip:        swapEx ? swapEx.equip           : (ex.equip        || ''),
-        sets:         ex.sets  || '3',
-        reps:         swapEx  ? (swapEx.reps_default  || '') : (ex.reps  || ''),
-        rest:         swapEx  ? `${swapEx.rest_seconds || 90} seg` : (ex.rest || '90 seg'),
-        weight_guide: swapEx  ? (swapEx.weight_guide   || '—') : (ex.weight_guide || '—'),
-        notes:        ex.notes || '',
-        position:     globalPos,
+        origId:           ex.id,
+        id:               swapEx ? swapEx.id             : ex.id,
+        name:             swapEx ? swapEx.name           : ex.name,
+        muscle:           swapEx ? swapEx.muscle_primary : (ex.muscle       || catalog?.muscle_primary || ''),
+        equip:            swapEx ? swapEx.equip          : (ex.equip        || catalog?.equip          || ''),
+        sets:             ex.sets  || String(catalog?.sets_default || '3'),
+        reps:             swapEx  ? (swapEx.reps_default || '') : (ex.reps  || catalog?.reps_default   || ''),
+        rest:             swapEx  ? `${swapEx.rest_seconds || 90} seg` : (ex.rest || `${catalog?.rest_seconds || 90} seg`),
+        weight_guide:     swapEx  ? (swapEx.weight_guide  || '—') : (ex.weight_guide || catalog?.weight_guide || '—'),
+        notes:            ex.notes || '',
+        difficulty:       catalog?.difficulty || 'intermediate',
+        category:         catalog?.category   || 'compound',
+        muscles_secondary: catalog?.muscles_secondary || [],
+        position:         globalPos,
       };
     }),
   }));
