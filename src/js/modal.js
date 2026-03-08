@@ -3,7 +3,7 @@ import { getExImage } from '../data/images.js';
 import { EXERCISES } from '../data/exercises.js';
 import { getExLog, getLastExLog, saveExLog, setExSwap } from './storage.js';
 import { calcNextRecommendation, calcCrossExRecommendation, getRelatedExLogs, getExRecommendation } from './progression.js';
-import { escStr } from './helpers.js';
+import { escStr, muscleSvg, equipIcon, diffLabel, catLabel, muscleName } from './helpers.js';
 import { startRestTimer } from './timer.js';
 import { loadSession } from './session.js';
 
@@ -238,28 +238,49 @@ window._eitAdjust = (delta) => {
 
 export function openExModal(id, name, muscle, equip, targetSets, targetReps, weightGuide, originalId, position = 1) {
   const modal = document.getElementById('exModalContent');
-  const imgSrc = getExImage(id, name);
-  const imgSection = imgSrc
-    ? `<div class="ex-modal-img" style="padding:0;background:var(--bg2);height:auto">
-        <img src="${imgSrc}" alt="${name}" style="width:100%;height:auto;display:block">
-       </div>`
-    : `<div class="ex-modal-img">
-        <div class="ex-modal-img-placeholder">🏋️</div>
-        <div class="ex-modal-img-text">${name}</div>
-        <div class="ex-modal-img-soon">📸 Imagen del ejercicio — próximamente</div>
-       </div>`;
-  const bodyExtra = imgSrc ? '' : `
-      <div style="font-size:12px;color:var(--text3);margin-top:12px;font-family:var(--font-mono);line-height:1.7">
-        Al hacer clic en el ícono 🖼 de cualquier ejercicio podrás ver aquí la imagen y video demostrativo del movimiento.<br>
-        <span style="color:var(--amber)">Esta función estará disponible en la próxima versión.</span>
-      </div>`;
+  const imgSrc  = getExImage(id, name);
+  const catalog = EXERCISES.find(x => x.id === id);
+
+  // ── Description tab content
+  const secMuscles = (catalog?.muscles_secondary || [])
+    .map(m => `<span class="gm-sec-chip">${muscleName(m)}</span>`)
+    .join('');
+
+  const descPanel = `
+    <div class="gm-desc-grid">
+      <div class="gm-desc-cell">
+        <div class="gm-desc-label">Nivel</div>
+        ${diffLabel(catalog?.difficulty)}
+      </div>
+      <div class="gm-desc-cell">
+        <div class="gm-desc-label">Tipo</div>
+        <span class="gm-cat-badge">${catLabel(catalog?.category)}</span>
+      </div>
+    </div>
+    <div class="gm-desc-divider"></div>
+    <div class="gm-desc-label">Músculo principal</div>
+    <div class="gm-muscle-card">
+      ${muscleSvg(muscle)}
+      <span class="gm-muscle-label">${muscle || '—'}</span>
+    </div>
+    ${secMuscles ? `
+    <div class="gm-desc-divider"></div>
+    <div class="gm-desc-label">Músculos involucrados</div>
+    <div class="gm-sec-muscles">${secMuscles}</div>
+    ` : ''}
+    <div class="gm-desc-divider"></div>
+    <div class="gm-desc-label">Equipamiento</div>
+    <div class="gm-equip-chip">
+      ${equipIcon(equip)}
+      <span>${equip || '—'}</span>
+    </div>
+  `;
 
   const numSets = parseInt(targetSets) || 0;
-  const origId = originalId || id;
+  const origId  = originalId || id;
   let logSection = '';
 
   if (numSets > 0 && id !== 'pre' && id !== 'post') {
-    // Look up rest time from plan (using original exercise id)
     let restStr = '90 seg';
     const session = getPlan().find(s => s.id === state.currentId);
     if (session) {
@@ -269,7 +290,7 @@ export function openExModal(id, name, muscle, equip, targetSets, targetReps, wei
       }
     }
 
-    const existing = getExLog(id, state.currentId);
+    const existing  = getExLog(id, state.currentId);
     const isSwapped = origId !== id;
     const swapBtnHtml = `
       <div class="ex-swap-actions">
@@ -296,9 +317,9 @@ export function openExModal(id, name, muscle, equip, targetSets, targetReps, wei
       }).join('');
       logSection = `
         <div class="ex-modal-log">
-          <div class="ex-log-title">✏️ Editando registro — sesión actual</div>
+          <div class="ex-log-title"><i class="ti ti-pencil"></i> Editando registro — sesión actual</div>
           ${rows}
-          <button class="ex-log-save" onclick="saveCurrentExLog()">💾 Guardar cambios</button>
+          <button class="ex-log-save" onclick="saveCurrentExLog()"><i class="ti ti-device-floppy"></i> Guardar cambios</button>
           <div class="ex-log-saved" id="exLogSaved">✓ Guardado</div>
         </div>
         ${swapBtnHtml}
@@ -320,19 +341,48 @@ export function openExModal(id, name, muscle, equip, targetSets, targetReps, wei
   }
 
   modal.innerHTML = `
-    ${imgSection}
+    <div class="ex-modal-tabs">
+      <button class="ex-modal-tab ex-modal-tab--active" id="exTabImg" onclick="window._exSwitchTab('img')">
+        <i class="ti ti-photo"></i> Imagen
+      </button>
+      <button class="ex-modal-tab" id="exTabDesc" onclick="window._exSwitchTab('desc')">
+        <i class="ti ti-info-circle"></i> Descripción
+      </button>
+    </div>
+
+    <div id="exPanelImg" class="ex-modal-img-wrap">
+      ${imgSrc
+        ? `<img src="${imgSrc}" alt="${name}" class="ex-modal-img-full">`
+        : `<div class="ex-modal-img-placeholder"><i class="ti ti-dumbbell"></i></div>`}
+    </div>
+
+    <div id="exPanelDesc" class="ex-modal-desc-panel" style="display:none">
+      ${descPanel}
+    </div>
+
     <div class="ex-modal-body">
       <div class="ex-modal-name">${name}</div>
-      <div class="ex-modal-muscle">💪 ${muscle}</div>
-      <div class="ex-modal-equip">🔧 ${equip}</div>
-      ${bodyExtra}
+      <div class="ex-modal-guide">
+        ${targetSets} series × ${targetReps}${weightGuide && weightGuide !== '—' ? ' &nbsp;·&nbsp; ' + weightGuide : ''}
+      </div>
       ${logSection}
     </div>
   `;
 
+  window._exSwitchTab = (tab) => {
+    const img  = document.getElementById('exPanelImg');
+    const desc = document.getElementById('exPanelDesc');
+    const tImg  = document.getElementById('exTabImg');
+    const tDesc = document.getElementById('exTabDesc');
+    if (!img || !desc) return;
+    img.style.display  = tab === 'img'  ? '' : 'none';
+    desc.style.display = tab === 'desc' ? '' : 'none';
+    tImg?.classList.toggle('ex-modal-tab--active',  tab === 'img');
+    tDesc?.classList.toggle('ex-modal-tab--active', tab === 'desc');
+  };
+
   document.getElementById('exModal').classList.add('open');
 
-  // Populate first set input after DOM is ready
   if (_exCtx && _exCtx.currentSet === 0) {
     _renderPerSetInput();
   }
