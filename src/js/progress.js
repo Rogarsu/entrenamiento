@@ -4,12 +4,23 @@
 
 import { state, getUserId } from './state.js';
 import { loadExLogs } from './storage.js';
-import { fetchBodyMetrics, upsertBodyMetric } from './db.js';
+import { fetchBodyMetrics, upsertBodyMetrics } from './db.js';
 
 // ── Module state ──────────────────────────────────────────────────────────────
 
-let _bodyMetrics = []; // [{ metric_date: 'YYYY-MM-DD', weight_kg: number }]
-let _selectedEx  = null;
+let _bodyMetrics    = []; // [{ metric_date, weight_kg, waist_cm?, hip_cm?, chest_cm?, arm_cm?, thigh_cm? }]
+let _selectedEx     = null;
+let _selectedMeasure = 'waist_cm';
+
+// ── Medidas corporales ────────────────────────────────────────────────────────
+
+const MEASURES = [
+  { key: 'waist_cm',  label: 'Cintura' },
+  { key: 'hip_cm',    label: 'Cadera'  },
+  { key: 'chest_cm',  label: 'Pecho'   },
+  { key: 'arm_cm',    label: 'Brazo'   },
+  { key: 'thigh_cm',  label: 'Muslo'   },
+];
 
 // ── SVG chart helpers ─────────────────────────────────────────────────────────
 
@@ -259,6 +270,9 @@ function _render() {
       </div>
     </div>
 
+    <!-- Medidas Corporales -->
+    ${_renderMeasuresSection()}
+
     <!-- Progresión de Ejercicios -->
     <div class="prog-section">
       <div class="prog-section-title"><i class="ti ti-trending-up"></i> Progresión de Pesos</div>
@@ -298,6 +312,80 @@ function _fmtExName(exId) {
   return exId.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
+// ── Medidas corporales helpers ─────────────────────────────────────────────────
+
+function _renderMeasuresSection() {
+  const today = new Date().toISOString().slice(0, 10);
+  const todayRec = _bodyMetrics.find(m => m.metric_date === today);
+  const firstRec = _bodyMetrics.find(m => MEASURES.some(ms => m[ms.key] != null));
+  const lastRec  = [..._bodyMetrics].reverse().find(m => MEASURES.some(ms => m[ms.key] != null));
+
+  // Inputs grid
+  const inputs = MEASURES.map(ms => {
+    const val = todayRec?.[ms.key] ?? '';
+    return `<div class="prog-measure-item">
+      <label class="prog-measure-lbl">${ms.label}</label>
+      <div class="prog-measure-inp-wrap">
+        <input type="number" id="progMeasure_${ms.key}" class="prog-wt-inp"
+               placeholder="${val || 'cm'}" value="${val}" step="0.1" min="1" max="300">
+        <span class="prog-wt-unit">cm</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Tabla de última medida + delta
+  let tableHtml = '';
+  if (lastRec) {
+    const rows = MEASURES.map(ms => {
+      const last  = lastRec[ms.key];
+      const first = firstRec?.[ms.key];
+      if (last == null) return '';
+      let deltaHtml = '';
+      if (first != null && last !== first) {
+        const d = (last - first).toFixed(1);
+        const sign = d > 0 ? '+' : '';
+        const cls  = d > 0 ? 'prog-delta--up' : 'prog-delta--down';
+        deltaHtml = `<span class="prog-delta ${cls} prog-measure-delta">${sign}${d} cm</span>`;
+      }
+      return `<div class="prog-measure-row">
+        <span class="prog-measure-name">${ms.label}</span>
+        <span class="prog-measure-val">${last} cm</span>
+        ${deltaHtml}
+      </div>`;
+    }).filter(Boolean).join('');
+    if (rows) tableHtml = `<div class="prog-measure-table">${rows}</div>`;
+  }
+
+  // Gráfica de tendencia (medida seleccionada)
+  const selPoints = _bodyMetrics
+    .map(m => ({ x: (m.metric_date || '').slice(5), y: parseFloat(m[_selectedMeasure]) || 0 }))
+    .filter(p => p.y);
+  const selLabel = MEASURES.find(ms => ms.key === _selectedMeasure)?.label || '';
+  const selectorOpts = MEASURES.map(ms =>
+    `<option value="${ms.key}" ${ms.key === _selectedMeasure ? 'selected' : ''}>${ms.label}</option>`
+  ).join('');
+
+  const chartHtml = selPoints.length >= 2
+    ? `<select class="prog-measure-select" onchange="progSetMeasure(this.value)">${selectorOpts}</select>
+       <div class="prog-chart-wrap">${_svgLine(selPoints, { color: 'var(--accent)' })}</div>
+       <p class="prog-chart-hint">${selLabel} en cm por fecha</p>`
+    : (lastRec
+        ? `<p class="prog-no-data">Registra al menos 2 mediciones para ver la gráfica de tendencia.</p>`
+        : `<p class="prog-no-data">Registra tu primera medida para ver la evolución aquí.</p>`);
+
+  return `<div class="prog-section">
+    <div class="prog-section-hd">
+      <div class="prog-section-title"><i class="ti ti-ruler"></i> Medidas Corporales</div>
+    </div>
+    <div class="prog-measures-grid">${inputs}</div>
+    <button class="prog-wt-btn prog-measures-save-btn" onclick="progLogMeasurements()">
+      <i class="ti ti-check"></i> Guardar medidas
+    </button>
+    ${tableHtml}
+    ${chartHtml}
+  </div>`;
+}
+
 // ── Public API ────────────────────────────────────────────────────────────────
 
 export function progSetEx(exId) {
@@ -316,7 +404,30 @@ export async function progLogWeight() {
   else _bodyMetrics.push({ metric_date: today, weight_kg: val });
   _bodyMetrics.sort((a, b) => a.metric_date.localeCompare(b.metric_date));
   localStorage.setItem('sv_body_metrics', JSON.stringify(_bodyMetrics));
-  if (userId) upsertBodyMetric(userId, today, val).catch(console.error);
+  if (userId) upsertBodyMetrics(userId, today, { weight_kg: val }).catch(console.error);
+  _render();
+}
+
+export async function progLogMeasurements() {
+  const today  = new Date().toISOString().slice(0, 10);
+  const userId = getUserId();
+  const fields = {};
+  for (const ms of MEASURES) {
+    const val = parseFloat(document.getElementById(`progMeasure_${ms.key}`)?.value);
+    if (val > 0 && val <= 300) fields[ms.key] = val;
+  }
+  if (!Object.keys(fields).length) return;
+  const idx = _bodyMetrics.findIndex(m => m.metric_date === today);
+  if (idx >= 0) Object.assign(_bodyMetrics[idx], fields);
+  else _bodyMetrics.push({ metric_date: today, ...fields });
+  _bodyMetrics.sort((a, b) => a.metric_date.localeCompare(b.metric_date));
+  localStorage.setItem('sv_body_metrics', JSON.stringify(_bodyMetrics));
+  if (userId) upsertBodyMetrics(userId, today, fields).catch(console.error);
+  _render();
+}
+
+export function progSetMeasure(key) {
+  _selectedMeasure = key;
   _render();
 }
 
