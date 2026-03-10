@@ -142,27 +142,24 @@ export async function fetchBodyMetrics(userId) {
 
 // Upsert de PESO — un registro por día, conflict en metric_date
 export async function upsertBodyMetrics(userId, date, fields) {
-  const payload = { user_id: userId, metric_date: date, metric_timestamp: date };
+  const payload = { user_id: userId, metric_date: date };
   for (const [k, v] of Object.entries(fields)) {
     if (v !== null && v !== undefined) payload[k] = v;
   }
   const { error } = await supabase.from('body_metrics').upsert(
     payload,
-    { onConflict: 'user_id,metric_timestamp' }
+    { onConflict: 'user_id,metric_date' }
   );
   if (error) console.error('[DB] upsert body_metrics falló — verifica RLS en Supabase:', error.message, error);
 }
 
-// Insert de MEDIDAS con timestamp único — siempre crea fila nueva
+// Insert de MEDIDAS — Postgres genera ID único automático, siempre crea fila nueva
 export async function insertBodyMeasurement(userId, timestamp, dateStr, fields) {
   const payload = { user_id: userId, metric_date: dateStr, metric_timestamp: timestamp };
   for (const [k, v] of Object.entries(fields)) {
     if (v !== null && v !== undefined) payload[k] = v;
   }
-  const { error } = await supabase.from('body_metrics').upsert(
-    payload,
-    { onConflict: 'user_id,metric_timestamp' }
-  );
+  const { error } = await supabase.from('body_metrics').insert(payload);
   if (error) console.error('[DB] insert body measurement falló:', error.message, error);
 }
 
