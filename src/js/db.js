@@ -140,15 +140,15 @@ export async function fetchBodyMetrics(userId) {
   }));
 }
 
-// Upsert de PESO — un registro por día, conflict en metric_date
+// Upsert de PESO — un registro por día, conflict en metric_timestamp (= date para peso)
 export async function upsertBodyMetrics(userId, date, fields) {
-  const payload = { user_id: userId, metric_date: date };
+  const payload = { user_id: userId, metric_date: date, metric_timestamp: date };
   for (const [k, v] of Object.entries(fields)) {
     if (v !== null && v !== undefined) payload[k] = v;
   }
   const { error } = await supabase.from('body_metrics').upsert(
     payload,
-    { onConflict: 'user_id,metric_date' }
+    { onConflict: 'user_id,metric_timestamp' }
   );
   if (error) console.error('[DB] upsert body_metrics falló — verifica RLS en Supabase:', error.message, error);
 }
