@@ -316,7 +316,8 @@ function _fmtExName(exId) {
 
 function _renderMeasuresSection() {
   const today = new Date().toISOString().slice(0, 10);
-  const todayRec = _bodyMetrics.find(m => m.metric_date === today);
+  // Último registro de hoy (puede tener hora incluida en la clave)
+  const todayRec = [..._bodyMetrics].reverse().find(m => m.metric_date.startsWith(today));
   const firstRec = _bodyMetrics.find(m => MEASURES.some(ms => m[ms.key] != null));
   const lastRec  = [..._bodyMetrics].reverse().find(m => MEASURES.some(ms => m[ms.key] != null));
 
@@ -370,7 +371,7 @@ function _renderMeasuresSection() {
        <div class="prog-chart-wrap">${_svgLine(selPoints, { color: 'var(--accent)' })}</div>
        <p class="prog-chart-hint">${selLabel} en cm por fecha</p>`
     : (lastRec
-        ? `<p class="prog-no-data">Vuelve mañana y registra otra medida para ver la gráfica y el delta.</p>`
+        ? `<p class="prog-no-data">Guarda una segunda medida para ver la gráfica y el delta.</p>`
         : `<p class="prog-no-data">Registra tu primera medida para ver la evolución aquí.</p>`);
 
   return `<div class="prog-section">
@@ -409,7 +410,10 @@ export async function progLogWeight() {
 }
 
 export async function progLogMeasurements() {
-  const today  = new Date().toISOString().slice(0, 10);
+  const now    = new Date();
+  const today  = now.toISOString().slice(0, 10);
+  // Clave con minutos → cada guardado es un punto distinto en la gráfica
+  const key    = today + ' ' + now.toTimeString().slice(0, 5); // "YYYY-MM-DD HH:MM"
   const userId = getUserId();
   const fields = {};
   for (const ms of MEASURES) {
@@ -417,11 +421,12 @@ export async function progLogMeasurements() {
     if (val > 0 && val <= 300) fields[ms.key] = val;
   }
   if (!Object.keys(fields).length) return;
-  const idx = _bodyMetrics.findIndex(m => m.metric_date === today);
+  const idx = _bodyMetrics.findIndex(m => m.metric_date === key);
   if (idx >= 0) Object.assign(_bodyMetrics[idx], fields);
-  else _bodyMetrics.push({ metric_date: today, ...fields });
+  else _bodyMetrics.push({ metric_date: key, ...fields });
   _bodyMetrics.sort((a, b) => a.metric_date.localeCompare(b.metric_date));
   localStorage.setItem('sv_body_metrics', JSON.stringify(_bodyMetrics));
+  // Supabase: upsert por fecha (un registro diario, sin cambio de schema)
   if (userId) upsertBodyMetrics(userId, today, fields).catch(console.error);
   _render();
   // Limpiar inputs y confirmar guardado visualmente
@@ -467,9 +472,16 @@ export async function showProgressPage() {
   if (userId) {
     fetchBodyMetrics(userId).then(data => {
       if (data && data.length) {
-        _bodyMetrics = data;
-        localStorage.setItem('sv_body_metrics', JSON.stringify(_bodyMetrics));
-        _render();
+        // Merge: preservar entradas locales con hora (key > 10 chars),
+        // agregar solo las fechas de Supabase que no existan ya en local
+        const localDates = new Set(_bodyMetrics.map(m => m.metric_date.slice(0, 10)));
+        const toAdd = data.filter(d => !localDates.has((d.metric_date || '').slice(0, 10)));
+        if (toAdd.length) {
+          _bodyMetrics = [..._bodyMetrics, ...toAdd];
+          _bodyMetrics.sort((a, b) => a.metric_date.localeCompare(b.metric_date));
+          localStorage.setItem('sv_body_metrics', JSON.stringify(_bodyMetrics));
+          _render();
+        }
       }
     });
   }
