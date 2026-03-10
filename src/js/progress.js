@@ -426,8 +426,8 @@ export async function progLogMeasurements() {
   else _bodyMetrics.push({ metric_date: key, ...fields });
   _bodyMetrics.sort((a, b) => a.metric_date.localeCompare(b.metric_date));
   localStorage.setItem('sv_body_metrics', JSON.stringify(_bodyMetrics));
-  // Supabase: upsert por fecha (un registro diario, sin cambio de schema)
-  if (userId) upsertBodyMetrics(userId, today, fields).catch(console.error);
+  // Supabase: upsert con clave completa (fecha + hora) para múltiples puntos por día
+  if (userId) upsertBodyMetrics(userId, key, fields).catch(console.error);
   _render();
   // Limpiar inputs y confirmar guardado visualmente
   for (const ms of MEASURES) {
