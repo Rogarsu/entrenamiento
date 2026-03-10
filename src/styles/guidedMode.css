@@ -130,16 +130,14 @@
 .gm-img-wrap {
   width: 100%;
   background: var(--bg3);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: hidden;
   flex-shrink: 0;
 }
 
 .gm-img {
   width: 100%;
+  height: auto;
   max-height: 45vh;
-  object-fit: contain;
   display: block;
 }
 
