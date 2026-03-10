@@ -4,7 +4,7 @@
 
 import { state, getUserId } from './state.js';
 import { loadExLogs } from './storage.js';
-import { fetchBodyMetrics, upsertBodyMetrics } from './db.js';
+import { fetchBodyMetrics, upsertBodyMetrics, insertBodyMeasurement } from './db.js';
 
 // ── Module state ──────────────────────────────────────────────────────────────
 
@@ -412,8 +412,8 @@ export async function progLogWeight() {
 export async function progLogMeasurements() {
   const now    = new Date();
   const today  = now.toISOString().slice(0, 10);
-  // Clave con minutos → cada guardado es un punto distinto en la gráfica
-  const key    = today + ' ' + now.toTimeString().slice(0, 5); // "YYYY-MM-DD HH:MM"
+  // Clave con segundos → cada guardado es un punto distinto en la gráfica
+  const key    = now.toISOString().slice(0, 19).replace('T', ' '); // "YYYY-MM-DD HH:MM:SS"
   const userId = getUserId();
   const fields = {};
   for (const ms of MEASURES) {
@@ -426,8 +426,8 @@ export async function progLogMeasurements() {
   else _bodyMetrics.push({ metric_date: key, ...fields });
   _bodyMetrics.sort((a, b) => a.metric_date.localeCompare(b.metric_date));
   localStorage.setItem('sv_body_metrics', JSON.stringify(_bodyMetrics));
-  // Supabase: upsert con clave completa (fecha + hora) para múltiples puntos por día
-  if (userId) upsertBodyMetrics(userId, key, fields).catch(console.error);
+  // Supabase: INSERT nuevo registro con timestamp único
+  if (userId) insertBodyMeasurement(userId, key, today, fields).catch(console.error);
   _render();
   // Limpiar inputs y confirmar guardado visualmente
   for (const ms of MEASURES) {

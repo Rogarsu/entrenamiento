@@ -129,25 +129,41 @@ export async function upsertUserPrefs(userId, prefs) {
 export async function fetchBodyMetrics(userId) {
   const { data, error } = await supabase
     .from('body_metrics')
-    .select('metric_date, weight_kg, waist_cm, hip_cm, chest_cm, arm_cm, thigh_cm')
+    .select('metric_date, metric_timestamp, weight_kg, waist_cm, hip_cm, chest_cm, arm_cm, thigh_cm')
     .eq('user_id', userId)
-    .order('metric_date', { ascending: true });
+    .order('metric_timestamp', { ascending: true });
   if (error) { console.error('fetchBodyMetrics:', error); return []; }
-  return data || [];
+  // Normalizar: usar metric_timestamp como metric_date local si existe
+  return (data || []).map(r => ({
+    ...r,
+    metric_date: r.metric_timestamp || r.metric_date,
+  }));
 }
 
-// fields: { weight_kg?, waist_cm?, hip_cm?, chest_cm?, arm_cm?, thigh_cm? }
-// Solo se envían los campos con valor — no sobreescribe los demás con null.
+// Upsert de PESO — un registro por día, conflict en metric_date
 export async function upsertBodyMetrics(userId, date, fields) {
-  const payload = { user_id: userId, metric_date: date };
+  const payload = { user_id: userId, metric_date: date, metric_timestamp: date };
   for (const [k, v] of Object.entries(fields)) {
     if (v !== null && v !== undefined) payload[k] = v;
   }
   const { error } = await supabase.from('body_metrics').upsert(
     payload,
-    { onConflict: 'user_id,metric_date' }
+    { onConflict: 'user_id,metric_timestamp' }
   );
   if (error) console.error('[DB] upsert body_metrics falló — verifica RLS en Supabase:', error.message, error);
+}
+
+// Insert de MEDIDAS con timestamp único — siempre crea fila nueva
+export async function insertBodyMeasurement(userId, timestamp, dateStr, fields) {
+  const payload = { user_id: userId, metric_date: dateStr, metric_timestamp: timestamp };
+  for (const [k, v] of Object.entries(fields)) {
+    if (v !== null && v !== undefined) payload[k] = v;
+  }
+  const { error } = await supabase.from('body_metrics').upsert(
+    payload,
+    { onConflict: 'user_id,metric_timestamp' }
+  );
+  if (error) console.error('[DB] insert body measurement falló:', error.message, error);
 }
 
 // Alias para compatibilidad con llamadas existentes (solo peso)
