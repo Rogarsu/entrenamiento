@@ -370,7 +370,7 @@ function _renderMeasuresSection() {
        <div class="prog-chart-wrap">${_svgLine(selPoints, { color: 'var(--accent)' })}</div>
        <p class="prog-chart-hint">${selLabel} en cm por fecha</p>`
     : (lastRec
-        ? `<p class="prog-no-data">Registra al menos 2 mediciones para ver la gráfica de tendencia.</p>`
+        ? `<p class="prog-no-data">Vuelve mañana y registra otra medida para ver la gráfica y el delta.</p>`
         : `<p class="prog-no-data">Registra tu primera medida para ver la evolución aquí.</p>`);
 
   return `<div class="prog-section">
@@ -424,6 +424,18 @@ export async function progLogMeasurements() {
   localStorage.setItem('sv_body_metrics', JSON.stringify(_bodyMetrics));
   if (userId) upsertBodyMetrics(userId, today, fields).catch(console.error);
   _render();
+  // Limpiar inputs y confirmar guardado visualmente
+  for (const ms of MEASURES) {
+    const el = document.getElementById(`progMeasure_${ms.key}`);
+    if (el) el.value = '';
+  }
+  const btn = document.querySelector('.prog-measures-save-btn');
+  if (btn) {
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<i class="ti ti-circle-check-filled"></i> Guardado';
+    btn.disabled = true;
+    setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; }, 1800);
+  }
 }
 
 export function progSetMeasure(key) {
