@@ -372,6 +372,14 @@ Accede desde la barra de navegación → **"Progreso"**.
 - **Gráfico de líneas** con evolución del peso
 - **Indicador de delta:** `+5.2 kg` o `-1.8 kg` desde el primer registro
 
+### Medidas corporales
+- **5 campos opcionales:** Cintura, Cadera, Pecho, Brazo y Muslo (en cm)
+- Ingresa solo las medidas que quieras registrar y toca **"✓ Guardar medidas"**
+- Un registro por día — si ya guardaste ese día, los nuevos valores se fusionan sin borrar los anteriores
+- **Tabla de última medida** con delta (Δ) respecto al primer registro (ej. `−3 cm`)
+- **Gráfico de tendencia** — selector desplegable para elegir qué medida ver en el gráfico
+- Visible solo cuando hay al menos 1 registro; sin datos muestra invitación a empezar
+
 ### Progresión de ejercicios
 - Selector desplegable con todos los ejercicios que has registrado
 - **Gráfico de peso máximo** por sesión (eje Y: peso en kg, eje X: fecha)
