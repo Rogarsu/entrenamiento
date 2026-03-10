@@ -86,7 +86,8 @@ export function initExSwaps() {
 }
 
 export function getExSwap(exId, sessionId) {
-  return _exSwaps[`${exId}|${sessionId}`] || null;
+  // Session-specific swap takes priority; fall back to permanent swap (key = "exId|*")
+  return _exSwaps[`${exId}|${sessionId}`] || _exSwaps[`${exId}|*`] || null;
 }
 
 export function setExSwap(exId, sessionId, newExId) {
@@ -94,6 +95,18 @@ export function setExSwap(exId, sessionId, newExId) {
   if (newExId) _exSwaps[key] = newExId;
   else delete _exSwaps[key];
   localStorage.setItem('sv_ex_swaps', JSON.stringify(_exSwaps));
+}
+
+// Permanent swap — applies to ALL sessions in the current plan cycle
+export function setPermanentSwap(exId, newExId) {
+  const key = `${exId}|*`;
+  if (newExId) _exSwaps[key] = newExId;
+  else delete _exSwaps[key];
+  localStorage.setItem('sv_ex_swaps', JSON.stringify(_exSwaps));
+}
+
+export function getPermanentSwap(exId) {
+  return _exSwaps[`${exId}|*`] || null;
 }
 
 export function clearExSwaps() {

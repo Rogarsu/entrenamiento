@@ -13,7 +13,11 @@
       "Bash(npm:*)",
       "Bash(cmd /c \"copy /Y \"\"c:\\\\Users\\\\USUARIO\\\\OneDrive\\\\Documentos\\\\Roberto\\\\Goals\\\\Entrenamiento\\\\dist\\\\index.html\"\" \"\"c:\\\\Users\\\\USUARIO\\\\OneDrive\\\\Documentos\\\\Roberto\\\\Goals\\\\Entrenamiento\\\\index.html\"\"\")",
       "Bash(cmd /c \"type nul > \"\"c:\\\\Users\\\\USUARIO\\\\OneDrive\\\\Documentos\\\\Roberto\\\\Goals\\\\Entrenamiento\\\\.nojekyll\"\"\")",
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "Bash(wc -l src/js/*.js)",
+      "Bash(node -e \":*)",
+      "Bash(node deploy.js)",
+      "Bash(npx vite build)"
     ]
   }
 }

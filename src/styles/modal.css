@@ -116,6 +116,31 @@
 .ex-picker-meta { font-family: var(--font-mono); font-size: 11px; color: var(--text3); }
 .ex-picker-empty { padding: 14px; font-family: var(--font-mono); font-size: 11px; color: var(--text3); }
 
+/* SWAP REASON PICKER */
+.ex-picker-reasons { display: flex; flex-direction: column; gap: 0; }
+.ex-picker-reason {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; padding: 12px 14px;
+  background: none; border: none; border-bottom: 1px solid var(--border2);
+  text-align: left; cursor: pointer;
+  transition: background 0.15s;
+}
+.ex-picker-reason:last-child { border-bottom: none; }
+.ex-picker-reason:hover { background: var(--bg2); }
+.ex-picker-reason-icon { flex-shrink: 0; font-size: 18px; color: var(--cyan); width: 26px; display: flex; align-items: center; justify-content: center; }
+.ex-picker-reason-title { font-family: var(--font-head); font-size: 13px; font-weight: 700; color: var(--text); }
+.ex-picker-reason-sub { font-family: var(--font-mono); font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+/* SCOPE BADGE (shows above exercise list) */
+.ex-picker-scope-badge {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 14px;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+  border-bottom: 1px solid var(--border2);
+}
+.ex-picker-scope--perm { background: rgba(245,158,11,0.12); color: #f59e0b; }
+.ex-picker-scope--session { background: rgba(6,182,212,0.08); color: var(--cyan); }
+
 /* PLAN MODAL — Nuevo Ciclo */
 .plan-modal-overlay {
   position: fixed; inset: 0; background: rgba(0,0,0,.65);

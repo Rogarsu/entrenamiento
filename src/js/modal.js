@@ -1,7 +1,7 @@
 import { state, getPlan } from './state.js';
 import { getExImage } from '../data/images.js';
 import { EXERCISES } from '../data/exercises.js';
-import { getExLog, getLastExLog, saveExLog, setExSwap } from './storage.js';
+import { getExLog, getLastExLog, saveExLog, setExSwap, setPermanentSwap, getPermanentSwap } from './storage.js';
 import { calcNextRecommendation, calcCrossExRecommendation, getRelatedExLogs, getExRecommendation } from './progression.js';
 import { escStr, muscleSvg, equipIcon, diffLabel, catLabel, muscleName } from './helpers.js';
 import { startRestTimer } from './timer.js';
@@ -292,10 +292,12 @@ export function openExModal(id, name, muscle, equip, targetSets, targetReps, wei
 
     const existing  = getExLog(id, state.currentId);
     const isSwapped = origId !== id;
+    const hasPermSwap = !!getPermanentSwap(origId);
     const swapBtnHtml = `
       <div class="ex-swap-actions">
         <button class="ex-swap-btn" onclick="window._exShowPicker()"><i class="ti ti-refresh"></i> Cambiar ejercicio</button>
-        ${isSwapped ? `<button class="ex-swap-btn ex-swap-reset" onclick="window._exResetSwap()"><i class="ti ti-arrow-back-up"></i> Volver al original</button>` : ''}
+        ${isSwapped && hasPermSwap ? `<button class="ex-swap-btn ex-swap-reset" onclick="window._exResetSwap('permanent')"><i class="ti ti-arrow-back-up"></i> Restaurar en todo el plan</button>` : ''}
+        ${isSwapped && !hasPermSwap ? `<button class="ex-swap-btn ex-swap-reset" onclick="window._exResetSwap('session')"><i class="ti ti-arrow-back-up"></i> Volver al original (solo hoy)</button>` : ''}
       </div>
       <div id="exPickerWrap" style="display:none"></div>`;
 
@@ -481,41 +483,90 @@ window._exShowPicker = () => {
   if (!wrap) return;
   if (wrap.style.display !== 'none') { wrap.style.display = 'none'; return; }
 
+  wrap.innerHTML = `
+    <div class="ex-picker">
+      <div class="ex-picker-title"><i class="ti ti-help-circle"></i> ¿Por qué quieres cambiar?</div>
+      <div class="ex-picker-reasons">
+        <button class="ex-picker-reason" onclick="window._exPickReason('permanent')">
+          <div class="ex-picker-reason-icon"><i class="ti ti-building-store"></i></div>
+          <div>
+            <div class="ex-picker-reason-title">Mi gym no tiene este equipo</div>
+            <div class="ex-picker-reason-sub">Reemplaza el ejercicio en todo el plan</div>
+          </div>
+        </button>
+        <button class="ex-picker-reason" onclick="window._exPickReason('session')">
+          <div class="ex-picker-reason-icon"><i class="ti ti-clock"></i></div>
+          <div>
+            <div class="ex-picker-reason-title">La máquina está ocupada hoy</div>
+            <div class="ex-picker-reason-sub">Solo afecta esta sesión</div>
+          </div>
+        </button>
+        <button class="ex-picker-reason" onclick="window._exPickReason('session')">
+          <div class="ex-picker-reason-icon"><i class="ti ti-arrows-shuffle"></i></div>
+          <div>
+            <div class="ex-picker-reason-title">Quiero variar hoy</div>
+            <div class="ex-picker-reason-sub">Solo afecta esta sesión</div>
+          </div>
+        </button>
+      </div>
+    </div>`;
+  wrap.style.display = 'block';
+};
+
+window._exPickReason = (scope) => {
+  if (!_exCtx) return;
+  const wrap = document.getElementById('exPickerWrap');
+  if (!wrap) return;
+
+  _exCtx._swapScope = scope;
+
   const currentMuscle = _exCtx.muscle;
   const alts = EXERCISES.filter(ex => ex.muscle_primary === currentMuscle && ex.id !== _exCtx.id);
 
   if (!alts.length) {
     wrap.innerHTML = `<div class="ex-picker-empty">No hay alternativas para este grupo muscular.</div>`;
-    wrap.style.display = 'block';
     return;
   }
 
-  const items = alts.map(ex => {
-    const diffLabel = { beginner: 'Básico', intermediate: 'Intermedio', advanced: 'Avanzado' }[ex.difficulty] || ex.difficulty;
-    return `<div class="ex-picker-item" onclick="window._exSelectAlt('${ex.id}')">
+  const dl = { beginner: 'Básico', intermediate: 'Intermedio', advanced: 'Avanzado' };
+  const items = alts.map(ex =>
+    `<div class="ex-picker-item" onclick="window._exSelectAlt('${escStr(ex.id)}')">
       <div class="ex-picker-name">${ex.name}</div>
-      <div class="ex-picker-meta">${ex.equip} · ${diffLabel}</div>
-    </div>`;
-  }).join('');
+      <div class="ex-picker-meta">${ex.equip || '—'} · ${dl[ex.difficulty] || ex.difficulty}</div>
+    </div>`
+  ).join('');
+
+  const scopeBadge = scope === 'permanent'
+    ? `<div class="ex-picker-scope-badge ex-picker-scope--perm"><i class="ti ti-building-store"></i> Cambio permanente en todo el plan</div>`
+    : `<div class="ex-picker-scope-badge ex-picker-scope--session"><i class="ti ti-clock"></i> Solo esta sesión</div>`;
 
   wrap.innerHTML = `
     <div class="ex-picker">
-      <div class="ex-picker-title"><i class="ti ti-refresh"></i> Elegir alternativa — ${currentMuscle}</div>
+      ${scopeBadge}
+      <div class="ex-picker-title"><i class="ti ti-list"></i> Alternativas — ${currentMuscle}</div>
       <div class="ex-picker-list">${items}</div>
     </div>`;
-  wrap.style.display = 'block';
 };
 
 window._exSelectAlt = (newExId) => {
   if (!_exCtx) return;
-  setExSwap(_exCtx.origId, state.currentId, newExId);
+  const scope = _exCtx._swapScope || 'session';
+  if (scope === 'permanent') {
+    setPermanentSwap(_exCtx.origId, newExId);
+  } else {
+    setExSwap(_exCtx.origId, state.currentId, newExId);
+  }
   closeExModal();
   loadSession(state.currentId);
 };
 
-window._exResetSwap = () => {
+window._exResetSwap = (scope) => {
   if (!_exCtx) return;
-  setExSwap(_exCtx.origId, state.currentId, null);
+  if (scope === 'permanent') {
+    setPermanentSwap(_exCtx.origId, null);
+  } else {
+    setExSwap(_exCtx.origId, state.currentId, null);
+  }
   closeExModal();
   loadSession(state.currentId);
 };
