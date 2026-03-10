@@ -754,6 +754,6 @@ export const EX_IMAGES = {
 const _RAW = 'https://raw.githubusercontent.com/Rogarsu/entrenamiento/dev/public/';
 
 export function getExImage(id, name) {
-  if (EX_IMAGES[id]) return _RAW + EX_IMAGES[id];
+  if (EX_IMAGES[id]) return _RAW + encodeURI(EX_IMAGES[id]);
   return null;
 }
