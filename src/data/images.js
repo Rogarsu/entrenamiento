@@ -751,7 +751,9 @@ export const EX_IMAGES = {
   'bike_reclined': 'images/Bicicleta estática reclinada.gif',
 };
 
+const _RAW = 'https://raw.githubusercontent.com/Rogarsu/entrenamiento/dev/public/';
+
 export function getExImage(id, name) {
-  if (EX_IMAGES[id]) return EX_IMAGES[id];
+  if (EX_IMAGES[id]) return _RAW + EX_IMAGES[id];
   return null;
 }
