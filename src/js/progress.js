@@ -279,7 +279,7 @@ function _render() {
       ${exercises.length ? `
         <select class="prog-ex-select" onchange="progSetEx(this.value)">${exOptions}</select>
         <div class="prog-chart-wrap">
-          ${_svgLine(exPoints, { color: 'var(--accent)' })}
+          ${_svgLine(exPoints, { color: 'var(--cyan)' })}
         </div>
         <p class="prog-chart-hint">Peso máximo registrado por sesión</p>
       ` : '<p class="prog-no-data">Registra pesos en tus ejercicios para ver la progresión aquí.</p>'}
@@ -368,7 +368,7 @@ function _renderMeasuresSection() {
 
   const chartHtml = selPoints.length >= 2
     ? `<select class="prog-measure-select" onchange="progSetMeasure(this.value)">${selectorOpts}</select>
-       <div class="prog-chart-wrap">${_svgLine(selPoints, { color: 'var(--accent)' })}</div>
+       <div class="prog-chart-wrap">${_svgLine(selPoints, { color: 'var(--cyan)' })}</div>
        <p class="prog-chart-hint">${selLabel} en cm por fecha</p>`
     : (lastRec
         ? `<p class="prog-no-data">Guarda una segunda medida para ver la gráfica y el delta.</p>`
